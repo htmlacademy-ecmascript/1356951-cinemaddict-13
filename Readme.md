@@ -1,7 +1,7 @@
 # Проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Honey badger](https://up.htmlacademy.ru/ecmascript/13/user/1356951).
-* Наставник: `Неизвестно`.
+* Наставник: `Семён Якушев`.
 
 ---
 
