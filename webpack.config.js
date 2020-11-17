@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exsports = {
+module.exports = {
   entry: './src/main.js',
   output: {
     filename: 'bundle.js',
