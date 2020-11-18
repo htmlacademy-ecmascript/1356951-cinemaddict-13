@@ -12,3 +12,4 @@ const render = (parent, element) => {
 
 const headerElement = document.querySelector(`.header`);
 render(headerElement, createUserTemplate());
+console.log(headerElement);
