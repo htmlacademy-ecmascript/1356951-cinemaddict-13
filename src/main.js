@@ -4,15 +4,15 @@ const COMMENTED_CARD_FILM_QUANTITY = 2;
 
 import {createUserTemplate} from "./view/user.js";
 import {createMenuTemplate} from "./view/menu.js";
-import {createStatsTemplate} from "./view/stats.js";
+// import {createStatsTemplate} from "./view/stats.js";
 import {createFilterTemplate} from "./view/filter.js";
 import {createFilmContainer} from "./view/film-container.js";
 import {createFilmCardTemplate} from "./view/film-card.js";
 import {createButtonTepmlate} from "./view/button.js";
-import {createPopupTemplate} from "./view/popup.js";
+// import {createPopupTemplate} from "./view/popup.js";
 
 const render = (parent, template, place) => {
-   parent.insertAdjacentHTML(place, template)
+  parent.insertAdjacentHTML(place, template);
 };
 
 const headerElement = document.querySelector(`.header`);
@@ -26,8 +26,8 @@ render(mainElement, createFilterTemplate(), `beforeend`);
 render(mainElement, createFilmContainer(), `beforeend`);
 
 const filmContainerElement = document.querySelector(`.films-list__container`);
-for (let i = 0; i < CARD_FILM_QUANTITY; i++){
- render(filmContainerElement, createFilmCardTemplate(), `beforeend`);
+for (let i = 0; i < CARD_FILM_QUANTITY; i++) {
+  render(filmContainerElement, createFilmCardTemplate(), `beforeend`);
 }
 
 // Добавляем кнопку
@@ -38,20 +38,19 @@ render(filmListElement, createButtonTepmlate(), `beforeend`);
 const filmListExtraElement = document.querySelector(`.films-list--extra`);
 const filmTopContainerElement = filmListExtraElement.querySelector(`.films-list__container`);
 
-for (let i = 0; i < TOP_CARD_FILM_QUANTITY; i++){
- render(filmTopContainerElement, createFilmCardTemplate(), `beforeend`);
+for (let i = 0; i < TOP_CARD_FILM_QUANTITY; i++) {
+  render(filmTopContainerElement, createFilmCardTemplate(), `beforeend`);
 }
 
 // 2шт комментированные
 const filmsElement = document.querySelector(`.films`);
 const filmListExtraLastElement = filmsElement.lastElementChild;
 const filmCommentedContainerElement = filmListExtraLastElement.querySelector(`.films-list__container`);
-for (let i = 0; i < COMMENTED_CARD_FILM_QUANTITY; i++){
+for (let i = 0; i < COMMENTED_CARD_FILM_QUANTITY; i++) {
   render(filmCommentedContainerElement, createFilmCardTemplate(), `beforeend`);
 }
 
 // Выводим попап
-const bodyElement = document.querySelector(`body`);
+// const bodyElement = document.querySelector(`body`);
 
-/* console.log(bodyElement);
-render(bodyElement, createPopupTemplate(), `beforeend`); */
+// render(bodyElement, createPopupTemplate(), `beforeend`);
