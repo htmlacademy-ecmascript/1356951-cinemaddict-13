@@ -23,8 +23,6 @@ const FILM_COUNT_PER_STEP = 5;
 const filmsQuantity = getRandomInteger(15, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
-console.log(films);
-
 
 const render = (parent, template, place) => {
   parent.insertAdjacentHTML(place, template);
