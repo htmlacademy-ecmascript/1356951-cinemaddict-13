@@ -1,6 +1,4 @@
-const CARD_FILM_QUANTITY = 5;
-const TOP_CARD_FILM_QUANTITY = 2;
-const COMMENTED_CARD_FILM_QUANTITY = 2;
+
 // const FILMS_QUANTITY = 20;
 // позже удалить
 import {getRandomInteger} from "./utils.js";
@@ -16,9 +14,17 @@ import {createFilmCardTemplate} from "./view/film-card.js";
 import {createButtonTepmlate} from "./view/button.js";
 // import {createPopupTemplate} from "./view/popup.js";
 
+const CARD_FILM_QUANTITY = 5;
+const TOP_CARD_FILM_QUANTITY = 2;
+const COMMENTED_CARD_FILM_QUANTITY = 2;
+const FILM_COUNT_PER_STEP = 5;
+
+
 const filmsQuantity = getRandomInteger(15, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
+// console.log(films);
+
 
 const render = (parent, template, place) => {
   parent.insertAdjacentHTML(place, template);
@@ -41,24 +47,52 @@ for (let i = 0; i < CARD_FILM_QUANTITY; i++) {
   render(filmContainerElement, createFilmCardTemplate(films[i]), `beforeend`);
 }
 
-// Добавляем кнопку
 const filmListElement = document.querySelector(`.films-list`);
-render(filmListElement, createButtonTepmlate(), `beforeend`);
+// Настраиваем логику кнопки
+
+if (films.length > FILM_COUNT_PER_STEP) {
+  let renderedFilmCount = FILM_COUNT_PER_STEP;
+
+
+  // Добавляем кнопку
+
+  render(filmListElement, createButtonTepmlate(), `beforeend`);
+  const buttonLoadMoreElement = filmListElement.querySelector(`.films-list__show-more`);
+  buttonLoadMoreElement.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    films
+    .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
+    .forEach((film) => render(filmContainerElement, createFilmCardTemplate(film), `beforeend`));
+    renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (renderedFilmCount >= films.length) {
+      buttonLoadMoreElement.remove();
+    }
+  });
+}
+
 
 // 2шт top
 const filmListExtraElement = document.querySelector(`.films-list--extra`);
 const filmTopContainerElement = filmListExtraElement.querySelector(`.films-list__container`);
+const topFilms = films.sort(function (a, b) {
+  return b.rating - a.rating;
+});
 
 for (let i = 0; i < TOP_CARD_FILM_QUANTITY; i++) {
-  render(filmTopContainerElement, createFilmCardTemplate(films[getRandomInteger(0, filmsQuantity)]), `beforeend`);
+  render(filmTopContainerElement, createFilmCardTemplate(topFilms[i]), `beforeend`);
 }
 
 // 2шт комментированные
 const filmsElement = document.querySelector(`.films`);
 const filmListExtraLastElement = filmsElement.lastElementChild;
 const filmCommentedContainerElement = filmListExtraLastElement.querySelector(`.films-list__container`);
+const commentedFilms = films.sort(function (a, b) {
+  return b.comments.length - a.comments.length;
+});
+
 for (let i = 0; i < COMMENTED_CARD_FILM_QUANTITY; i++) {
-  render(filmCommentedContainerElement, createFilmCardTemplate(films[getRandomInteger(0, filmsQuantity)]), `beforeend`);
+  render(filmCommentedContainerElement, createFilmCardTemplate(commentedFilms[i]), `beforeend`);
 }
 
 const footer = document.querySelector(`footer`);
@@ -67,8 +101,4 @@ render(footerStat, `${filmsQuantity}`, `beforeend`);
 
 // Выводим попап
 // const bodyElement = document.querySelector(`body`);
-
-// render(bodyElement, createPopupTemplate(film[0]), `beforeend`);
-
-//  удалить
-// console.log(createfilm());
+// render(bodyElement, createPopupTemplate(films[0]), `beforeend`);
