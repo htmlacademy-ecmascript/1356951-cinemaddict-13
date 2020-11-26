@@ -4,7 +4,7 @@
 import {getRandomInteger} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
 
-import {createfilm} from "./mock/film.js";
+import {createfilm, commentsCollection} from "./mock/film.js";
 import {createUserTemplate} from "./view/user.js";
 import {createMenuTemplate} from "./view/menu.js";
 // import {createStatsTemplate} from "./view/stats.js";
@@ -12,7 +12,7 @@ import {createFilterTemplate} from "./view/filter.js";
 import {createFilmContainer} from "./view/film-container.js";
 import {createFilmCardTemplate} from "./view/film-card.js";
 import {createButtonTepmlate} from "./view/button.js";
-// import {createPopupTemplate} from "./view/popup.js";
+import {createPopupTemplate} from "./view/popup.js";
 
 const CARD_FILM_QUANTITY = 5;
 const TOP_CARD_FILM_QUANTITY = 2;
@@ -23,7 +23,7 @@ const FILM_COUNT_PER_STEP = 5;
 const filmsQuantity = getRandomInteger(15, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
-// console.log(films);
+console.log(films);
 
 
 const render = (parent, template, place) => {
@@ -100,5 +100,5 @@ const footerStat = footer.querySelector(`.footer__statistics`);
 render(footerStat, `${filmsQuantity}`, `beforeend`);
 
 // Выводим попап
-// const bodyElement = document.querySelector(`body`);
-// render(bodyElement, createPopupTemplate(films[0]), `beforeend`);
+const bodyElement = document.querySelector(`body`);
+render(bodyElement, createPopupTemplate(films[0], commentsCollection), `beforeend`);

@@ -28,15 +28,11 @@ const createFilmDetails = (name, data) => {
   return filmDetails;
 };
 
-const createComment = (arrComments) => {
-  let comments = ``;
-  for (let i = 0; i < arrComments.length; i++) {
-    const {text, emoji, date, author} = arrComments[i];
-    const today = dayjs();
-    const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
-    const textX = dayAgo === 0 ? `today` : ` days ago`;
-
-    comments += `<li class="film-details__comment">
+const createComment = ({text, emoji, date, author}) => {
+  const today = dayjs();
+  const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
+  const textX = dayAgo === 0 ? `today` : ` days ago`;
+  return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src=${emoji} width="55" height="55" alt="emoji-smile">
     </span>
@@ -49,12 +45,12 @@ const createComment = (arrComments) => {
       </p>
     </div>
   </li>`;
-  }
+  // }
   // date1.diff(date2, 'month')  dayjs().toDate().diff(date, `day`) 2019/12/31 23:59
-  return comments;
+  // return comments;
 };
 
-export const createPopupTemplate = (film = {}) => {
+export const createPopupTemplate = (film = {}, commentsX = []) => {
   const {
     filmName,
     poster,
@@ -70,8 +66,9 @@ export const createPopupTemplate = (film = {}) => {
     country
 
   } = film;
+
   // console.log(dayjs().format(`D MMMM`) + ` ${year}`);
-  // console.log(comments);
+  // console.log(commentsX);
   // console.log(dayjs());
 
 
@@ -135,7 +132,7 @@ export const createPopupTemplate = (film = {}) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-            ${createComment(comments)}
+            ${comments.map((item) => createComment(commentsX[item])).join(` `)}
 
             </ul>
 

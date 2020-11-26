@@ -6,6 +6,86 @@ import {MAX_SENTENCE_OF_DESCRIPTION,
   MIN_COMMENTS
 } from "../const.js";
 
+let nanoid = (t = 5)=>{
+  let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
+    /*eslint-disable */
+    let n = 63 & r[t]; e += n < 36 ? n.toString(36) : n < 62 ? (n - 26).toString(36).toUpperCase() : n < 63 ? `_` : `-`;
+  /*eslint-disable */
+  } return e;
+};
+
+const getDaysAgo = () => {
+  const dayAgo = getRandomInteger(0, dayjs().format(`D`));
+  return dayAgo;
+};
+
+const getDate = () => {
+  const dayAgo = getRandomInteger(0, dayjs().format(`D`));
+  return dayjs().subtract(dayAgo, `day`);
+};
+
+const getMessage = () => {
+  const messages = [
+    `Классный фильм`,
+    `Полный отстой`,
+    `Здорово посмеялась`,
+    `Местами смешно`,
+    `Плакала пока писала код`,
+    `Иногда хочется перeсмотреть этот фильм`,
+    `Почему в фильме не смотрят на дорогу, когда ведут машину`,
+    `Тор красавчик`,
+    `Вечером с сыном доклад про Кострому делать...и лайв еще...`
+  ];
+  const message = messages[getRandomInteger(0, messages.length - 1)];
+return message;
+};
+
+const getAutor = () => {
+  const autors = [
+    `Кристина янь`,
+    `Тон Су Ли`,
+    `Здоровяк добряк`,
+    `Аппетитный пирожок`,
+    `ПОПУГАЙ`,
+    `Веселый Антошка`,
+    `Дед мороз`,
+    `Тор`
+  ];
+  const autor = autors[getRandomInteger(0, autors.length - 1)];
+return autor;
+};
+
+const getEmoji = () => {
+const emojies = [
+  `./images/emoji/smile.png`,
+  `./images/emoji/angry.png`,
+  `./images/emoji/puke.png`,
+  `./images/emoji/sleeping.png`,
+];
+const emoji = emojies[getRandomInteger(0, emojies.length - 1)];
+return emoji;
+};
+
+const generateComment = () => {
+  return {
+    id: nanoid(),
+    text: getMessage(),
+    emoji: getEmoji(),
+    daysAgo: getDaysAgo(),
+    date: getDate(),
+    author: getAutor()
+  };
+};
+
+const generateComments = (amount) => {
+  let comments = {};
+  for (let i = 0; i < amount; i++) {
+    let comment = generateComment();
+    comments[comment.id] = comment;
+  }
+return comments;
+};
+export const commentsCollection = generateComments(8);
 export const createfilm = () => {
   const year = getYear();
 
@@ -100,17 +180,12 @@ const getDescription = () => {
   return description();
 };
 
-const getDaysAgo = () => {
-  const dayAgo = getRandomInteger(0, dayjs().format(`D`));
-  return dayAgo;
-};
 
-const getDate = () => {
-  const dayAgo = getRandomInteger(0, dayjs().format(`D`));
-  return dayjs().subtract(dayAgo, `day`);
-};
 
-const commentsCollection = [
+
+
+
+/*const commentsCollection = [
   {
     id: 1,
     text: `класс`,
@@ -167,14 +242,17 @@ const commentsCollection = [
     date: getDate(),
     author: `Doll`
   }
-];
+];*/
 
-const comments = shuffle(commentsCollection);
+// const comments = shuffle(commentsCollection);
 
 const getComments = () => {
   const commentQuantity = getRandomInteger(MIN_COMMENTS, MAX_COMMENTS);
-
-  let commentsArray = comments.slice(0, commentQuantity);
+  const comments = [];
+  let commentsArray = Object.keys(commentsCollection);
+  for (let i = 0; i < commentQuantity; i++) {
+    comments.push(commentsArray[getRandomInteger(0,commentsArray.length - 1)]);
+  }
   /* = [];
   if (commentQuantity > 0) {
     for (let i = 0; i < commentQuantity; i++) {
@@ -184,7 +262,7 @@ const getComments = () => {
 
   /* const commentsId = new Array(commentsArray.length)
   .fill().map(commentsArray.id);*/
-  return commentsArray;
+  return comments;
 };
 
 const getRating = () => {
