@@ -4,13 +4,6 @@ const filmToFilterMap = {
     .filter((film) => film.isInWatchlist).length,
   Favorites: (films) => films
     .filter((film) => film.isInFavorites).length,
-  /* favorites: (tasks) => tasks
-    .filter((task) => !task.isArchive)
-    .filter((task) => task.isFavorite).length,
-  repeating: (tasks) => tasks
-    .filter((task) => !task.isArchive)
-    .filter((task) => isTaskRepeating(task.repeating)).length,
-  archive: (tasks) => tasks.filter((task) => task.isArchive).length,*/
 };
 
 export const generateFilter = (films) => {

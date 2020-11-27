@@ -180,72 +180,6 @@ const getDescription = () => {
   return description();
 };
 
-
-
-
-
-
-/*const commentsCollection = [
-  {
-    id: 1,
-    text: `класс`,
-    emoji: `./images/emoji/smile.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Roza`
-  },
-  {
-    id: 2,
-    text: `супер`,
-    emoji: `./images/emoji/smile.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Keks`
-  },
-  {
-    id: 3,
-    text: `ужас`,
-    emoji: `./images/emoji/angry.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Colobock`
-  },
-  {
-    id: 4,
-    text: `здорово`,
-    emoji: `./images/emoji/smile.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Compot`
-  },
-  {
-    id: 5,
-    text: `зря потраченной время`,
-    emoji: `./images/emoji/angry.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Clava`
-  },
-  {
-    id: 6,
-    text: `веселый`,
-    emoji: `./images/emoji/puke.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Chaplin`
-  },
-  {
-    id: 7,
-    text: `великолепный`,
-    emoji: `./images/emoji/sleeping.png`,
-    daysAgo: getDaysAgo(),
-    date: getDate(),
-    author: `Doll`
-  }
-];*/
-
-// const comments = shuffle(commentsCollection);
-
 const getComments = () => {
   const commentQuantity = getRandomInteger(MIN_COMMENTS, MAX_COMMENTS);
   const comments = [];
@@ -253,15 +187,6 @@ const getComments = () => {
   for (let i = 0; i < commentQuantity; i++) {
     comments.push(commentsArray[getRandomInteger(0,commentsArray.length - 1)]);
   }
-  /* = [];
-  if (commentQuantity > 0) {
-    for (let i = 0; i < commentQuantity; i++) {
-      commentsArray.push(comments[i]);
-    }
-  }*/
-
-  /* const commentsId = new Array(commentsArray.length)
-  .fill().map(commentsArray.id);*/
   return comments;
 };
 
@@ -326,14 +251,6 @@ const getWriters = () => {
 
   const randomWriters = shuffle(writers);
   const quantityWriters = getRandomInteger(1, writers.length - 1);
-
-  /* let writersX = ``;
-  for (let i = 0; i < quantityWriters; i++) {
-    writersX += randomWriters[i];
-    if (i < quantityWriters - 1) {
-      writersX += `, `;
-    }
-  }*/
   const writersX = randomWriters.slice(0, quantityWriters).join(`, `);
   return writersX;
 };
@@ -371,10 +288,8 @@ const getCountry = () => {
     `Russia`,
     `Finland`
   ];
-
   const country = countries[getRandomInteger(0, countries.length - 1)];
   return country;
-
 };
 
 

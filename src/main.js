@@ -1,9 +1,5 @@
-
-// const FILMS_QUANTITY = 20;
-// позже удалить
 import {getRandomInteger} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
-
 import {createfilm, commentsCollection} from "./mock/film.js";
 import {createUserTemplate} from "./view/user.js";
 import {createMenuTemplate} from "./view/menu.js";
@@ -47,13 +43,9 @@ for (let i = 0; i < CARD_FILM_QUANTITY; i++) {
 
 const filmListElement = document.querySelector(`.films-list`);
 // Настраиваем логику кнопки
-
 if (films.length > FILM_COUNT_PER_STEP) {
   let renderedFilmCount = FILM_COUNT_PER_STEP;
-
-
   // Добавляем кнопку
-
   render(filmListElement, createButtonTepmlate(), `beforeend`);
   const buttonLoadMoreElement = filmListElement.querySelector(`.films-list__show-more`);
   buttonLoadMoreElement.addEventListener(`click`, (evt) => {
@@ -68,7 +60,6 @@ if (films.length > FILM_COUNT_PER_STEP) {
     }
   });
 }
-
 
 // 2шт top
 const filmListExtraElement = document.querySelector(`.films-list--extra`);

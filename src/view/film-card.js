@@ -1,5 +1,3 @@
-// import dayjs from "dayjs";
-
 export const createFilmCardTemplate = (film) => {
   const {
     filmName,
@@ -32,4 +30,3 @@ export const createFilmCardTemplate = (film) => {
     </article>`
   );
 };
-// src="./images/posters/the-man-with-the-golden-arm.jpg"

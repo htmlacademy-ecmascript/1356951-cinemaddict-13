@@ -1,11 +1,4 @@
-/* const getResult = (films = {}) => {
-  const {rating, releaseDate} = films;
-
-
-};*/
-
-export const createFilterTemplate = (/* films*/) => {
-  // const result = getResult(films);
+export const createFilterTemplate = () => {
   return (
     `<ul class="sort">
       <li><a href="#" class="sort__button">Sort by default</a></li>
