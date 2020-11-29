@@ -1,6 +1,6 @@
-import {getRandomInteger, renderElement, RenderPosition} from "./utils.js";
+import {getRandomInteger, render, RenderPosition} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
-import {createfilm/* , commentsCollection*/} from "./mock/film.js";
+import {createfilm, commentsCollection} from "./mock/film.js";
 // import {createMenuTemplate} from "./view/menu.js";
 // import {createFilmContainer} from "./view/film-container.js";
 import FilmCard from "./view/film-card.js";
@@ -29,42 +29,80 @@ const filters = generateFilter(films);
 
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
+// Выводим попап
+const bodyElement = document.querySelector(`body`);
 
-renderElement(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
-renderElement(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
+
+const renderFilm = (filmListElement, film) => {
+  const filmComponent = new FilmCard(film);
+  render(filmListElement, filmComponent.getElement(), RenderPosition.BEFOREEND);
+
+  const popup = new Popup(film, commentsCollection);
+
+  const onClosePopup = (evt) => {
+    evt.preventDefault();
+    bodyElement.classList.remove(`hide-overflow`);
+    bodyElement.removeChild(popup.getElement());
+    filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
+    filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
+    filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+
+  };
+
+  const onOpenPopup = (evt) => {
+    evt.preventDefault();
+    bodyElement.classList.add(`hide-overflow`);
+    bodyElement.appendChild(popup.getElement());
+    document.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
+
+    filmComponent.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, onOpenPopup);
+    filmComponent.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, onOpenPopup);
+    filmComponent.getElement().querySelector(`.film-card__comments`).removeEventListener(`click`, onOpenPopup);
+
+  };
+
+  filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
+  filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
+  filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+
+
+};
+
+render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
+render(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
 
 // выводим статистику
-// renderElement(mainElement, new Stats().getElement(), RenderPosition.BEFOREEND);
-renderElement(mainElement, new Filter().getElement(), RenderPosition.BEFOREEND);
+// render(mainElement, new Stats().getElement(), RenderPosition.BEFOREEND);
+render(mainElement, new Filter().getElement(), RenderPosition.BEFOREEND);
 
 const filmContainer = new FilmContainer().getElement();
-renderElement(mainElement, filmContainer, RenderPosition.BEFOREEND);
+render(mainElement, filmContainer, RenderPosition.BEFOREEND);
 
-const filmList = new FilmList().getElement();
-renderElement(filmContainer, filmList, RenderPosition.BEFOREEND);
+const filmList = new FilmList();
+render(filmContainer, filmList.getElement(), RenderPosition.BEFOREEND);
 const filmListContainer = new FilmListContainer().getElement();
-renderElement(filmList, filmListContainer, RenderPosition.BEFOREEND);
+render(filmList.getElement(), filmListContainer, RenderPosition.BEFOREEND);
 
 // отображаем map
 for (let i = 0; i < CARD_FILM_QUANTITY; i++) {
-  renderElement(filmListContainer, new FilmCard(films[i]).getElement(), RenderPosition.BEFOREEND);
+  renderFilm(filmListContainer, films[i]);
 }
 
 // Настраиваем логику кнопки
 if (films.length > FILM_COUNT_PER_STEP) {
   let renderedFilmCount = FILM_COUNT_PER_STEP;
   // Добавляем кнопку
-  const loadMoreButton = new Button().getElement();
-  renderElement(filmList, loadMoreButton, RenderPosition.BEFOREEND);
-  loadMoreButton.addEventListener(`click`, (evt) => {
+  const loadMoreButton = new Button();
+  render(filmList.getElement(), loadMoreButton.getElement(), RenderPosition.BEFOREEND);
+  loadMoreButton.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
     films
     .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
-    .forEach((film) => renderElement(filmListContainer, new FilmCard(film).getElement(), `beforeend`));
+    .forEach((film) => renderFilm(filmListContainer, film));
     renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (renderedFilmCount >= films.length) {
-      loadMoreButton.remove();
+      loadMoreButton.getElement().remove();
       loadMoreButton.removeElement();
     }
   });
@@ -72,36 +110,33 @@ if (films.length > FILM_COUNT_PER_STEP) {
 
 // 2шт top
 const filmListTop = new FilmListTop().getElement();
-renderElement(filmContainer, filmListTop, RenderPosition.BEFOREEND);
+render(filmContainer, filmListTop, RenderPosition.BEFOREEND);
 const filmListContainerTop = new FilmListContainer().getElement();
-renderElement(filmListTop, filmListContainerTop, RenderPosition.BEFOREEND);
+render(filmListTop, filmListContainerTop, RenderPosition.BEFOREEND);
 
 const topFilms = films.sort(function (a, b) {
   return b.rating - a.rating;
 });
 
 for (let i = 0; i < TOP_CARD_FILM_QUANTITY; i++) {
-  renderElement(filmListContainerTop, new FilmCard(topFilms[i]).getElement(), RenderPosition.BEFOREEND);
+  renderFilm(filmListContainerTop, topFilms[i]);
 }
 
 // 2шт комментированные
 const filmListCommented = new FilmListCommented().getElement();
-renderElement(filmContainer, filmListCommented, RenderPosition.BEFOREEND);
+render(filmContainer, filmListCommented, RenderPosition.BEFOREEND);
 const filmListContainerCommented = new FilmListContainer().getElement();
-renderElement(filmListCommented, filmListContainerCommented, RenderPosition.BEFOREEND);
+render(filmListCommented, filmListContainerCommented, RenderPosition.BEFOREEND);
 
 const commentedFilms = films.sort(function (a, b) {
   return b.comments.length - a.comments.length;
 });
 
 for (let i = 0; i < COMMENTED_CARD_FILM_QUANTITY; i++) {
-  renderElement(filmListContainerCommented, new FilmCard(commentedFilms[i]).getElement(), RenderPosition.BEFOREEND);
+  renderFilm(filmListContainerCommented, commentedFilms[i]);
 }
 
 const footer = document.querySelector(`footer`);
 const footerStat = footer.querySelector(`.footer__statistics`);
-renderElement(footerStat, `${filmsQuantity}`, RenderPosition.BEFOREEND);
+render(footerStat, `${filmsQuantity}`, RenderPosition.BEFOREEND);
 
-// Выводим попап
-// const bodyElement = document.querySelector(`body`);
-// renderElement(bodyElement, new Popup(films[0], commentsCollection).getElement(), RenderPosition.BEFOREEND);
