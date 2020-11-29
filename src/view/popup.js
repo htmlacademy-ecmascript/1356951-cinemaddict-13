@@ -1,4 +1,4 @@
-
+import {createElement} from "../utils.js";
 import dayjs from "dayjs";
 
 const createFilmDetails = (name, data) => {
@@ -44,7 +44,7 @@ const createComment = ({text, emoji, date, author}) => {
   </li>`;
 };
 
-export const createPopupTemplate = (film = {}, commentsX = []) => {
+const createPopupTemplate = (film = {}, commentsX = []) => {
   const {
     filmName,
     poster,
@@ -159,3 +159,26 @@ export const createPopupTemplate = (film = {}, commentsX = []) => {
       </form>
     </section>`);
 };
+
+export default class Popup {
+  constructor(film, comments) {
+    this._film = film;
+    this._comments = comments;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopupTemplate(this._film, this._comments);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

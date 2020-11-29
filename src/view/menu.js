@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const createFilterItemTemplate = (film) => {
   const {name, count} = film;
   return (
@@ -6,7 +8,7 @@ const createFilterItemTemplate = (film) => {
 
 };
 
-export const createMenuTemplate = (films) => {
+const createMenuTemplate = (films) => {
   const filterItemTemplate = films.map((film) => createFilterItemTemplate(film)).join(``);
   return (
     `<nav class="main-navigation">
@@ -18,3 +20,25 @@ export const createMenuTemplate = (films) => {
     </nav>`
   );
 };
+
+export default class Menu {
+  constructor(films) {
+    this._films = films;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMenuTemplate(this._films);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
