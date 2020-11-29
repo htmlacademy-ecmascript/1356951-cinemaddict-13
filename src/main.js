@@ -6,7 +6,7 @@ import {createfilm, commentsCollection} from "./mock/film.js";
 import FilmCard from "./view/film-card.js";
 import Button from "./view/button.js";
 import User from "./view/user.js";
-import Filter from "./view/filter.js";
+import Sort from "./view/sort.js";
 // import Stats from "./view/stats.js";FilmListContainer
 import FilmContainer from "./view/film-container.js";
 import FilmList from "./view/film-list.js";
@@ -73,7 +73,7 @@ render(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
 
 // выводим статистику
 // render(mainElement, new Stats().getElement(), RenderPosition.BEFOREEND);
-render(mainElement, new Filter().getElement(), RenderPosition.BEFOREEND);
+render(mainElement, new Sort().getElement(), RenderPosition.BEFOREEND);
 
 const filmContainer = new FilmContainer().getElement();
 render(mainElement, filmContainer, RenderPosition.BEFOREEND);

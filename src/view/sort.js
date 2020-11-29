@@ -10,7 +10,7 @@ const createFilterTemplate = () => {
   );
 };
 
-export default class Filter {
+export default class Sort {
   constructor() {
     this._element = null;
   }
