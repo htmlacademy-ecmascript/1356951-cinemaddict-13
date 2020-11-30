@@ -1,4 +1,6 @@
-export const createStatsTemplate = () => {
+import {createElement} from "../utils.js";
+
+const createStatsTemplate = () => {
   return (
     `<section class="statistic">
       <p class="statistic__rank">
@@ -49,3 +51,26 @@ export const createStatsTemplate = () => {
   );
 
 };
+
+export default class Stats {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createStatsTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(createStatsTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+

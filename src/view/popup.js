@@ -1,9 +1,7 @@
-
+import {createElement} from "../utils.js";
 import dayjs from "dayjs";
 
 const createFilmDetails = (name, data) => {
-  // console.log(!data.isArray);
-  // console.log(typeof data);
   let filmDetails = ``;
   if (!data.isArray && typeof data !== `object`) {
     filmDetails = (
@@ -17,7 +15,6 @@ const createFilmDetails = (name, data) => {
     for (let i = 0; i < data.length; i++) {
       genresHtml += `<span class="film-details__genre">${data[i]}</span>`;
     }
-    // console.log(genresHtml);
     filmDetails = (
       `<tr class="film-details__row">
       <td class="film-details__term">${name}</td>
@@ -45,12 +42,9 @@ const createComment = ({text, emoji, date, author}) => {
       </p>
     </div>
   </li>`;
-  // }
-  // date1.diff(date2, 'month')  dayjs().toDate().diff(date, `day`) 2019/12/31 23:59
-  // return comments;
 };
 
-export const createPopupTemplate = (film = {}, commentsX = []) => {
+const createPopupTemplate = (film = {}, commentsX = []) => {
   const {
     filmName,
     poster,
@@ -66,11 +60,6 @@ export const createPopupTemplate = (film = {}, commentsX = []) => {
     country
 
   } = film;
-
-  // console.log(dayjs().format(`D MMMM`) + ` ${year}`);
-  // console.log(commentsX);
-  // console.log(dayjs());
-
 
   return (
     `<section class="film-details">
@@ -170,3 +159,26 @@ export const createPopupTemplate = (film = {}, commentsX = []) => {
       </form>
     </section>`);
 };
+
+export default class Popup {
+  constructor(film, comments) {
+    this._film = film;
+    this._comments = comments;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopupTemplate(this._film, this._comments);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
