@@ -1,4 +1,4 @@
-import {/* getRandomInteger, */render, RenderPosition} from "./utils.js";
+import {getRandomInteger, render, RenderPosition} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
 import {createfilm, commentsCollection} from "./mock/film.js";
 import FilmCard from "./view/film-card.js";
@@ -21,7 +21,7 @@ const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
 
 
-const filmsQuantity = 0; // getRandomInteger(15, 20);
+const filmsQuantity = getRandomInteger(0, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
 
@@ -51,7 +51,7 @@ const renderFilm = (filmListElement, film) => {
       closeEvt.preventDefault();
       bodyElement.classList.remove(`hide-overflow`);
       bodyElement.removeChild(popup.getElement());
-      document.querySelector(`.film-details__close-btn`).removeEventListener(`click`, onClosePopup);
+      document.removeEventListener(`keydown`, onEscKeyDown);
       filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
       filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
       filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
@@ -61,7 +61,7 @@ const renderFilm = (filmListElement, film) => {
     bodyElement.classList.add(`hide-overflow`);
     const popup = new Popup(film, commentsCollection);
     bodyElement.appendChild(popup.getElement());
-    document.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
+    popup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
     document.addEventListener(`keydown`, onEscKeyDown);
 
     filmComponent.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, onOpenPopup);
