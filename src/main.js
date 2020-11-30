@@ -13,7 +13,8 @@ import FilmListCommented from "./view/film-list-commented.js";
 import FilmListContainer from "./view/film-list-container.js";
 import Menu from "./view/menu.js";
 import Popup from "./view/popup.js";
-
+import ListEmpty from "./view/list-empty.js";
+// console.log(new ListEmpty().getElement());
 const CARD_FILM_QUANTITY = 5;
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
@@ -34,6 +35,17 @@ const renderFilm = (filmListElement, film) => {
   render(filmListElement, filmComponent.getElement(), RenderPosition.BEFOREEND);
 
   const onOpenPopup = (evt) => {
+    const onEscKeyDown = (escEvt) => {
+      if (escEvt.key === `Escape` || escEvt.key === `Esc`) {
+        escEvt.preventDefault();
+        bodyElement.classList.remove(`hide-overflow`);
+        bodyElement.removeChild(popup.getElement());
+        filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
+        filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
+        filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+      }
+    };
+
     const onClosePopup = (closeEvt) => {
       closeEvt.preventDefault();
       bodyElement.classList.remove(`hide-overflow`);
@@ -48,6 +60,7 @@ const renderFilm = (filmListElement, film) => {
     const popup = new Popup(film, commentsCollection);
     bodyElement.appendChild(popup.getElement());
     document.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
+    document.addEventListener(`keydown`, onEscKeyDown);
 
     filmComponent.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, onOpenPopup);
     filmComponent.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, onOpenPopup);
@@ -62,12 +75,19 @@ const renderFilm = (filmListElement, film) => {
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 render(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
 
+if (films.length === 0) {
+  render(mainElement, new ListEmpty().getElement(), RenderPosition.BEFOREEND);
+}
+
+
 // выводим статистику
 // render(mainElement, new Stats().getElement(), RenderPosition.BEFOREEND);
-render(mainElement, new Sort().getElement(), RenderPosition.BEFOREEND);
-
 const filmContainer = new FilmContainer().getElement();
-render(mainElement, filmContainer, RenderPosition.BEFOREEND);
+
+if (films.length > 0) {
+  render(mainElement, new Sort().getElement(), RenderPosition.BEFOREEND);
+  render(mainElement, filmContainer, RenderPosition.BEFOREEND);
+}
 
 const filmList = new FilmList();
 render(filmContainer, filmList.getElement(), RenderPosition.BEFOREEND);
