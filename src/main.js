@@ -33,28 +33,25 @@ const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCard(film);
   render(filmListElement, filmComponent.getElement(), RenderPosition.BEFOREEND);
 
-  const onClosePopup = (evt) => {
-    evt.preventDefault();
-    bodyElement.classList.remove(`hide-overflow`);
-    // не лишняя ли нижняя строка?
-    new Popup(film, commentsCollection).removeElement();
-    bodyElement.removeChild(document.querySelector(`.film-details`));
-    filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
-    filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
-    filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
-
-  };
-
   const onOpenPopup = (evt) => {
+    const onClosePopup = (closeEvt) => {
+      closeEvt.preventDefault();
+      bodyElement.classList.remove(`hide-overflow`);
+      bodyElement.removeChild(popup.getElement());
+      filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
+      filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
+      filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+    };
+
     evt.preventDefault();
     bodyElement.classList.add(`hide-overflow`);
-    bodyElement.appendChild(new Popup(film, commentsCollection).getElement());
+    const popup = new Popup(film, commentsCollection);
+    bodyElement.appendChild(popup.getElement());
     document.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
 
     filmComponent.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, onOpenPopup);
     filmComponent.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, onOpenPopup);
     filmComponent.getElement().querySelector(`.film-card__comments`).removeEventListener(`click`, onOpenPopup);
-
   };
 
   filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
