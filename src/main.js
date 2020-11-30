@@ -40,6 +40,7 @@ const renderFilm = (filmListElement, film) => {
         escEvt.preventDefault();
         bodyElement.classList.remove(`hide-overflow`);
         bodyElement.removeChild(popup.getElement());
+        document.removeEventListener(`keydown`, onEscKeyDown);
         filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
         filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
         filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
@@ -50,6 +51,7 @@ const renderFilm = (filmListElement, film) => {
       closeEvt.preventDefault();
       bodyElement.classList.remove(`hide-overflow`);
       bodyElement.removeChild(popup.getElement());
+      document.querySelector(`.film-details__close-btn`).removeEventListener(`click`, onClosePopup);
       filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
       filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
       filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
@@ -77,17 +79,14 @@ render(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
 
 if (films.length === 0) {
   render(mainElement, new ListEmpty().getElement(), RenderPosition.BEFOREEND);
-}
-
-
+} else {
 // выводим статистику
 // render(mainElement, new Stats().getElement(), RenderPosition.BEFOREEND);
-const filmContainer = new FilmContainer().getElement();
+  const filmContainer = new FilmContainer().getElement();
 
-if (films.length > 0) {
   render(mainElement, new Sort().getElement(), RenderPosition.BEFOREEND);
   render(mainElement, filmContainer, RenderPosition.BEFOREEND);
-} else {
+
   const filmList = new FilmList();
   render(filmContainer, filmList.getElement(), RenderPosition.BEFOREEND);
   const filmListContainer = new FilmListContainer().getElement();
@@ -149,7 +148,6 @@ if (films.length > 0) {
   const footer = document.querySelector(`footer`);
   const footerStat = footer.querySelector(`.footer__statistics`);
   render(footerStat, `${filmsQuantity}`, RenderPosition.BEFOREEND);
-
 
 }
 
