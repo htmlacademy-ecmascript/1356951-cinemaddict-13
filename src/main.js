@@ -1,4 +1,4 @@
-import {getRandomInteger, render, RenderPosition} from "./utils.js";
+import {/* getRandomInteger, */render, RenderPosition} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
 import {createfilm, commentsCollection} from "./mock/film.js";
 import FilmCard from "./view/film-card.js";
@@ -14,14 +14,14 @@ import FilmListContainer from "./view/film-list-container.js";
 import Menu from "./view/menu.js";
 import Popup from "./view/popup.js";
 import ListEmpty from "./view/list-empty.js";
-// console.log(new ListEmpty().getElement());
+
 const CARD_FILM_QUANTITY = 5;
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
 
 
-const filmsQuantity = getRandomInteger(15, 20);
+const filmsQuantity = 0; // getRandomInteger(15, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
 
