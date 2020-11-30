@@ -1,20 +1,17 @@
 import {getRandomInteger, render, RenderPosition} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
 import {createfilm, commentsCollection} from "./mock/film.js";
-// import {createMenuTemplate} from "./view/menu.js";
-// import {createFilmContainer} from "./view/film-container.js";
 import FilmCard from "./view/film-card.js";
 import Button from "./view/button.js";
 import User from "./view/user.js";
 import Sort from "./view/sort.js";
-// import Stats from "./view/stats.js";FilmListContainer
+// import Stats from "./view/stats.js";
 import FilmContainer from "./view/film-container.js";
 import FilmList from "./view/film-list.js";
 import FilmListTop from "./view/film-list-top.js";
 import FilmListCommented from "./view/film-list-commented.js";
 import FilmListContainer from "./view/film-list-container.js";
 import Menu from "./view/menu.js";
-
 import Popup from "./view/popup.js";
 
 const CARD_FILM_QUANTITY = 5;
@@ -32,17 +29,16 @@ const mainElement = document.querySelector(`.main`);
 // Выводим попап
 const bodyElement = document.querySelector(`body`);
 
-
 const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCard(film);
   render(filmListElement, filmComponent.getElement(), RenderPosition.BEFOREEND);
 
-  const popup = new Popup(film, commentsCollection);
-
   const onClosePopup = (evt) => {
     evt.preventDefault();
     bodyElement.classList.remove(`hide-overflow`);
-    bodyElement.removeChild(popup.getElement());
+    // не лишняя ли нижняя строка?
+    new Popup(film, commentsCollection).removeElement();
+    bodyElement.removeChild(document.querySelector(`.film-details`));
     filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
     filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
     filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
@@ -52,7 +48,7 @@ const renderFilm = (filmListElement, film) => {
   const onOpenPopup = (evt) => {
     evt.preventDefault();
     bodyElement.classList.add(`hide-overflow`);
-    bodyElement.appendChild(popup.getElement());
+    bodyElement.appendChild(new Popup(film, commentsCollection).getElement());
     document.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
 
     filmComponent.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, onOpenPopup);
@@ -64,8 +60,6 @@ const renderFilm = (filmListElement, film) => {
   filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
   filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
   filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
-
-
 };
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
