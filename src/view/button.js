@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "../view/abstract.js";
 
 const createButtonTepmlate = () => {
   return (
@@ -6,23 +6,24 @@ const createButtonTepmlate = () => {
   );
 };
 
-export default class Button {
+export default class Button extends Abstract {
   constructor() {
-    this._element = null;
+    super();
+    this._onClick = this._onClick.bind(this);
   }
-
   getTemplate() {
     return createButtonTepmlate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(createButtonTepmlate());
-    }
-    return this._element;
+  setClick(callback) {
+    this._callback.click = callback;
+
+    this.getElement().addEventListener(`click`, this._onClick);
   }
 
-  removeElement() {
-    this._element = null;
+  _onClick(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
+
 }

@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "../view/abstract.js";
 
 const createListEmptyTemplate = () => {
   return (
@@ -10,24 +10,10 @@ const createListEmptyTemplate = () => {
   );
 };
 
-export default class ListEmpty {
-  constructor() {
-    this._element = null;
-  }
+export default class ListEmpty extends Abstract {
 
   getTemplate() {
     return createListEmptyTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(createListEmptyTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

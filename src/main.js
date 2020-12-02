@@ -15,11 +15,11 @@ import Menu from "./view/menu.js";
 import Popup from "./view/popup.js";
 import ListEmpty from "./view/list-empty.js";
 
-const CARD_FILM_QUANTITY = 5;
+// const CARD_FILM_QUANTITY = 5;
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
-
+let cardFilmQuantity = 5;
 
 const filmsQuantity = getRandomInteger(0, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
@@ -93,7 +93,10 @@ if (films.length === 0) {
   render(filmList.getElement(), filmListContainer, RenderPosition.BEFOREEND);
 
   // отображаем map
-  for (let i = 0; i < CARD_FILM_QUANTITY; i++) {
+  if (films.length < cardFilmQuantity) {
+    cardFilmQuantity = films.length;
+  }
+  for (let i = 0; i < cardFilmQuantity; i++) {
     renderFilm(filmListContainer, films[i]);
   }
 
@@ -103,8 +106,8 @@ if (films.length === 0) {
     // Добавляем кнопку
     const loadMoreButton = new Button();
     render(filmList.getElement(), loadMoreButton.getElement(), RenderPosition.BEFOREEND);
-    loadMoreButton.getElement().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
+    loadMoreButton.setClick(() => {
+      // evt.preventDefault();
       films
       .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => renderFilm(filmListContainer, film));

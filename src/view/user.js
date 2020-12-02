@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "../view/abstract.js";
 
 const createUserTemplate = () => {
   return (
@@ -9,23 +9,8 @@ const createUserTemplate = () => {
   );
 };
 
-export default class User {
-  constructor() {
-    this._element = null;
-  }
-
+export default class User extends Abstract {
   getTemplate() {
     return createUserTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(createUserTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

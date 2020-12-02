@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "../view/abstract.js";
 
 const createFilmListTop = () => {
   return (
@@ -10,23 +10,9 @@ const createFilmListTop = () => {
   );
 };
 
-export default class FilmListTop {
-  constructor() {
-    this._element = null;
-  }
+export default class FilmListTop extends Abstract {
 
   getTemplate() {
     return createFilmListTop();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(createFilmListTop());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
