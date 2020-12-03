@@ -9,19 +9,19 @@ const createButtonTepmlate = () => {
 export default class Button extends Abstract {
   constructor() {
     super();
-    this._onClick = this._onClick.bind(this);
+    this._onButtonClick = this._onButtonClick.bind(this);
   }
   getTemplate() {
     return createButtonTepmlate();
   }
 
-  setClick(callback) {
+  setButtonClick(callback) {
     this._callback.click = callback;
 
-    this.getElement().addEventListener(`click`, this._onClick);
+    this.getElement().addEventListener(`click`, this._onButtonClick);
   }
 
-  _onClick(evt) {
+  _onButtonClick(evt) {
     evt.preventDefault();
     this._callback.click();
   }
