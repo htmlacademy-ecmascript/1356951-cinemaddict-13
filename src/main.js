@@ -15,11 +15,11 @@ import Menu from "./view/menu.js";
 import Popup from "./view/popup.js";
 import ListEmpty from "./view/list-empty.js";
 
-const CARD_FILM_QUANTITY = 5;
+// const CARD_FILM_QUANTITY = 5;
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
-
+let cardFilmQuantity = 5;
 
 const filmsQuantity = getRandomInteger(0, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
@@ -34,44 +34,32 @@ const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCard(film);
   render(filmListElement, filmComponent.getElement(), RenderPosition.BEFOREEND);
 
-  const onOpenPopup = (evt) => {
+  const onOpenPopup = () => {
     const onEscKeyDown = (escEvt) => {
       if (escEvt.key === `Escape` || escEvt.key === `Esc`) {
         escEvt.preventDefault();
         bodyElement.classList.remove(`hide-overflow`);
         bodyElement.removeChild(popup.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
-        filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
-        filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
-        filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+        filmComponent.setFilmCardClickListeners(onOpenPopup);
       }
     };
 
-    const onClosePopup = (closeEvt) => {
-      closeEvt.preventDefault();
+    const onClosePopup = () => {
       bodyElement.classList.remove(`hide-overflow`);
       bodyElement.removeChild(popup.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);
-      filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
-      filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
-      filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+      filmComponent.setFilmCardClickListeners(onOpenPopup);
     };
 
-    evt.preventDefault();
     bodyElement.classList.add(`hide-overflow`);
     const popup = new Popup(film, commentsCollection);
     bodyElement.appendChild(popup.getElement());
-    popup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopup);
+    popup.setCloseClickListener(onClosePopup);
     document.addEventListener(`keydown`, onEscKeyDown);
-
-    filmComponent.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, onOpenPopup);
-    filmComponent.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, onOpenPopup);
-    filmComponent.getElement().querySelector(`.film-card__comments`).removeEventListener(`click`, onOpenPopup);
   };
 
-  filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onOpenPopup);
-  filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onOpenPopup);
-  filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onOpenPopup);
+  filmComponent.setFilmCardClickListeners(onOpenPopup);
 };
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
@@ -84,17 +72,20 @@ if (films.length === 0) {
 // render(mainElement, new Stats().getElement(), RenderPosition.BEFOREEND);
   const filmContainer = new FilmContainer().getElement();
 
-  render(mainElement, new Sort().getElement(), RenderPosition.BEFOREEND);
+  render(mainElement, new Sort(), RenderPosition.BEFOREEND);
   render(mainElement, filmContainer, RenderPosition.BEFOREEND);
 
   const filmList = new FilmList();
-  render(filmContainer, filmList.getElement(), RenderPosition.BEFOREEND);
-  const filmListContainer = new FilmListContainer().getElement();
+  render(filmContainer, filmList, RenderPosition.BEFOREEND);
+  const filmListContainer = new FilmListContainer();
   render(filmList.getElement(), filmListContainer, RenderPosition.BEFOREEND);
 
   // отображаем map
-  for (let i = 0; i < CARD_FILM_QUANTITY; i++) {
-    renderFilm(filmListContainer, films[i]);
+  if (films.length < cardFilmQuantity) {
+    cardFilmQuantity = films.length;
+  }
+  for (let i = 0; i < cardFilmQuantity; i++) {
+    renderFilm(filmListContainer.getElement(), films[i]);
   }
 
   // Настраиваем логику кнопки
@@ -102,12 +93,11 @@ if (films.length === 0) {
     let renderedFilmCount = FILM_COUNT_PER_STEP;
     // Добавляем кнопку
     const loadMoreButton = new Button();
-    render(filmList.getElement(), loadMoreButton.getElement(), RenderPosition.BEFOREEND);
-    loadMoreButton.getElement().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
+    render(filmList, loadMoreButton, RenderPosition.BEFOREEND);
+    loadMoreButton.setButtonClickListeners(() => {
       films
       .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => renderFilm(filmListContainer, film));
+      .forEach((film) => renderFilm(filmListContainer.getElement(), film));
       renderedFilmCount += FILM_COUNT_PER_STEP;
 
       if (renderedFilmCount >= films.length) {
@@ -118,9 +108,9 @@ if (films.length === 0) {
   }
 
   // 2шт top
-  const filmListTop = new FilmListTop().getElement();
+  const filmListTop = new FilmListTop();
   render(filmContainer, filmListTop, RenderPosition.BEFOREEND);
-  const filmListContainerTop = new FilmListContainer().getElement();
+  const filmListContainerTop = new FilmListContainer();
   render(filmListTop, filmListContainerTop, RenderPosition.BEFOREEND);
 
   const topFilms = films.sort(function (a, b) {
@@ -128,13 +118,13 @@ if (films.length === 0) {
   });
 
   for (let i = 0; i < TOP_CARD_FILM_QUANTITY; i++) {
-    renderFilm(filmListContainerTop, topFilms[i]);
+    renderFilm(filmListContainerTop.getElement(), topFilms[i]);
   }
 
   // 2шт комментированные
-  const filmListCommented = new FilmListCommented().getElement();
+  const filmListCommented = new FilmListCommented();
   render(filmContainer, filmListCommented, RenderPosition.BEFOREEND);
-  const filmListContainerCommented = new FilmListContainer().getElement();
+  const filmListContainerCommented = new FilmListContainer();
   render(filmListCommented, filmListContainerCommented, RenderPosition.BEFOREEND);
 
   const commentedFilms = films.sort(function (a, b) {
@@ -142,7 +132,7 @@ if (films.length === 0) {
   });
 
   for (let i = 0; i < COMMENTED_CARD_FILM_QUANTITY; i++) {
-    renderFilm(filmListContainerCommented, commentedFilms[i]);
+    renderFilm(filmListContainerCommented.getElement(), commentedFilms[i]);
   }
 
   const footer = document.querySelector(`footer`);

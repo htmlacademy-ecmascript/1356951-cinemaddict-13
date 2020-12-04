@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "../view/abstract.js";
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -33,24 +33,29 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCard {
+export default class FilmCard extends Abstract {
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
+    this._onFilmCardClick = this._onFilmCardClick.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setFilmCardClickListeners(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._onFilmCardClick);
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._onFilmCardClick);
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._onFilmCardClick);
   }
 
-  removeElement() {
-    this._element = null;
+  _onFilmCardClick(evt) {
+    evt.preventDefault();
+    this._callback.click();
+    this.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, this._onFilmCardClick);
+    this.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, this._onFilmCardClick);
+    this.getElement().querySelector(`.film-card__comments`).removeEventListener(`click`, this._onFilmCardClick);
   }
 }

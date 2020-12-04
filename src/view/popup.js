@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
 
 const createFilmDetails = (name, data) => {
@@ -160,25 +160,25 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
     </section>`);
 };
 
-export default class Popup {
+export default class Popup extends Abstract {
   constructor(film, comments) {
+    super();
     this._film = film;
     this._comments = comments;
-    this._element = null;
+    this._onClick = this._onClick.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._film, this._comments);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setCloseClickListener(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onClick);
   }
 
-  removeElement() {
-    this._element = null;
+  _onClick(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 }
