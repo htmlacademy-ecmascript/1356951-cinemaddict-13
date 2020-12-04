@@ -172,7 +172,7 @@ export default class Popup extends Abstract {
     return createPopupTemplate(this._film, this._comments);
   }
 
-  setClick(callback) {
+  setCloseClickListener(callback) {
     this._callback.click = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onClick);
   }

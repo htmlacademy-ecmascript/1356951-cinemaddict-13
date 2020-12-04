@@ -41,7 +41,7 @@ const renderFilm = (filmListElement, film) => {
         bodyElement.classList.remove(`hide-overflow`);
         bodyElement.removeChild(popup.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
-        filmComponent.setFilmCardClick(onOpenPopup);
+        filmComponent.setFilmCardClickListeners(onOpenPopup);
       }
     };
 
@@ -49,17 +49,17 @@ const renderFilm = (filmListElement, film) => {
       bodyElement.classList.remove(`hide-overflow`);
       bodyElement.removeChild(popup.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);
-      filmComponent.setFilmCardClick(onOpenPopup);
+      filmComponent.setFilmCardClickListeners(onOpenPopup);
     };
 
     bodyElement.classList.add(`hide-overflow`);
     const popup = new Popup(film, commentsCollection);
     bodyElement.appendChild(popup.getElement());
-    popup.setClick(onClosePopup);
+    popup.setCloseClickListener(onClosePopup);
     document.addEventListener(`keydown`, onEscKeyDown);
   };
 
-  filmComponent.setFilmCardClick(onOpenPopup);
+  filmComponent.setFilmCardClickListeners(onOpenPopup);
 };
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
@@ -94,7 +94,7 @@ if (films.length === 0) {
     // Добавляем кнопку
     const loadMoreButton = new Button();
     render(filmList, loadMoreButton, RenderPosition.BEFOREEND);
-    loadMoreButton.setButtonClick(() => {
+    loadMoreButton.setButtonClickListeners(() => {
       films
       .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => renderFilm(filmListContainer.getElement(), film));

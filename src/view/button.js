@@ -15,7 +15,7 @@ export default class Button extends Abstract {
     return createButtonTepmlate();
   }
 
-  setButtonClick(callback) {
+  setButtonClickListeners(callback) {
     this._callback.click = callback;
 
     this.getElement().addEventListener(`click`, this._onButtonClick);
