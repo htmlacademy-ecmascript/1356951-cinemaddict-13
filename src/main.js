@@ -1,34 +1,38 @@
 import {getRandomInteger, render, RenderPosition} from "./utils.js";
 import {generateFilter} from "./mock/filter.js";
-import {createfilm, commentsCollection} from "./mock/film.js";
-import FilmCard from "./view/film-card.js";
-import Button from "./view/button.js";
+import {createfilm/* , commentsCollection*/} from "./mock/film.js";
+// import FilmCard from "./view/film-card.js";
+// import Button from "./view/button.js";
 import User from "./view/user.js";
-import Sort from "./view/sort.js";
-// import Stats from "./view/stats.js";
-import FilmContainer from "./view/film-container.js";
+// import Sort from "./view/sort.js";
+// ////import Stats from "./view/stats.js";
+/* import FilmContainer from "./view/film-container.js";
 import FilmList from "./view/film-list.js";
 import FilmListTop from "./view/film-list-top.js";
 import FilmListCommented from "./view/film-list-commented.js";
 import FilmListContainer from "./view/film-list-container.js";
-import Menu from "./view/menu.js";
 import Popup from "./view/popup.js";
-import ListEmpty from "./view/list-empty.js";
+import ListEmpty from "./view/list-empty.js";*/
 
-// const CARD_FILM_QUANTITY = 5;
+import Menu from "./view/menu.js";
+import Films from "./presenter/films.js";
+
+
+/* const CARD_FILM_QUANTITY = 5;
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
-let cardFilmQuantity = 5;
+let cardFilmQuantity = 5;*/
 
 const filmsQuantity = getRandomInteger(0, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
-
+console.log(films);
+const FilmsPresenter = new Films();
 const headerElement = document.querySelector(`.header`);
-const mainElement = document.querySelector(`.main`);
+export const mainElement = document.querySelector(`.main`);
 // Выводим попап
-const bodyElement = document.querySelector(`body`);
+/* const bodyElement = document.querySelector(`body`);
 
 const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCard(film);
@@ -60,12 +64,13 @@ const renderFilm = (filmListElement, film) => {
   };
 
   filmComponent.setFilmCardClickListeners(onOpenPopup);
-};
-
+};*/
+//
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 render(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
-
-if (films.length === 0) {
+FilmsPresenter.init(films);
+//
+/* if (films.length === 0) {
   render(mainElement, new ListEmpty().getElement(), RenderPosition.BEFOREEND);
 } else {
 // выводим статистику
@@ -79,17 +84,17 @@ if (films.length === 0) {
   render(filmContainer, filmList, RenderPosition.BEFOREEND);
   const filmListContainer = new FilmListContainer();
   render(filmList.getElement(), filmListContainer, RenderPosition.BEFOREEND);
-
-  // отображаем map
-  if (films.length < cardFilmQuantity) {
+*/
+// отображаем map
+/* if (films.length < cardFilmQuantity) {
     cardFilmQuantity = films.length;
   }
   for (let i = 0; i < cardFilmQuantity; i++) {
     renderFilm(filmListContainer.getElement(), films[i]);
-  }
+  }*/
 
-  // Настраиваем логику кнопки
-  if (films.length > FILM_COUNT_PER_STEP) {
+// Настраиваем логику кнопки
+/* if (films.length > FILM_COUNT_PER_STEP) {
     let renderedFilmCount = FILM_COUNT_PER_STEP;
     // Добавляем кнопку
     const loadMoreButton = new Button();
@@ -105,10 +110,10 @@ if (films.length === 0) {
         loadMoreButton.removeElement();
       }
     });
-  }
+  }*/
 
-  // 2шт top
-  const filmListTop = new FilmListTop();
+// 2шт top
+/* const filmListTop = new FilmListTop();
   render(filmContainer, filmListTop, RenderPosition.BEFOREEND);
   const filmListContainerTop = new FilmListContainer();
   render(filmListTop, filmListContainerTop, RenderPosition.BEFOREEND);
@@ -119,10 +124,10 @@ if (films.length === 0) {
 
   for (let i = 0; i < TOP_CARD_FILM_QUANTITY; i++) {
     renderFilm(filmListContainerTop.getElement(), topFilms[i]);
-  }
+  }*/
 
-  // 2шт комментированные
-  const filmListCommented = new FilmListCommented();
+// 2шт комментированные
+/* const filmListCommented = new FilmListCommented();
   render(filmContainer, filmListCommented, RenderPosition.BEFOREEND);
   const filmListContainerCommented = new FilmListContainer();
   render(filmListCommented, filmListContainerCommented, RenderPosition.BEFOREEND);
@@ -133,11 +138,11 @@ if (films.length === 0) {
 
   for (let i = 0; i < COMMENTED_CARD_FILM_QUANTITY; i++) {
     renderFilm(filmListContainerCommented.getElement(), commentedFilms[i]);
-  }
+  }*/
 
-  const footer = document.querySelector(`footer`);
-  const footerStat = footer.querySelector(`.footer__statistics`);
-  render(footerStat, `${filmsQuantity}`, RenderPosition.BEFOREEND);
-
-}
+const footer = document.querySelector(`footer`);
+const footerStat = footer.querySelector(`.footer__statistics`);
+render(footerStat, `${filmsQuantity}`, RenderPosition.BEFOREEND);
+/*
+}*/
 

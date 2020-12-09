@@ -1,0 +1,59 @@
+import FilmCard from "../view/film-card.js";
+import Popup from "../view/popup.js";
+// import Films from "../presenter/films.js";
+import {/* getRandomInteger, */render, RenderPosition} from "../utils.js";
+import {commentsCollection} from "../mock/film.js";
+
+const bodyElement = document.querySelector(`body`);
+
+export default class Film {
+  constructor() {
+    this._onOpenPopup = this._onOpenPopup.bind(this);
+    this._onClosePopup = this._onClosePopup.bind(this);
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    // this._film = null;
+    this._filmComponent = null;
+  }
+  filmInit(filmListElement, film) {
+    this._filmListElement = filmListElement;
+    this._film = film;
+    const prevFilm = this._filmComponent;
+    this._filmComponent = new FilmCard(this._film);
+    this._popup = new Popup(this._film, commentsCollection);
+    // this._popup = this._popup.bind(this);
+
+    if (prevFilm === null) {
+      render(this._filmListElement, this._filmComponent, RenderPosition.BEFOREEND);
+    }
+
+    this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
+    // new Films()._renderButton();
+    // this._renderButton();
+  }
+
+  _onOpenPopup() {
+
+    bodyElement.classList.add(`hide-overflow`);
+    // const popup = new Popup(film, commentsCollection);
+    bodyElement.appendChild(this._popup.getElement());
+    this._popup.setCloseClickListener(this._onClosePopup);
+    document.addEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  _onEscKeyDown(escEvt) {
+    if (escEvt.key === `Escape` || escEvt.key === `Esc`) {
+      escEvt.preventDefault();
+      bodyElement.classList.remove(`hide-overflow`);
+      bodyElement.removeChild(this._popup.getElement());
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
+    }
+  }
+
+  _onClosePopup() {
+    bodyElement.classList.remove(`hide-overflow`);
+    bodyElement.removeChild(this._popup.getElement());
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
+  }
+}
