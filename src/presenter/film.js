@@ -21,7 +21,6 @@ export default class Film {
   filmInit(filmListElement, film) {
     this._filmListElement = filmListElement;
     this._film = film;
-    console.log(this._film);
     const prevFilm = this._filmComponent;
     this._filmComponent = new FilmCard(this._film);
     this._popup = new Popup(this._film, commentsCollection);
@@ -67,7 +66,6 @@ export default class Film {
   }
 
   _handlerFavoriteClick() {
-    console.log(this._film);
     this._changeData(
         Object.assign(
             {},
