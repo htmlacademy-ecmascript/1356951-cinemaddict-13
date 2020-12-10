@@ -27,10 +27,10 @@ let cardFilmQuantity = 5;*/
 const filmsQuantity = getRandomInteger(0, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
-console.log(films);
 const FilmsPresenter = new Films();
 const headerElement = document.querySelector(`.header`);
 export const mainElement = document.querySelector(`.main`);
+
 // Выводим попап
 /* const bodyElement = document.querySelector(`body`);
 

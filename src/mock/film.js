@@ -90,6 +90,7 @@ export const createfilm = () => {
   const year = getYear();
 
   return {
+    id: nanoid(),
     filmName: generateName(),
     poster: getPoster(),
     description: getDescription(),
