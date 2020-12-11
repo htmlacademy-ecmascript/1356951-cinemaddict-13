@@ -62,18 +62,18 @@ export default class FilmCard extends Abstract {
     this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._onFilmCardClick);
   }
 
-  setFavoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
-    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
-
-  }
-
   _onFilmCardClick(evt) {
     evt.preventDefault();
     this._callback.click();
     this.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, this._onFilmCardClick);
     this.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, this._onFilmCardClick);
     this.getElement().querySelector(`.film-card__comments`).removeEventListener(`click`, this._onFilmCardClick);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
+
   }
 
   _onFavoriteClick(evt) {

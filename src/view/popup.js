@@ -57,9 +57,17 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
     writers,
     actors,
     releaseDate,
-    country
+    country,
+    isInFavorites,
+    isInHistory,
+    isInWatchlist
 
   } = film;
+
+  const getActiveClass = (param) => {
+    const activeClass = param ? `checked` : ``;
+    return activeClass;
+  };
 
   return (
     `<section class="film-details">
@@ -105,13 +113,13 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+            <input type="checkbox" class="film-details__control-input visually-hidden" ${getActiveClass(isInWatchlist)} id="watchlist" name="watchlist">
             <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+            <input type="checkbox" class="film-details__control-input visually-hidden"  ${getActiveClass(isInHistory)} id="watched" name="watched">
             <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+            <input type="checkbox" class="film-details__control-input visually-hidden"  ${getActiveClass(isInFavorites)} id="favorite" name="favorite">
             <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
           </section>
         </div>
@@ -166,6 +174,9 @@ export default class Popup extends Abstract {
     this._film = film;
     this._comments = comments;
     this._onClick = this._onClick.bind(this);
+    this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
+    this._onWatchlistClick = this._onWatchlistClick.bind(this);
+    this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
@@ -180,5 +191,39 @@ export default class Popup extends Abstract {
   _onClick(evt) {
     evt.preventDefault();
     this._callback.click();
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`input[name="favorite"`).addEventListener(`change`, this._onFavoriteClick);
+
+  }
+
+  _onFavoriteClick(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+    // this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+    this.getElement().querySelector(`input[name="watchlist"]`).addEventListener(`change`, this._onWatchlistClick);
+  }
+
+  _onWatchlistClick(evt) {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+    // this.getElement().querySelector(`input[name="watchlist"`).removeEventListener(`change`, this._onWatchlistClick);
+  }
+
+  setWatchedlistClickHandler(callback) {
+    this._callback.watchedlistClick = callback;
+    this.getElement().querySelector(`input[name="watched"`).addEventListener(`change`, this._onWatchedlistClick);
+  }
+
+  _onWatchedlistClick(evt) {
+    evt.preventDefault();
+    this._callback.watchedlistClick();
+    // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
   }
 }

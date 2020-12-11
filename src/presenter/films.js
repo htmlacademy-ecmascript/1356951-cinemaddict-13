@@ -37,12 +37,17 @@ export default class Films {
     this._button = new Button();
     //
     this._filmPresenter = {};
+    this._filmTopPresenter = {};
+    this._filmCommentedPresenter = {};
     this._popup = new Popup();
     this._renderedFilmCount = null;
     this._hadleFilmChange = this._hadleFilmChange.bind(this);
     // this._films = this._films.bind(this);
     // this._renderFilmPresenter = new Film();
+    this._filmListContainerTop = new FilmListContainer();
+    this._filmListContainerCommented = new FilmListContainer();
   }
+
   init(films = []) {
     this._films = films.slice();
     if (this._films.length === 0) {
@@ -89,6 +94,18 @@ export default class Films {
     this._filmPresenter[film.id] = renderFilmPresenter;
   }
 
+  _renderTopFilm(container, film) {
+    const renderFilmPresenter = new Film(this._hadleFilmChange, container);
+    renderFilmPresenter.filmInit(film);
+    this._filmTopPresenter[film.id] = renderFilmPresenter;
+  }
+
+  _renderCommentedFilm(container, film) {
+    const renderFilmPresenter = new Film(this._hadleFilmChange, container);
+    renderFilmPresenter.filmInit(film);
+    this._filmCommentedPresenter[film.id] = renderFilmPresenter;
+  }
+
   _clearFilms() {
     Object
       .values(this._filmPresenter)
@@ -104,9 +121,17 @@ export default class Films {
   }
 
   _hadleFilmChange(updateFilm) {
+    console.log(this._films);
     this._films = updateItem(this._films, updateFilm);
     // console.log(this._filmPresenter[updateFilm.id]);
+    console.log(this._films);
     this._filmPresenter[updateFilm.id].filmInit(updateFilm);
+    if (this._filmTopPresenter[updateFilm.id]) {
+      this._filmTopPresenter[updateFilm.id].filmInit(updateFilm);
+    }
+    if (this._filmCommentedPresenter[updateFilm.id]) {
+      this._filmCommentedPresenter[updateFilm.id].filmInit(updateFilm);
+    }
   }
 
   _renderButton() {
@@ -134,29 +159,30 @@ export default class Films {
   _renderTopFilms() {
     // отрисовка топ фильмов
     render(this._filmContainer, this._filmListTop, RenderPosition.BEFOREEND);
-    const filmListContainerTop = new FilmListContainer();
-    render(this._filmListTop, filmListContainerTop, RenderPosition.BEFOREEND);
-    let topCardQuantity = this._films.length > 1 ? TOP_CARD_FILM_QUANTITY : 1;
-    const topFilms = this._films.sort(function (a, b) {
+    // const filmListContainerTop = new FilmListContainer();
+    render(this._filmListTop, this._filmListContainerTop, RenderPosition.BEFOREEND);
+    let topCardQuantity = this._films.length > 1 ? TOP_CARD_FILM_QUANTITY : this._films.length;
+    this._topFilms = this._films.sort(function (a, b) {
       return b.rating - a.rating;
-    });
+    }).slice(0, topCardQuantity);
+    console.log(this._topFilms);
     for (let i = 0; i < topCardQuantity; i++) {
-      this._renderFilm(filmListContainerTop.getElement(), topFilms[i]);
+      this._renderTopFilm(this._filmListContainerTop.getElement(), this._topFilms[i]);
     }
   }
 
   _renderCommentedFilms() {
   // отрисовка комментируемых фильмов
     render(this._filmContainer, this._filmListCommented, RenderPosition.BEFOREEND);
-    const filmListContainerCommented = new FilmListContainer();
-    render(this._filmListCommented, filmListContainerCommented, RenderPosition.BEFOREEND);
+    // const filmListContainerCommented = new FilmListContainer();
+    render(this._filmListCommented, this._filmListContainerCommented, RenderPosition.BEFOREEND);
     let commentedCardQuantity = this._films.length > 1 ? COMMENTED_CARD_FILM_QUANTITY : 1;
     const commentedFilms = this._films.sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
 
     for (let i = 0; i < commentedCardQuantity; i++) {
-      this._renderFilm(filmListContainerCommented.getElement(), commentedFilms[i]);
+      this._renderCommentedFilm(this._filmListContainerCommented.getElement(), commentedFilms[i]);
       // new Film().filmInit(filmListContainerCommented.getElement(), commentedFilms[i]);
     }
 

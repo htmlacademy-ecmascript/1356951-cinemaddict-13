@@ -46,6 +46,9 @@ export default class Film {
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
+    this._popup.setWatchedlistClickHandler(this._handlerWatchedlistClick);
+    this._popup.setWatchlistClickHandler(this._handlerWatchlistClick);
+    this._popup.setFavoriteClickHandler(this._handlerFavoriteClick);
     this._popup.setCloseClickListener(this._onClosePopup);
     document.addEventListener(`keydown`, this._onEscKeyDown);
   }
@@ -61,6 +64,8 @@ export default class Film {
   }
 
   _onClosePopup() {
+    //
+    // this._popup = new Popup(this._film, commentsCollection);
     bodyElement.classList.remove(`hide-overflow`);
     bodyElement.removeChild(this._popup.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
