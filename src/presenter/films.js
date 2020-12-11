@@ -84,8 +84,8 @@ export default class Films {
   }
 
   _renderFilm(container, film) {
-    const renderFilmPresenter = new Film(this._hadleFilmChange);
-    renderFilmPresenter.filmInit(container, film);
+    const renderFilmPresenter = new Film(this._hadleFilmChange, container);
+    renderFilmPresenter.filmInit(film);
     this._filmPresenter[film.id] = renderFilmPresenter;
   }
 
@@ -141,7 +141,7 @@ export default class Films {
       return b.rating - a.rating;
     });
     for (let i = 0; i < topCardQuantity; i++) {
-      this._renderFilm(filmListContainerTop, topFilms[i]);
+      this._renderFilm(filmListContainerTop.getElement(), topFilms[i]);
     }
   }
 
@@ -156,7 +156,7 @@ export default class Films {
     });
 
     for (let i = 0; i < commentedCardQuantity; i++) {
-      this._renderFilm(filmListContainerCommented, commentedFilms[i]);
+      this._renderFilm(filmListContainerCommented.getElement(), commentedFilms[i]);
       // new Film().filmInit(filmListContainerCommented.getElement(), commentedFilms[i]);
     }
 

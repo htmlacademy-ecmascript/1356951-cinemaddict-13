@@ -7,7 +7,8 @@ import {commentsCollection} from "../mock/film.js";
 const bodyElement = document.querySelector(`body`);
 
 export default class Film {
-  constructor(changeData) {
+  constructor(changeData, container) {
+    this._filmListElement = container;
     this._changeData = changeData;
     this._onOpenPopup = this._onOpenPopup.bind(this);
     this._onClosePopup = this._onClosePopup.bind(this);
@@ -18,8 +19,8 @@ export default class Film {
     this._handlerWatchedlistClick = this._handlerWatchedlistClick.bind(this);
   }
 
-  filmInit(filmListElement, film) {
-    this._filmListElement = filmListElement;
+  filmInit(/* filmListElement, */film) {
+    // this._filmListElement = filmListElement;
     this._film = film;
     const prevFilm = this._filmComponent;
     this._filmComponent = new FilmCard(this._film);
@@ -29,6 +30,7 @@ export default class Film {
     this._filmComponent.setWatchlistClickHandler(this._handlerWatchlistClick);
     this._filmComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
     //
+    // console.log(this._filmListElement);
     if (prevFilm === null) {
       render(this._filmListElement, this._filmComponent, RenderPosition.BEFOREEND);
     } else if (this._filmListElement.contains(prevFilm.getElement())) {
