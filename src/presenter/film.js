@@ -7,9 +7,10 @@ import {commentsCollection} from "../mock/film.js";
 const bodyElement = document.querySelector(`body`);
 
 export default class Film {
-  constructor(changeData, container) {
+  constructor(changeData, viewChange, container) {
     this._filmListElement = container;
     this._changeData = changeData;
+    this._viewChange = viewChange;
     this._onOpenPopup = this._onOpenPopup.bind(this);
     this._onClosePopup = this._onClosePopup.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
@@ -19,18 +20,15 @@ export default class Film {
     this._handlerWatchedlistClick = this._handlerWatchedlistClick.bind(this);
   }
 
-  filmInit(/* filmListElement, */film) {
-    // this._filmListElement = filmListElement;
+  filmInit(film) {
     this._film = film;
     const prevFilm = this._filmComponent;
     this._filmComponent = new FilmCard(this._film);
-    this._popup = new Popup(this._film, commentsCollection);
     this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
     this._filmComponent.setWatchedlistClickHandler(this._handlerWatchedlistClick);
     this._filmComponent.setWatchlistClickHandler(this._handlerWatchlistClick);
     this._filmComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
-    //
-    // console.log(this._filmListElement);
+
     if (prevFilm === null) {
       render(this._filmListElement, this._filmComponent, RenderPosition.BEFOREEND);
     } else if (this._filmListElement.contains(prevFilm.getElement())) {
@@ -43,6 +41,8 @@ export default class Film {
   }
 
   _onOpenPopup() {
+    this._viewChange();
+    this._popup = new Popup(this._film, commentsCollection);
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
@@ -60,16 +60,22 @@ export default class Film {
       bodyElement.removeChild(this._popup.getElement());
       document.removeEventListener(`keydown`, this._onEscKeyDown);
       this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
+      this._popup = null;
     }
   }
 
+  closePopup() {
+    this._onClosePopup();
+  }
+
   _onClosePopup() {
-    //
-    // this._popup = new Popup(this._film, commentsCollection);
-    bodyElement.classList.remove(`hide-overflow`);
-    bodyElement.removeChild(this._popup.getElement());
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
-    this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
+    if (this._popup) {
+      bodyElement.classList.remove(`hide-overflow`);
+      bodyElement.removeChild(this._popup.getElement());
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
+      this._popup = null;
+    }
   }
 
   _handlerFavoriteClick() {
