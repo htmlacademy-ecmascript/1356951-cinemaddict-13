@@ -9,8 +9,16 @@ const createFilmCardTemplate = (film) => {
     rating,
     year,
     duration,
-    genre
+    genre,
+    isInFavorites,
+    isInHistory,
+    isInWatchlist
   } = film;
+
+  const getActiveClass = (param) => {
+    const activeClass = param ? ` film-card__controls-item--active` : ``;
+    return activeClass;
+  };
 
   return (
     `<article class="film-card">
@@ -25,9 +33,9 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__description">${description}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched film-card__controls-item--active" type="button">Mark as watched</button>
-        <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${getActiveClass(isInWatchlist)}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${getActiveClass(isInHistory)}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite${getActiveClass(isInFavorites)}" type="button">Mark as favorite</button>
       </div>
     </article>`
   );
@@ -38,6 +46,9 @@ export default class FilmCard extends Abstract {
     super();
     this._film = film;
     this._onFilmCardClick = this._onFilmCardClick.bind(this);
+    this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
+    this._onWatchlistClick = this._onWatchlistClick.bind(this);
+    this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
@@ -57,5 +68,39 @@ export default class FilmCard extends Abstract {
     this.getElement().querySelector(`.film-card__poster`).removeEventListener(`click`, this._onFilmCardClick);
     this.getElement().querySelector(`.film-card__title`).removeEventListener(`click`, this._onFilmCardClick);
     this.getElement().querySelector(`.film-card__comments`).removeEventListener(`click`, this._onFilmCardClick);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
+
+  }
+
+  _onFavoriteClick(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+    this.getElement().querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onFavoriteClick);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onWatchlistClick);
+  }
+
+  _onWatchlistClick(evt) {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onWatchlistClick);
+  }
+
+  setWatchedlistClickHandler(callback) {
+    this._callback.watchedlistClick = callback;
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onWatchedlistClick);
+  }
+
+  _onWatchedlistClick(evt) {
+    evt.preventDefault();
+    this._callback.watchedlistClick();
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onWatchedlistClick);
   }
 }
