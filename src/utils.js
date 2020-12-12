@@ -77,3 +77,36 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1)
   ];
 };
+
+const getWeightForNullDate = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+};
+/*
+export const sortDate = (filmA, filmB) => {
+  const weight = getWeightForNullDate(filmA.dueDate, filmB.dueDate);
+
+  if (weight !== null) {
+    return weight;
+  }
+  return
+};
+
+export const sortRating = (filmA, filmB) => {
+  const weight = getWeightForNullDate(filmA.dueDate, filmB.dueDate);
+
+  if (weight !== null) {
+    return weight;
+  }
+};*/

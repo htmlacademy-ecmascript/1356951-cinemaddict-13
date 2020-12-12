@@ -1,7 +1,7 @@
 import {remove, render, RenderPosition, updateItem} from "../utils.js";
 import Button from "../view/button.js";
 import Film from "../presenter/film.js";
-
+import dayjs from "dayjs";
 import Sort from "../view/sort.js";
 import Stats from "../view/stats.js";
 import FilmContainer from "../view/film-container.js";
@@ -12,7 +12,7 @@ import FilmListContainer from "../view/film-list-container.js";
 import Popup from "../view/popup.js";
 import ListEmpty from "../view/list-empty.js";
 import {mainElement} from "../main.js";
-
+import {SortType} from "../const.js";
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
@@ -38,16 +38,24 @@ export default class Films {
     this._filmListContainerTop = new FilmListContainer();
     this._filmListContainerCommented = new FilmListContainer();
     this._setDefaultView = this._setDefaultView.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._currentSortType = SortType.DEFAULT;
+    // this._films = this._films.bind(this);
     //
     // this._renderedFilmCount = FILM_COUNT_PER_STEP;
   }
 
   init(films = []) {
+    console.log(films);
+    console.log(films.slice());
     this._films = films.slice();
+    console.log(this._films);
+    this._sourseFilms = films.slice();
     if (this._films.length === 0) {
       this._renderEmptyFilmsList();
     } else {
-      render(mainElement, this._sortComponent, RenderPosition.BEFOREEND);
+      this._renderSort();
+
       render(mainElement, this._filmContainer, RenderPosition.BEFOREEND);
       render(this._filmContainer, this._filmList, RenderPosition.BEFOREEND);
       render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
@@ -55,7 +63,58 @@ export default class Films {
     }
   }
 
-  _renderSort() {
+  _renderDefaultSort() {
+    // сортировка
+  }
+
+  _renderDateSort(sortType) {
+    // сортировка
+    switch (sortType) {
+      case SortType.DATE:
+        console.log(this._films);
+        console.log(this._films.sort(function (a, b) {
+          // console.log(b.releaseDate);
+          console.log(dayjs(b.releaseDate).diff(dayjs(a.releaseDate)));
+          return dayjs(b.releaseDate).diff(dayjs(a.releaseDate));
+        }));
+        console.log(this._films.sort(function (a, b) {
+          return b.rating - a.rating;
+        }).slice());
+        this._films.sort(function (a, b) {
+          return b.year - a.year;
+        });
+        break;
+      case SortType.RATING:
+        this._films.sort(function (a, b) {
+          return b.rating - a.rating;
+        }).slice();
+        break;
+      default:
+        // 3. А когда пользователь захочет "вернуть всё, как было",
+        // мы просто запишем в _boardTasks исходный массив
+        this._films = this._sourseFilms.slice();
+    }
+
+    this._currentSortType = sortType;
+
+
+    /*
+    this._clearFilms();
+    this._dateFilms = this._films.sort(function (a, b) {
+      return b.year - a.year;
+    });
+    this.init(this._dateFilms);*/
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._renderDateSort(sortType);
+    // очищаем список
+    // рендерим новый
+  }
+  _renderRatingSort() {
     // сортировка
   }
 
@@ -149,6 +208,10 @@ export default class Films {
 
   _renderTopFilms() {
     // отрисовка топ фильмов
+    console.log(this._films.sort(function (a, b) {
+      return b.year - a.year;
+    }));
+    console.log(this._films);
     render(this._filmContainer, this._filmListTop, RenderPosition.BEFOREEND);
     render(this._filmListTop, this._filmListContainerTop, RenderPosition.BEFOREEND);
     let topCardQuantity = this._films.length > 1 ? TOP_CARD_FILM_QUANTITY : this._films.length;
@@ -158,6 +221,7 @@ export default class Films {
     for (let i = 0; i < topCardQuantity; i++) {
       this._renderTopFilm(this._filmListContainerTop.getElement(), this._topFilms[i]);
     }
+    console.log(this._films);
   }
 
   _renderCommentedFilms() {
@@ -171,6 +235,10 @@ export default class Films {
     for (let i = 0; i < commentedCardQuantity; i++) {
       this._renderCommentedFilm(this._filmListContainerCommented.getElement(), commentedFilms[i]);
     }
+  }
+  _renderSort() {
+    render(mainElement, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderStat() {
