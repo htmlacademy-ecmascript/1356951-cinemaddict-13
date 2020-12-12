@@ -40,16 +40,14 @@ export default class Films {
     this._setDefaultView = this._setDefaultView.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._currentSortType = SortType.DEFAULT;
-    // this._films = this._films.bind(this);
-    //
-    // this._renderedFilmCount = FILM_COUNT_PER_STEP;
   }
 
   init(films = []) {
-    console.log(films);
-    console.log(films.slice());
+    // console.log(films);
+    // console.log(films.slice());
+    // Можешь объяснить почему в this._films меняется порядок фильмов, но при отрисовке действует старый порядок?
     this._films = films.slice();
-    console.log(this._films);
+    // console.log(this._films);
     this._sourseFilms = films.slice();
     if (this._films.length === 0) {
       this._renderEmptyFilmsList();
@@ -67,21 +65,12 @@ export default class Films {
     // сортировка
   }
 
-  _renderDateSort(sortType) {
+  _renderSort(sortType) {
     // сортировка
     switch (sortType) {
       case SortType.DATE:
-        console.log(this._films);
-        console.log(this._films.sort(function (a, b) {
-          // console.log(b.releaseDate);
-          console.log(dayjs(b.releaseDate).diff(dayjs(a.releaseDate)));
-          return dayjs(b.releaseDate).diff(dayjs(a.releaseDate));
-        }));
-        console.log(this._films.sort(function (a, b) {
-          return b.rating - a.rating;
-        }).slice());
         this._films.sort(function (a, b) {
-          return b.year - a.year;
+          return dayjs(b.releaseDate).diff(dayjs(a.releaseDate));
         });
         break;
       case SortType.RATING:
@@ -91,31 +80,22 @@ export default class Films {
         break;
       default:
         // 3. А когда пользователь захочет "вернуть всё, как было",
-        // мы просто запишем в _boardTasks исходный массив
+        // мы просто запишем в _sourseFilms исходный массив
         this._films = this._sourseFilms.slice();
     }
 
     this._currentSortType = sortType;
-
-
-    /*
-    this._clearFilms();
-    this._dateFilms = this._films.sort(function (a, b) {
-      return b.year - a.year;
-    });
-    this.init(this._dateFilms);*/
   }
 
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._renderDateSort(sortType);
+    this._renderSort(sortType);
     // очищаем список
+    this._clearFilms();
     // рендерим новый
-  }
-  _renderRatingSort() {
-    // сортировка
+    this._renderFilmsList();
   }
 
   _renderFilmsList() {
@@ -208,10 +188,6 @@ export default class Films {
 
   _renderTopFilms() {
     // отрисовка топ фильмов
-    console.log(this._films.sort(function (a, b) {
-      return b.year - a.year;
-    }));
-    console.log(this._films);
     render(this._filmContainer, this._filmListTop, RenderPosition.BEFOREEND);
     render(this._filmListTop, this._filmListContainerTop, RenderPosition.BEFOREEND);
     let topCardQuantity = this._films.length > 1 ? TOP_CARD_FILM_QUANTITY : this._films.length;
@@ -221,7 +197,6 @@ export default class Films {
     for (let i = 0; i < topCardQuantity; i++) {
       this._renderTopFilm(this._filmListContainerTop.getElement(), this._topFilms[i]);
     }
-    console.log(this._films);
   }
 
   _renderCommentedFilms() {

@@ -14,8 +14,6 @@ export default class Sort extends Abstract {
   constructor() {
     super();
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
-    /* this._onDateClick = this._onDateClick.bind(this);
-    this._onRatingClick = this._onRatingClick.bind(this);*/
   }
 
   getTemplate() {
@@ -27,37 +25,21 @@ export default class Sort extends Abstract {
     this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 
+  _clearActiveClass() {
+    const buttons = this.getElement().querySelectorAll(`.sort__button`);
+    buttons.forEach((button) => {
+      button.classList.remove(`sort__button--active`);
+    });
+  }
+
   _sortTypeChangeHandler(evt) {
-    console.log(evt.target.tagName);
     if (evt.target.tagName !== `A`) {
       return;
     }
     evt.preventDefault();
-    console.log(evt.target.dataset.sortType);
+    this._clearActiveClass();
+    evt.target.classList.add(`sort__button--active`);
     this._callback.sortTypeChangeHandler(evt.target.dataset.sortType);
-
-    // this.getElement().querySelector().removeEventListener(`click`, this._sortTypeChangeHandler);
   }
 
-  /*  setDateClickHandler(callback) {
-    this._callback.defaultClick = callback;
-    this._getElement().querySelector().addEventListeners(`click`, this._onDateClick);
-  }
-
-  _onDateClick(evt) {
-    evt.preventDefault();
-    this._callback.defaultClick();
-    this._getElement().querySelector().removeEventListeners(`click`, this._onDateClick);
-  }
-
-  setRatingClickHandler(callback) {
-    this._callback.defaultClick = callback;
-    this._getElement().querySelector().addEventListeners(`click`, this._onRatingClick);
-  }
-
-  _onRatingClick(evt) {
-    evt.preventDefault();
-    this._callback.defaultClick();
-    this._getElement().querySelector().removeEventListeners(`click`, this._onRatingClick);
-  }*/
 }

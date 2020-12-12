@@ -1,4 +1,5 @@
 import Abstract from "./view/abstract.js";
+import dayjs from "dayjs";
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -93,14 +94,14 @@ const getWeightForNullDate = (dateA, dateB) => {
 
   return null;
 };
-/*
+
 export const sortDate = (filmA, filmB) => {
   const weight = getWeightForNullDate(filmA.dueDate, filmB.dueDate);
 
   if (weight !== null) {
     return weight;
   }
-  return
+  return dayjs(filmB.releaseDate).diff(dayjs(filmA.releaseDate));
 };
 
 export const sortRating = (filmA, filmB) => {
@@ -109,4 +110,5 @@ export const sortRating = (filmA, filmB) => {
   if (weight !== null) {
     return weight;
   }
-};*/
+  return filmB.rating - filmA.rating;
+};
