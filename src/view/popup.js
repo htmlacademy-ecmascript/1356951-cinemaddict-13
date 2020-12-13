@@ -64,7 +64,6 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     // isMessage  134  ${// if (isMessage) {createComment()}}
 
   } = data;
-
   const getActiveClass = (param) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
@@ -178,13 +177,31 @@ export default class Popup extends Abstract {
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
+    this._messageToggleHandler = this._messageToggleHandler.bind(this);
+    // console.log(this._element);
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    // console.log(this._data);
     return createPopupTemplate(this._data, this._comments);
   }
   //
+  updateData(update, justDataUpdating) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+    if (justDataUpdating) {
+      return;
+    }
+    this.updateElement();
+  }
+
   updateElement() {
     let prevElement = this.getElement();
     const parent = prevElement.parentElement;
@@ -193,6 +210,38 @@ export default class Popup extends Abstract {
     const newElement = this.getElement();
 
     parent.replaceChild(newElement, prevElement);
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseClickListener(this._callback.click);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setWatchedlistClickHandler(this._callback.watchedlistClick);
+  }
+
+  _setInnerHandlers() {
+    // this.getElement().querySelector(`.film-details__new-comment`).addEventListener(`click`, this._messageToggleHandler);
+    // this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._descriptionInputHandler);
+  }
+
+  _descriptionInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      description: evt.target.value
+    }, true);
+  }
+
+  _messageToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      isMessage: !this._data.isMessage
+      // textMessage: evt.value,
+      // dateMessage: dayjs(),
+      // emojiMessage: this.getElement().querySelector(`checked`),
+      // authorMessage:
+    });
   }
 
   setCloseClickListener(callback) {
@@ -245,10 +294,10 @@ export default class Popup extends Abstract {
         film,
         {
           isMessage: film.message !== null,
-          textMessage: null,
+          /* textMessage: null,
           emojiMessage: null,
           dateMessage: null,
-          authorMessage: null
+          authorMessage: null*/
           // message:
           // isRepeating: isTaskRepeating(task.repeating) message: null,isMessage:
         }
@@ -261,10 +310,10 @@ export default class Popup extends Abstract {
       film.message = null;
     }
     delete film.isMessage;
-    delete film.textMessage;
+    /* delete film.textMessage;
     delete film.emojiMessage;
     delete film.dateMessage;
-    delete film.authorMessage;
+    delete film.authorMessage;*/
     return film;
   }
 }
