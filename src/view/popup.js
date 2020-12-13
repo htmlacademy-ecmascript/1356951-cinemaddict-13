@@ -180,7 +180,7 @@ export default class Popup extends Abstract {
   }
 
   getTemplate() {
-    console.log(this._data);
+    // console.log(this._data);
     return createPopupTemplate(this._data, this._comments);
   }
 
