@@ -44,7 +44,7 @@ const createComment = ({text, emoji, date, author}) => {
   </li>`;
 };
 
-const createPopupTemplate = (film = {}, commentsX = []) => {
+const createPopupTemplate = (data = {}, commentsX = []) => {
   const {
     filmName,
     poster,
@@ -60,9 +60,10 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
     country,
     isInFavorites,
     isInHistory,
-    isInWatchlist
+    isInWatchlist,
+    // isMessage  134  ${// if (isMessage) {createComment()}}
 
-  } = film;
+  } = data;
 
   const getActiveClass = (param) => {
     const activeClass = param ? `checked` : ``;
@@ -169,9 +170,9 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
 };
 
 export default class Popup extends Abstract {
-  constructor(film, comments) {
+  constructor(film = {}, comments) {
     super();
-    this._film = film;
+    this._data = Popup.parseFilmToData(film);
     this._comments = comments;
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -180,7 +181,18 @@ export default class Popup extends Abstract {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._film, this._comments);
+    // console.log(this._data);
+    return createPopupTemplate(this._data, this._comments);
+  }
+  //
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
   }
 
   setCloseClickListener(callback) {
@@ -225,5 +237,34 @@ export default class Popup extends Abstract {
     evt.preventDefault();
     this._callback.watchedlistClick();
     // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
+  }
+
+  static parseFilmToData(film) {
+    return Object.assign(
+        {},
+        film,
+        {
+          isMessage: film.message !== null,
+          textMessage: null,
+          emojiMessage: null,
+          dateMessage: null,
+          authorMessage: null
+          // message:
+          // isRepeating: isTaskRepeating(task.repeating) message: null,isMessage:
+        }
+    );
+  }
+
+  static parseDataToFilm(data) {
+    let film = Object.assign({}, data);
+    if (!film.isMessage) {
+      film.message = null;
+    }
+    delete film.isMessage;
+    delete film.textMessage;
+    delete film.emojiMessage;
+    delete film.dateMessage;
+    delete film.authorMessage;
+    return film;
   }
 }

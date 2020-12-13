@@ -1,7 +1,7 @@
 import {remove, render, RenderPosition, updateItem} from "../utils.js";
 import Button from "../view/button.js";
 import Film from "../presenter/film.js";
-
+import dayjs from "dayjs";
 import Sort from "../view/sort.js";
 import Stats from "../view/stats.js";
 import FilmContainer from "../view/film-container.js";
@@ -12,7 +12,7 @@ import FilmListContainer from "../view/film-list-container.js";
 import Popup from "../view/popup.js";
 import ListEmpty from "../view/list-empty.js";
 import {mainElement} from "../main.js";
-
+import {SortType} from "../const.js";
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
@@ -38,16 +38,22 @@ export default class Films {
     this._filmListContainerTop = new FilmListContainer();
     this._filmListContainerCommented = new FilmListContainer();
     this._setDefaultView = this._setDefaultView.bind(this);
-    //
-    // this._renderedFilmCount = FILM_COUNT_PER_STEP;
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._currentSortType = SortType.DEFAULT;
   }
 
   init(films = []) {
+    // console.log(films);
+    // console.log(films.slice());
+    // Можешь объяснить почему в this._films меняется порядок фильмов, но при отрисовке действует старый порядок?
     this._films = films.slice();
+    // console.log(this._films);
+    this._sourseFilms = films.slice();
     if (this._films.length === 0) {
       this._renderEmptyFilmsList();
     } else {
-      render(mainElement, this._sortComponent, RenderPosition.BEFOREEND);
+      this._renderSort();
+
       render(mainElement, this._filmContainer, RenderPosition.BEFOREEND);
       render(this._filmContainer, this._filmList, RenderPosition.BEFOREEND);
       render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
@@ -55,8 +61,41 @@ export default class Films {
     }
   }
 
-  _renderSort() {
+  _renderDefaultSort() {
     // сортировка
+  }
+
+  _renderSortedFilms(sortType) {
+    // сортировка
+    switch (sortType) {
+      case SortType.DATE:
+        this._films.sort(function (a, b) {
+          return dayjs(b.releaseDate).diff(dayjs(a.releaseDate));
+        });
+        break;
+      case SortType.RATING:
+        this._films.sort(function (a, b) {
+          return b.rating - a.rating;
+        }).slice();
+        break;
+      default:
+        // 3. А когда пользователь захочет "вернуть всё, как было",
+        // мы просто запишем в _sourseFilms исходный массив
+        this._films = this._sourseFilms.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._renderSortedFilms(sortType);
+    // очищаем список
+    this._clearFilms();
+    // рендерим новый
+    this._renderFilmsList();
   }
 
   _renderFilmsList() {
@@ -67,7 +106,9 @@ export default class Films {
     for (let i = 0; i < cardFilmQuantity; i++) {
       this._renderFilm(this._filmListContainer.getElement(), this._films[i]);
     }
-    this._renderButton();
+    if (this._filmContainer.getElement().querySelector(`.films-list__show-more`) === null) {
+      this._renderButton();
+    }
   }
 
   _renderFilm(container, film) {
@@ -143,8 +184,10 @@ export default class Films {
         }
       });
     }
-    this._renderTopFilms();
-    this._renderCommentedFilms();
+    if (this._filmContainer.getElement().querySelector(`.films-list--extra`) === null) {
+      this._renderTopFilms();
+      this._renderCommentedFilms();
+    }
   }
 
   _renderTopFilms() {
@@ -171,6 +214,10 @@ export default class Films {
     for (let i = 0; i < commentedCardQuantity; i++) {
       this._renderCommentedFilm(this._filmListContainerCommented.getElement(), commentedFilms[i]);
     }
+  }
+  _renderSort() {
+    render(mainElement, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderStat() {
