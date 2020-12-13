@@ -44,7 +44,7 @@ const createComment = ({text, emoji, date, author}) => {
   </li>`;
 };
 
-const createPopupTemplate = (film = {}, commentsX = []) => {
+const createPopupTemplate = (data = {}, commentsX = []) => {
   const {
     filmName,
     poster,
@@ -62,7 +62,7 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
     isInHistory,
     isInWatchlist
 
-  } = film;
+  } = data;
 
   const getActiveClass = (param) => {
     const activeClass = param ? `checked` : ``;
@@ -171,7 +171,7 @@ const createPopupTemplate = (film = {}, commentsX = []) => {
 export default class Popup extends Abstract {
   constructor(film, comments) {
     super();
-    this._film = film;
+    this._data = Popup.parseFilmToData(film);
     this._comments = comments;
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -180,7 +180,8 @@ export default class Popup extends Abstract {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._film, this._comments);
+    console.log(this._data);
+    return createPopupTemplate(this._data, this._comments);
   }
 
   setCloseClickListener(callback) {
@@ -225,5 +226,16 @@ export default class Popup extends Abstract {
     evt.preventDefault();
     this._callback.watchedlistClick();
     // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
+  }
+
+  static parseFilmToData(film) {
+    return Object.assign(
+        {},
+        film,
+        {
+          // is: task.dueDate !== null,
+          // isRepeating: isTaskRepeating(task.repeating)
+        }
+    );
   }
 }

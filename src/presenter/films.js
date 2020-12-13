@@ -65,7 +65,7 @@ export default class Films {
     // сортировка
   }
 
-  _renderSort(sortType) {
+  _renderSortFilms(sortType) {
     // сортировка
     switch (sortType) {
       case SortType.DATE:
@@ -91,7 +91,7 @@ export default class Films {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._renderSort(sortType);
+    this._renderSortFilms(sortType);
     // очищаем список
     this._clearFilms();
     // рендерим новый
@@ -106,7 +106,9 @@ export default class Films {
     for (let i = 0; i < cardFilmQuantity; i++) {
       this._renderFilm(this._filmListContainer.getElement(), this._films[i]);
     }
-    this._renderButton();
+    if (this._filmContainer.getElement().querySelector(`.films-list__show-more`) === null) {
+      this._renderButton();
+    }
   }
 
   _renderFilm(container, film) {
@@ -182,8 +184,10 @@ export default class Films {
         }
       });
     }
-    this._renderTopFilms();
-    this._renderCommentedFilms();
+    if (this._filmContainer.getElement().querySelector(`.films-list--extra`) === null) {
+      this._renderTopFilms();
+      this._renderCommentedFilms();
+    }
   }
 
   _renderTopFilms() {
