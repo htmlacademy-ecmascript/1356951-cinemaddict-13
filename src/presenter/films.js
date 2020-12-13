@@ -65,7 +65,7 @@ export default class Films {
     // сортировка
   }
 
-  _renderSortFilms(sortType) {
+  _renderSortedFilms(sortType) {
     // сортировка
     switch (sortType) {
       case SortType.DATE:
@@ -91,7 +91,7 @@ export default class Films {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._renderSortFilms(sortType);
+    this._renderSortedFilms(sortType);
     // очищаем список
     this._clearFilms();
     // рендерим новый

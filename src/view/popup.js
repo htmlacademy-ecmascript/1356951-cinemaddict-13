@@ -60,7 +60,8 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     country,
     isInFavorites,
     isInHistory,
-    isInWatchlist
+    isInWatchlist,
+    // isMessage  134  ${// if (isMessage) {createComment()}}
 
   } = data;
 
@@ -169,7 +170,7 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
 };
 
 export default class Popup extends Abstract {
-  constructor(film, comments) {
+  constructor(film = {}, comments) {
     super();
     this._data = Popup.parseFilmToData(film);
     this._comments = comments;
@@ -182,6 +183,16 @@ export default class Popup extends Abstract {
   getTemplate() {
     // console.log(this._data);
     return createPopupTemplate(this._data, this._comments);
+  }
+  //
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
   }
 
   setCloseClickListener(callback) {
@@ -233,9 +244,27 @@ export default class Popup extends Abstract {
         {},
         film,
         {
-          // is: task.dueDate !== null,
-          // isRepeating: isTaskRepeating(task.repeating)
+          isMessage: film.message !== null,
+          textMessage: null,
+          emojiMessage: null,
+          dateMessage: null,
+          authorMessage: null
+          // message:
+          // isRepeating: isTaskRepeating(task.repeating) message: null,isMessage:
         }
     );
+  }
+
+  static parseDataToFilm(data) {
+    let film = Object.assign({}, data);
+    if (!film.isMessage) {
+      film.message = null;
+    }
+    delete film.isMessage;
+    delete film.textMessage;
+    delete film.emojiMessage;
+    delete film.dateMessage;
+    delete film.authorMessage;
+    return film;
   }
 }
