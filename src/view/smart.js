@@ -1,5 +1,6 @@
 import Abstract from "../view/abstract.js";
 
+
 export default class Smart extends Abstract {
   constructor() {
     super();
@@ -19,6 +20,7 @@ export default class Smart extends Abstract {
     if (justDataUpdating) {
       return;
     }
+    console.log(this._data);
     this.updateElement();
   }
 

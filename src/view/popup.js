@@ -1,6 +1,15 @@
 // import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
 import SmartView from "../view/smart.js";
+// import nanoid from "../mock/film.js";
+
+let nanoid = (t = 5)=>{
+  let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
+    /*eslint-disable */
+  let n = 63 & r[t]; e += n < 36 ? n.toString(36) : n < 62 ? (n - 26).toString(36).toUpperCase() : n < 63 ? `_` : `-`;
+/*eslint-disable */
+  } return e;
+};
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
@@ -62,9 +71,22 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     isInFavorites,
     isInHistory,
     isInWatchlist,
+    emoji,
+    text
     // isMessage  134  ${// if (isMessage) {createComment()}}
 
   } = data;
+
+  const renderPlaceholder = (textMessage) => {
+    const placeholder = textMessage ? `${data.text}` : ``;
+    return placeholder;
+  };
+  const renderEmogi = (emogiX) => {
+    const emojiY = emogiX ?
+      `<span><img src="${emogiX.src}" width="55" height="55" alt="${emogiX.id}"></span>` : ``;
+    return emojiY;
+  };
+
   const getActiveClass = (param) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
@@ -135,10 +157,10 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label"> ${renderEmogi(emoji)}</div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${renderPlaceholder(text)}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -179,40 +201,21 @@ export default class Popup extends SmartView {
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
     this._messageToggleHandler = this._messageToggleHandler.bind(this);
-    // console.log(this._element);
+    this._messageInputHandler = this._messageInputHandler.bind(this);
+    this._smileChangeHandler = this._smileChangeHandler.bind(this);
+    console.log(this._data);
+    /* this.updateData({
+      emoji: `smile`
+    });*/
+    // console.log(this._data);
     this._setInnerHandlers();
+    // console.log(this._comments);
   }
 
   getTemplate() {
     return createPopupTemplate(this._data, this._comments);
   }
   //
-  /*  updateData(update, justDataUpdating) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-    if (justDataUpdating) {
-      return;
-    }
-    this.updateElement();
-  }
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    this.restoreHandlers();
-  }*/
 
   restoreHandlers() {
     this._setInnerHandlers();
@@ -224,25 +227,42 @@ export default class Popup extends SmartView {
 
   _setInnerHandlers() {
     // this.getElement().querySelector(`.film-details__new-comment`).addEventListener(`click`, this._messageToggleHandler);
-    // this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._descriptionInputHandler);
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`change`, this._messageInputHandler);
+    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._smileChangeHandler);
   }
 
-  _descriptionInputHandler(evt) {
+  _messageInputHandler(evt) {
     evt.preventDefault();
+    console.log(evt.target.value);
     this.updateData({
-      description: evt.target.value
+      text: evt.target.value
     }, true);
   }
 
   _messageToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      isMessage: !this._data.isMessage
-      // textMessage: evt.value,
-      // dateMessage: dayjs(),
-      // emojiMessage: this.getElement().querySelector(`checked`),
-      // authorMessage:
+      isMessage: !this._data.isMessage,
+      scrollHeight: evt.target.clientHeight,
+      /*comments: this._data.comments.push({
+
+      })*/
+      idMessage: nanoid(),
+      date: dayjs(),
+      daysAgo: date.getTime() * (-1) / 86400000,
+      author: `anon`
     });
+  }
+
+  _smileChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      emoji: {
+        src: evt.target.src,
+        id: evt.target.id
+      }
+    }
+    );
   }
 
   setCloseClickListener(callback) {
@@ -295,12 +315,6 @@ export default class Popup extends SmartView {
         film,
         {
           isMessage: film.message !== null,
-          /* textMessage: null,
-          emojiMessage: null,
-          dateMessage: null,
-          authorMessage: null*/
-          // message:
-          // isRepeating: isTaskRepeating(task.repeating) message: null,isMessage:
         }
     );
   }
