@@ -1,5 +1,6 @@
-import Abstract from "../view/abstract.js";
+// import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
+import SmartView from "../view/smart.js";
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
@@ -168,7 +169,7 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     </section>`);
 };
 
-export default class Popup extends Abstract {
+export default class Popup extends SmartView {
   constructor(film = {}, comments) {
     super();
     this._data = Popup.parseFilmToData(film);
@@ -186,7 +187,7 @@ export default class Popup extends Abstract {
     return createPopupTemplate(this._data, this._comments);
   }
   //
-  updateData(update, justDataUpdating) {
+  /*  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -211,7 +212,7 @@ export default class Popup extends Abstract {
 
     parent.replaceChild(newElement, prevElement);
     this.restoreHandlers();
-  }
+  }*/
 
   restoreHandlers() {
     this._setInnerHandlers();
