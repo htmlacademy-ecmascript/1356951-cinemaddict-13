@@ -43,7 +43,10 @@ const createComment = ({text, emoji, date, author}) => {
   const chosenEmoji = emoji ?
   `<span class="film-details__comment-emoji">
       <img src=${emoji} width="55" height="55" alt="emoji-smile">
-    </span>` : ``;
+    </span>` :
+    `<span class="film-details__comment-emoji">
+    <img style="opacity: 0" width="55" height="55">
+  </span>`;
   return `<li class="film-details__comment">
   ${chosenEmoji}
     <div>
@@ -79,8 +82,6 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     // isMessage  134  ${// if (isMessage) {createComment()}}
 
   } = data;
-  console.log(comments);
-  console.log(commentsX);
   const renderPlaceholder = (textMessage) => {
     const placeholder = textMessage ? `${data.text}` : ``;
     return placeholder;
@@ -198,9 +199,7 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
 export default class Popup extends SmartView {
   constructor(film = {}, comments) {
     super();
-    this._data = Popup.parseFilmToData(film);
-    console.log(comments);
-    // this._commentsData = Popup.parsecommentsToData(comments);
+    this._data = film; //Popup.parseFilmToData();
     this._comments = comments;
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -209,19 +208,13 @@ export default class Popup extends SmartView {
     this._messageToggleHandler = this._messageToggleHandler.bind(this);
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
-    console.log(this._data);
-    /* this.updateData({
-      emoji: `smile`
-    });*/
-    // console.log(this._data);
     this._setInnerHandlers();
-    // console.log(this._commentsData);
+
   }
 
   getTemplate() {
     return createPopupTemplate(this._data, this._comments);
   }
-  //
 
   restoreHandlers() {
     this._setInnerHandlers();
@@ -232,37 +225,37 @@ export default class Popup extends SmartView {
   }
 
   _setInnerHandlers() {
-
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._smileChangeHandler);
-    this.getElement().addEventListener(`keydown`, this._messageToggleHandler);
+    document.addEventListener(`keydown`, this._messageToggleHandler);
   }
 
   _messageInputHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target.value);
     this.updateData({
       text: evt.target.value
     }, true);
   }
 
   _messageToggleHandler(evt) {
-   // evt.preventDefault();
-    console.log(evt.key);
     if ((evt.metaKey || evt.ctrlKey) && evt.key === `Enter`) {
-      // this.updateData({
-        // isMessage: !this._data.isMessage,
-        const newComment = {
-          idMessage: nanoid(),
-          text: this._data.text,
-          emoji: this._data.emoji.src,
-          daysAgo: 7,//date.getTime() / 86400000,
-          date: dayjs(),
-          author: `anon`
-            };
-       // comments: this._data.comments.push()
+      const emoji = this._data.emoji ? this._data.emoji.src : null;
+      const text = this._data.text ? this._data.text : null;
+      if (text === null && emoji === null) {
+        return
+      }
+      const newComment = {
+      idMessage: nanoid(),
+      text: text,
+      emoji: emoji,//this._data.emoji.src,
+      date: dayjs(),
+      daysAgo: 7,//date.getTime() / 86400000,
+      author: `anon`
+      };
       this._comments[newComment.idMessage] = newComment;
-      // });
+      delete this._data.text;
+      delete this._data.emoji;
+      document.removeEventListener(`keydown`, this._messageToggleHandler);
       this.updateData({
        comments: [...this._data.comments, newComment.idMessage]
       })
@@ -272,7 +265,6 @@ export default class Popup extends SmartView {
 
   _smileChangeHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target.parentNode);
     this.updateData({
       emoji: {
         src: evt.target.src,
@@ -295,13 +287,11 @@ export default class Popup extends SmartView {
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector(`input[name="favorite"`).addEventListener(`change`, this._onFavoriteClick);
-
   }
 
   _onFavoriteClick(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
-    // this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
   }
 
   setWatchlistClickHandler(callback) {
@@ -312,7 +302,6 @@ export default class Popup extends SmartView {
   _onWatchlistClick(evt) {
     evt.preventDefault();
     this._callback.watchlistClick();
-    // this.getElement().querySelector(`input[name="watchlist"`).removeEventListener(`change`, this._onWatchlistClick);
   }
 
   setWatchedlistClickHandler(callback) {
@@ -323,46 +312,27 @@ export default class Popup extends SmartView {
   _onWatchedlistClick(evt) {
     evt.preventDefault();
     this._callback.watchedlistClick();
-    // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
   }
 
-  static parseFilmToData(film) {
+  /*static parseFilmToData(film) {
     return Object.assign(
         {},
         film,
         {
-          isMessage: film.message !== null,
-          idNewMessage: nanoid()
-        }
+         }
     );
-  }
+  }*/
 
-  static parseDataToFilm(data) {
+  /* static parseDataToFilm(data) {
     let film = Object.assign({}, data);
-
-
-    delete film.isMessage;
-    /* delete film.textMessage;
-    delete film.emojiMessage;
-    delete film.dateMessage;
-    delete film.authorMessage;*/
     return film;
-  }
+  }*/
 
   /*static parsecommentsToData(comments) {
     return Object.assign(
       {},
       comments,
-      {
-        /*idMessage: kgk5u: {
-              idMessage: `kgk5u`,
-              text: `привет`,// this.data.text;
-              emoji: `./images/emoji/smile.png`, //  this.data.emoji.src;
-              daysAgo: 7,//date.getTime() * (-1) / 86400000,
-              date: dayjs(),
-              author: `anon`
-              }
-      }
+
     )
   }*/
 
