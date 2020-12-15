@@ -226,7 +226,8 @@ export default class Popup extends SmartView {
 
   _setInnerHandlers() {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
-    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._smileChangeHandler);
+    this.getElement().querySelectorAll(`.film-details__emoji-label`)
+    .forEach((item) => item.addEventListener(`click`, this._smileChangeHandler));
     document.addEventListener(`keydown`, this._messageToggleHandler);
   }
 
