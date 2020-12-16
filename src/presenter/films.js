@@ -9,7 +9,7 @@ import FilmList from "../view/film-list.js";
 import FilmListTop from "../view/film-list-top.js";
 import FilmListCommented from "../view/film-list-commented.js";
 import FilmListContainer from "../view/film-list-container.js";
-import Popup from "../view/popup.js";
+// import Popup from "../view/popup.js";
 import ListEmpty from "../view/list-empty.js";
 import {mainElement} from "../main.js";
 import {SortType} from "../const.js";
@@ -32,7 +32,7 @@ export default class Films {
     this._filmPresenter = {};
     this._filmTopPresenter = {};
     this._filmCommentedPresenter = {};
-    this._popup = new Popup();
+    // this._popup = new Popup();
     this._renderedFilmCount = null;
     this._hadleFilmChange = this._hadleFilmChange.bind(this);
     this._filmListContainerTop = new FilmListContainer();

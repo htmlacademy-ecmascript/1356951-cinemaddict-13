@@ -1,5 +1,15 @@
-import Abstract from "../view/abstract.js";
+// import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
+import SmartView from "../view/smart.js";
+import {nanoid} from "../mock/film.js";
+
+/* let nanoid = (t = 5)=>{
+  let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
+    /*eslint-disable */
+// let n = 63 & r[t]; e += n < 36 ? n.toString(36) : n < 62 ? (n - 26).toString(36).toUpperCase() : n < 63 ? `_` : `-`;
+/*eslint-disable */
+ // } return e;
+//};*/
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
@@ -29,12 +39,18 @@ const createComment = ({text, emoji, date, author}) => {
   const today = dayjs();
   const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
   const textX = dayAgo === 0 ? `today` : ` days ago`;
-  return `<li class="film-details__comment">
-    <span class="film-details__comment-emoji">
+  const textMessage = text ? text : ``;
+  const chosenEmoji = emoji ?
+  `<span class="film-details__comment-emoji">
       <img src=${emoji} width="55" height="55" alt="emoji-smile">
-    </span>
+    </span>` :
+    `<span class="film-details__comment-emoji">
+    <img style="opacity: 0" width="55" height="55">
+  </span>`;
+  return `<li class="film-details__comment">
+  ${chosenEmoji}
     <div>
-      <p class="film-details__comment-text">${text}</p>
+      <p class="film-details__comment-text">${textMessage}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${dayAgo}${textX}</span>
@@ -61,9 +77,20 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     isInFavorites,
     isInHistory,
     isInWatchlist,
+    emoji,
+    text
     // isMessage  134  ${// if (isMessage) {createComment()}}
 
   } = data;
+  const renderPlaceholder = (textMessage) => {
+    const placeholder = textMessage ? `${data.text}` : ``;
+    return placeholder;
+  };
+  const renderEmogi = (emogiX) => {
+    const emojiY = emogiX ?
+      `<span><img src="${emogiX.src}" width="55" height="55" alt="${emogiX.id}"></span>` : ``;
+    return emojiY;
+  };
 
   const getActiveClass = (param) => {
     const activeClass = param ? `checked` : ``;
@@ -135,10 +162,10 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label"> ${renderEmogi(emoji)}</div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${renderPlaceholder(text)}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -169,30 +196,83 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     </section>`);
 };
 
-export default class Popup extends Abstract {
+export default class Popup extends SmartView {
   constructor(film = {}, comments) {
     super();
-    this._data = Popup.parseFilmToData(film);
+    this._data = film; //Popup.parseFilmToData();
     this._comments = comments;
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
+    this._messageToggleHandler = this._messageToggleHandler.bind(this);
+    this._messageInputHandler = this._messageInputHandler.bind(this);
+    this._smileChangeHandler = this._smileChangeHandler.bind(this);
+    this._setInnerHandlers();
+
   }
 
   getTemplate() {
-    // console.log(this._data);
     return createPopupTemplate(this._data, this._comments);
   }
-  //
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
 
-    const newElement = this.getElement();
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseClickListener(this._callback.click);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setWatchedlistClickHandler(this._callback.watchedlistClick);
+  }
 
-    parent.replaceChild(newElement, prevElement);
+  _setInnerHandlers() {
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
+    this.getElement().querySelectorAll(`.film-details__emoji-label`)
+    .forEach((item) => item.addEventListener(`click`, this._smileChangeHandler));
+    document.addEventListener(`keydown`, this._messageToggleHandler);
+  }
+
+  _messageInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      text: evt.target.value
+    }, true);
+  }
+
+  _messageToggleHandler(evt) {
+    if ((evt.metaKey || evt.ctrlKey) && evt.key === `Enter`) {
+      const emoji = this._data.emoji ? this._data.emoji.src : null;
+      const text = this._data.text ? this._data.text : null;
+      if (text === null && emoji === null) {
+        return
+      }
+      const newComment = {
+      idMessage: nanoid(),
+      text: text,
+      emoji: emoji,//this._data.emoji.src,
+      date: dayjs(),
+      daysAgo: 7,//date.getTime() / 86400000,
+      author: `anon`
+      };
+      this._comments[newComment.idMessage] = newComment;
+      delete this._data.text;
+      delete this._data.emoji;
+      document.removeEventListener(`keydown`, this._messageToggleHandler);
+      this.updateData({
+       comments: [...this._data.comments, newComment.idMessage]
+      })
+    }
+
+  }
+
+  _smileChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      emoji: {
+        src: evt.target.src,
+        id: evt.target.parentNode.getAttribute(`for`)
+      }
+    }
+    );
   }
 
   setCloseClickListener(callback) {
@@ -208,13 +288,14 @@ export default class Popup extends Abstract {
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector(`input[name="favorite"`).addEventListener(`change`, this._onFavoriteClick);
-
   }
 
   _onFavoriteClick(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
-    // this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
+    this.updateData({
+      isInFavorites: !this._data.isInFavorites
+    });
   }
 
   setWatchlistClickHandler(callback) {
@@ -225,7 +306,9 @@ export default class Popup extends Abstract {
   _onWatchlistClick(evt) {
     evt.preventDefault();
     this._callback.watchlistClick();
-    // this.getElement().querySelector(`input[name="watchlist"`).removeEventListener(`change`, this._onWatchlistClick);
+    this.updateData({
+      isInWatchlist: !this._data.isInWatchlist
+    });
   }
 
   setWatchedlistClickHandler(callback) {
@@ -236,35 +319,31 @@ export default class Popup extends Abstract {
   _onWatchedlistClick(evt) {
     evt.preventDefault();
     this._callback.watchedlistClick();
-    // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
+    this.updateData({
+      isInHistory: !this._data.isInHistory
+    });
   }
 
-  static parseFilmToData(film) {
+  /*static parseFilmToData(film) {
     return Object.assign(
         {},
         film,
         {
-          isMessage: film.message !== null,
-          textMessage: null,
-          emojiMessage: null,
-          dateMessage: null,
-          authorMessage: null
-          // message:
-          // isRepeating: isTaskRepeating(task.repeating) message: null,isMessage:
-        }
+         }
     );
-  }
+  }*/
 
-  static parseDataToFilm(data) {
+  /* static parseDataToFilm(data) {
     let film = Object.assign({}, data);
-    if (!film.isMessage) {
-      film.message = null;
-    }
-    delete film.isMessage;
-    delete film.textMessage;
-    delete film.emojiMessage;
-    delete film.dateMessage;
-    delete film.authorMessage;
     return film;
-  }
+  }*/
+
+  /*static parsecommentsToData(comments) {
+    return Object.assign(
+      {},
+      comments,
+
+    )
+  }*/
+
 }

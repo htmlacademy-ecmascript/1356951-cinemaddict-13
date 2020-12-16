@@ -6,7 +6,7 @@ import {MAX_SENTENCE_OF_DESCRIPTION,
   MIN_COMMENTS
 } from "../const.js";
 
-let nanoid = (t = 5)=>{
+export let nanoid = (t = 5)=>{
   let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
     /*eslint-disable */
     let n = 63 & r[t]; e += n < 36 ? n.toString(36) : n < 62 ? (n - 26).toString(36).toUpperCase() : n < 63 ? `_` : `-`;
@@ -68,7 +68,7 @@ return emoji;
 
 const generateComment = () => {
   return {
-    id: nanoid(),
+    idMessage: nanoid(),
     text: getMessage(),
     emoji: getEmoji(),
     daysAgo: getDaysAgo(),
@@ -81,7 +81,7 @@ const generateComments = (amount) => {
   let comments = {};
   for (let i = 0; i < amount; i++) {
     let comment = generateComment();
-    comments[comment.id] = comment;
+    comments[comment.idMessage] = comment;
   }
 return comments;
 };
