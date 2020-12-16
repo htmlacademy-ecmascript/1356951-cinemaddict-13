@@ -43,12 +43,9 @@ export default class Films {
   }
 
   init(films = []) {
-    // console.log(films);
-    // console.log(films.slice());
     // Можешь объяснить почему в this._films меняется порядок фильмов, но при отрисовке действует старый порядок?
-    this._films = films.slice();
-    // console.log(this._films);
-    this._sourseFilms = films.slice();
+    this._films = films.getFilms().slice();
+    this._sourseFilms = films.getFilms().slice();
     if (this._films.length === 0) {
       this._renderEmptyFilmsList();
     } else {

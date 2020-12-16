@@ -3,7 +3,10 @@ import Popup from "../view/popup.js";
 // import Films from "../presenter/films.js";
 import {render, RenderPosition, remove, replace} from "../utils.js";
 import {commentsCollection} from "../mock/film.js";
+import Comments from "../model/comments.js";
 
+const commentsModel = new Comments();
+commentsModel.setFilms(commentsCollection);
 const bodyElement = document.querySelector(`body`);
 
 export default class Film {
@@ -42,7 +45,7 @@ export default class Film {
 
   _onOpenPopup() {
     this._viewChange();
-    this._popup = new Popup(this._film, commentsCollection);
+    this._popup = new Popup(this._film, commentsModel.getFilms());
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
