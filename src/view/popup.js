@@ -293,6 +293,9 @@ export default class Popup extends SmartView {
   _onFavoriteClick(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
+    this.updateData({
+      isInFavorites: !this._data.isInFavorites
+    });
   }
 
   setWatchlistClickHandler(callback) {
@@ -303,6 +306,9 @@ export default class Popup extends SmartView {
   _onWatchlistClick(evt) {
     evt.preventDefault();
     this._callback.watchlistClick();
+    this.updateData({
+      isInWatchlist: !this._data.isInWatchlist
+    });
   }
 
   setWatchedlistClickHandler(callback) {
@@ -313,6 +319,9 @@ export default class Popup extends SmartView {
   _onWatchedlistClick(evt) {
     evt.preventDefault();
     this._callback.watchedlistClick();
+    this.updateData({
+      isInHistory: !this._data.isInHistory
+    });
   }
 
   /*static parseFilmToData(film) {
