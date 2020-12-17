@@ -2,7 +2,12 @@
 import dayjs from "dayjs";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
+import Comments from "../model/comments.js";
+import {commentsCollection} from "../mock/film.js";
 
+const commentsModel = new Comments();
+commentsModel.setComments(commentsCollection);
+console.log(commentsModel);
 /* let nanoid = (t = 5)=>{
   let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
     /*eslint-disable */
@@ -197,10 +202,10 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(film = {}, comments) {
+  constructor(film = {}) {
     super();
     this._data = film; //Popup.parseFilmToData();
-    this._comments = comments;
+    this._comments = commentsModel.getComments();
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
@@ -209,7 +214,24 @@ export default class Popup extends SmartView {
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
     this._setInnerHandlers();
+    console.log(this._comments);
+    // this._comments.setComments({text: tyt})
+    // console.log(this._comments);
+  }
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
 
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
   getTemplate() {

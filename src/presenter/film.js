@@ -2,12 +2,11 @@ import FilmCard from "../view/film-card.js";
 import Popup from "../view/popup.js";
 // import Films from "../presenter/films.js";
 import {render, RenderPosition, remove, replace} from "../utils.js";
-import {commentsCollection} from "../mock/film.js";
-import Comments from "../model/comments.js";
+// import {commentsCollection} from "../mock/film.js";
+// import Comments from "../model/comments.js";
 import {UserAction, UpdateType} from "../const.js";
 
-const commentsModel = new Comments();
-commentsModel.setFilms(commentsCollection);
+
 const bodyElement = document.querySelector(`body`);
 
 export default class FilmPresenter {
@@ -43,12 +42,10 @@ export default class FilmPresenter {
   destroy() {
     remove(this._filmComponent);
   }
-  _getComments() {
-    return commentsModel.getFilms();
-  }
+
   _onOpenPopup() {
     this._viewChange();
-    this._popup = new Popup(this._film, Object.assign({}, this._getComments()));
+    this._popup = new Popup(this._film);
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());

@@ -5,14 +5,17 @@ export default class Comments extends Observer {
     super();
     this._comments = {};
   }
-  setFilms(_comments) {
+  setComments(_comments) {
+    if (!_comments) {
+      return;
+    }
     this._comments = Object.assign(
         {},
         _comments
     );
   }
 
-  getFilms() {
+  getComments() {
     return this._comments;
   }
 }
