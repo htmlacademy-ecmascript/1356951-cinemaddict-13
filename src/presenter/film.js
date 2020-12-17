@@ -42,10 +42,12 @@ export default class Film {
   destroy() {
     remove(this._filmComponent);
   }
-
+  _getComments() {
+    return commentsModel.getFilms();
+  }
   _onOpenPopup() {
     this._viewChange();
-    this._popup = new Popup(this._film, commentsModel.getFilms());
+    this._popup = new Popup(this._film, Object.assign({}, this._getComments()));
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
