@@ -10,17 +10,17 @@ import Movies from "./model/movies.js";
 const filmsQuantity = getRandomInteger(0, 20);
 const films = new Array(filmsQuantity).fill().map(createfilm);
 const filters = generateFilter(films);
-const FilmsPresenter = new Films();
-const headerElement = document.querySelector(`.header`);
-
 const filmsModel = new Movies();
 filmsModel.setFilms(films);
+const FilmsPresenter = new Films(filmsModel);
+const headerElement = document.querySelector(`.header`);
+
 
 export const mainElement = document.querySelector(`.main`);
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 render(mainElement, new Menu(filters).getElement(), RenderPosition.BEFOREEND);
-FilmsPresenter.init(filmsModel);
+FilmsPresenter.init();
 
 const footer = document.querySelector(`footer`);
 const footerStat = footer.querySelector(`.footer__statistics`);

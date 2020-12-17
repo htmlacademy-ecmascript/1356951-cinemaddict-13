@@ -1,6 +1,6 @@
 import {remove, render, RenderPosition/* , updateItem*/} from "../utils.js";
 import Button from "../view/button.js";
-import Film from "../presenter/film.js";
+import FilmPresenter from "../presenter/film.js";
 import dayjs from "dayjs";
 import Sort from "../view/sort.js";
 import Stats from "../view/stats.js";
@@ -19,7 +19,8 @@ const FILM_COUNT_PER_STEP = 5;
 // let cardFilmQuantity = 5;
 
 export default class Films {
-  constructor() {
+  constructor(films = []) {
+    this._films = films;
     this._renderedFilmsCount = FILM_COUNT_PER_STEP;
     this._sortComponent = new Sort();
     this._filmContainer = new FilmContainer();
@@ -39,14 +40,13 @@ export default class Films {
     this._filmListContainerTop = new FilmListContainer();
     this._filmListContainerCommented = new FilmListContainer();
     this._setDefaultView = this._setDefaultView.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._currentSortType = SortType.DEFAULT;
+    this._films.addObserver(this._handleModelEvent);
   }
 
-  init(films = []) {
-    // Можешь объяснить почему в this._films меняется порядок фильмов, но при отрисовке действует старый порядок?
-    this._films = films;
-    // this._sourseFilms = films.getFilms().slice();
+  init() {
     if (this._films.getFilms().slice().length === 0) {
       this._renderEmptyFilmsList();
     } else {
@@ -57,10 +57,6 @@ export default class Films {
       render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
       this._renderFilmsList();
     }
-  }
-
-  _renderDefaultSort() {
-    // сортировка
   }
 
   _getFilms() { // renderSortedFilms
@@ -83,6 +79,22 @@ export default class Films {
     }
     return this._films.getFilms();
     //  this._currentSortType = sortType;
+  }
+
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
   _handleSortTypeChange(sortType) {
@@ -120,19 +132,19 @@ export default class Films {
   }
 
   _renderFilm(container, film) {
-    const renderFilmPresenter = new Film(this._hadleFilmChange, this._setDefaultView, container);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container);
     renderFilmPresenter.filmInit(film);
     this._filmPresenter[film.id] = renderFilmPresenter;
   }
 
   _renderTopFilm(container, film) {
-    const renderFilmPresenter = new Film(this._hadleFilmChange, this._setDefaultView, container);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container);
     renderFilmPresenter.filmInit(film);
     this._filmTopPresenter[film.id] = renderFilmPresenter;
   }
 
   _renderCommentedFilm(container, film) {
-    const renderFilmPresenter = new Film(this._hadleFilmChange, this._setDefaultView, container);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container);
     renderFilmPresenter.filmInit(film);
     this._filmCommentedPresenter[film.id] = renderFilmPresenter;
   }
