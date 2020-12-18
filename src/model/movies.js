@@ -12,4 +12,22 @@ export default class Movies extends Observer {
   getFilms() {
     return this._films;
   }
+
+  updateFilm(updateType, update) {
+    console.log(this._films);
+    const index = this._films.findIndex((film) => film.id === update.id);
+
+    if (index === -1) {
+      throw new Error(`Can't update unexisting task`);
+    }
+
+    this._films = [
+      ...this._films.slice(0, index),
+      update,
+      ...this._films.slice(index + 1)
+    ];
+    console.log(this._films);
+    this._notify(updateType, update);
+  }
+
 }

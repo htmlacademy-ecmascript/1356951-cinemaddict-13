@@ -3,6 +3,7 @@ export const MIN_SENTENCE_OF_DESCRIPTION = 1;
 export const MAX_COMMENTS = 5;
 export const MIN_COMMENTS = 0;
 export const SortType = {
+  ALL: `all`,
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`
@@ -10,8 +11,8 @@ export const SortType = {
 
 export const UserAction = {
   UPDATE_FILM: `UPDATE_FILM`,
-  ADD_FILM: `ADD_FILM`,
-  DELETE_FILM: `DELETE_FILM`
+  // ADD_FILM: `ADD_FILM`,
+  // DELETE_FILM: `DELETE_FILM`
 };
 
 export const UpdateType = {

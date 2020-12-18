@@ -205,7 +205,7 @@ export default class Popup extends SmartView {
   constructor(film = {}) {
     super();
     this._data = film; //Popup.parseFilmToData();
-    this._comments = commentsModel.getComments();
+    this._comments = commentsModel;
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
@@ -235,7 +235,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._data, this._comments);
+    return createPopupTemplate(this._data, this._comments.getComments());
   }
 
   restoreHandlers() {
@@ -275,7 +275,7 @@ export default class Popup extends SmartView {
       daysAgo: 7,//date.getTime() / 86400000,
       author: `anon`
       };
-      this._comments[newComment.idMessage] = newComment;
+      this._comments.getComments()[newComment.idMessage] = newComment;
       delete this._data.text;
       delete this._data.emoji;
       document.removeEventListener(`keydown`, this._messageToggleHandler);
