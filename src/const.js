@@ -4,6 +4,9 @@ export const MAX_COMMENTS = 5;
 export const MIN_COMMENTS = 0;
 export const SortType = {
   ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`,
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`

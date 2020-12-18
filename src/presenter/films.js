@@ -19,7 +19,8 @@ const FILM_COUNT_PER_STEP = 5;
 // let cardFilmQuantity = 5;
 
 export default class Films {
-  constructor(filmsModel = []) {
+  constructor(filmsModel = [], filterModel) {
+    this._filterModel = filterModel;
     this._filmsModel = filmsModel;
     this._renderedFilmsCount = FILM_COUNT_PER_STEP;
     this._sortComponent = null;// new Sort();
@@ -44,6 +45,7 @@ export default class Films {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._currentSortType = SortType.DEFAULT;
+    this._filmsModel.addObserver(this._handleModelEvent);
     this._filmsModel.addObserver(this._handleModelEvent);
 
     // this._filmNewPresenter =

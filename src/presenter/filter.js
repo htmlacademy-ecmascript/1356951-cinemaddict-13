@@ -27,7 +27,7 @@ export default class Filter {
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterComponent._setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
@@ -51,39 +51,29 @@ export default class Filter {
   }
 
   _getFilters() {
-    const films = this._filmsModel.getTasks();
+    const films = this._filmsModel.getFilms();
 
     return [
       {
         type: SortType.ALL,
-        name: `All`,
+        name: `All movies`,
         count: filter[SortType.ALL](films).length
-      }/* ,
-      {
-        type: SortType.OVERDUE,
-        name: `Overdue`,
-        count: filter[SortType.OVERDUE](tasks).length
       },
       {
-        type: SortType.TODAY,
-        name: `Today`,
-        count: filter[SortType.TODAY](tasks).length
+        type: SortType.WATCHLIST,
+        name: `Watchlist`,
+        count: filter[SortType.WATCHLIST](films).length
+      },
+      {
+        type: SortType.HISTORY,
+        name: `History`,
+        count: filter[SortType.HISTORY](films).length
       },
       {
         type: SortType.FAVORITES,
         name: `Favorites`,
-        count: filter[SortType.FAVORITES](tasks).length
-      },
-      {
-        type: SortType.REPEATING,
-        name: `Repeating`,
-        count: filter[SortType.REPEATING](tasks).length
-      },
-      {
-        type: SortType.ARCHIVE,
-        name: `Archive`,
-        count: filter[SortType.ARCHIVE](tasks).length
-      }*/
+        count: filter[SortType.FAVORITES](films).length
+      }
     ];
   }
 }
