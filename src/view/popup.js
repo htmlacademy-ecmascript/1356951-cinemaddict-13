@@ -4,6 +4,7 @@ import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
 import {commentsCollection} from "../mock/film.js";
+import {UserActionMessage, UpdateType, UserAction} from "../const.js";
 
 const commentsModel = new Comments();
 commentsModel.setComments(commentsCollection);
@@ -202,11 +203,13 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(film = {}) {
+  constructor(film = {}, films) {
     super();
     this._filmModel = film;
-    this._filmData = Popup.parseFilmToData(film);
+    this._filmsModel = films;
+    this._data = Popup.parseFilmToData(film);
     this._commentsModel = commentsModel;
+    this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
@@ -214,9 +217,10 @@ export default class Popup extends SmartView {
     this._messageToggleHandler = this._messageToggleHandler.bind(this);
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._setInnerHandlers();
     console.log(this._commentsModel);
-    this._filmModel.addObserver(this._handleModelEvent);
+    // this._filmsModel.addObserver(this._handleModelEvent);
     this._commentsModel.addObserver(this._handleModelEvent);
     // this._comments.setComments({text: tyt})
     // console.log(this._comments);
@@ -229,7 +233,7 @@ export default class Popup extends SmartView {
         this._commentsModel.addComment(updateType, update)
         break;
       case UserActionMessage.DELETE_MESSAGE:
-        this._filmsModel.deleteComment(updateType, update);
+        this._commentsModel.deleteComment(updateType, update);
         break;
     }
 
@@ -243,11 +247,11 @@ export default class Popup extends SmartView {
   _handleViewActionFilm(actionType, updateType, update) {
     console.log(actionType, updateType, update);
     switch (actionType) {
-      case UserActionMessage.ADD_MESSAGE:
+      case UserAction.ADD_MESSAGE:
        //  this._filmsModel.addComment(updateType, update);
-        this._commentsModel.addComment(updateType, update)
+        this._filmsModel.addComment(updateType, update)
         break;
-      case UserActionMessage.DELETE_MESSAGE:
+      case UserAction.DELETE_MESSAGE:
         this._filmsModel.deleteComment(updateType, update);
         break;
     }
@@ -256,15 +260,18 @@ export default class Popup extends SmartView {
   _handleModelEvent(updateType, data) {
     console.log(updateType, data);
     switch (updateType) {
-      case UpdateType.PATCH:
-        //
-        break;
+      /* case UpdateType.PATCH:
+
+        break;*/
       case UpdateType.MINOR:
-        this._clearBoard();
-        this._renderBoard();
+        console.log(this._commentsModel.getComments());
+        this.updateElement();
+       /* this.removeElement();
+       this.getTemplate();
+       this.restoreHandlers();*/
         break;
       case UpdateType.MAJOR:
-        //
+        this.updateElement();
         break;
       }
     // В зависимости от типа изменений решаем, что делать:
@@ -274,7 +281,13 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._filmModel.getFilms(), this._commentsModel.getComments());
+    const index = this._filmsModel.getFilms().findIndex((film) => film.id === this._filmModel.id);
+    const filmsX = this._filmsModel.getFilms();
+    console.log(this._filmModel.id);
+    console.log(index);
+    console.log(filmsX);
+    console.log(filmsX[index]);
+    return createPopupTemplate(this._filmsModel.getFilms()[index]/*.getFilms()*/, this._commentsModel.getComments());
   }
 
   restoreHandlers() {
@@ -316,25 +329,29 @@ export default class Popup extends SmartView {
       author: `anon`
       };
       // this._commentsModel.addComment(newComment);
+
+
+      this.updateData({
+        // comments: [this._data.comments.push(newComment.idMessage)]
+        comments: [...this._data.comments, newComment.idMessage]
+      })
+      delete this._data.text;
+      delete this._data.emoji;
+      console.log(this._data);
+
+      this._handleViewActionFilm(
+        UserAction.ADD_MESSAGE,
+        UpdateType.PATCH,
+        this._data
+      );
+
+
       this._handleViewActionComments(
         UserActionMessage.ADD_MESSAGE,
         UpdateType.MINOR,
         newComment
       );
-      delete this._data.text;
-      delete this._data.emoji;
 
-      this.updateData({
-        comments: [...this._data.comments, newComment.idMessage]
-       })
-
-      console.log(this._data);
-
-      this._handleViewActionFilm(
-        UserAction.UPDATE_FILM,
-        UpdateType.MINOR,
-        this._data
-      );
     }
   }
 

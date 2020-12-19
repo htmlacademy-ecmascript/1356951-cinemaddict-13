@@ -10,7 +10,8 @@ import {UserAction, UpdateType} from "../const.js";
 const bodyElement = document.querySelector(`body`);
 
 export default class FilmPresenter {
-  constructor(changeData, viewChange, container) {
+  constructor(changeData, viewChange, container, films) {
+    this._filmsModel = films;
     this._filmListElement = container;
     this._changeData = changeData;
     this._viewChange = viewChange;
@@ -45,7 +46,7 @@ export default class FilmPresenter {
 
   _onOpenPopup() {
     this._viewChange();
-    this._popup = new Popup(this._film);
+    this._popup = new Popup(this._film, this._filmsModel);
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());

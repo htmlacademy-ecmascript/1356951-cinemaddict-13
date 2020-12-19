@@ -93,7 +93,7 @@ export default class Films {
         this._filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.ADD_FILM_COMMENT:
-        this._filmsModel.addComments(updateType, update);
+        this._filmsModel.addComment(updateType, update);
         break;
       /* ase UserAction.DELETE_TASK:
         this._filmsModel.deleteTask(updateType, update);
@@ -108,12 +108,13 @@ export default class Films {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._filmPresenter[data.id].init(data);
+        console.log(data);
+        this._filmPresenter[data.id].filmInit(data);
         if (this._filmTopPresenter[data.id]) {
-          this._filmTopPresenter[data.id].init(data);
+          this._filmTopPresenter[data.id].filmInit(data);
         }
         if (this._filmCommentedPresenter[data.id]) {
-          this._filmCommentedPresenter[data.id].init(data);
+          this._filmCommentedPresenter[data.id].filmInit(data);
         }
         break;
       case UpdateType.MINOR:
@@ -157,19 +158,19 @@ export default class Films {
   }
 
   _renderFilm(container, film) {
-    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container, this._handleModelEvent);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container, this._filmsModel);
     renderFilmPresenter.filmInit(film);
     this._filmPresenter[film.id] = renderFilmPresenter;
   }
 
   _renderTopFilm(container, film) {
-    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container, this._handleModelEvent);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container, this._filmsModel);
     renderFilmPresenter.filmInit(film);
     this._filmTopPresenter[film.id] = renderFilmPresenter;
   }
 
   _renderCommentedFilm(container, film) {
-    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container, this._handleModelEvent);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, container, this._filmsModel);
     renderFilmPresenter.filmInit(film);
     this._filmCommentedPresenter[film.id] = renderFilmPresenter;
   }
