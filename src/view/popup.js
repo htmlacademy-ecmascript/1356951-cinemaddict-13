@@ -93,9 +93,14 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     return placeholder;
   };
   const renderEmogi = (emogiX) => {
+    if (emogiX !== undefined) {
+    console.log(emogiX);
+    console.log(emogiX.src);
     const emojiY = emogiX ?
       `<span><img src="${emogiX.src}" width="55" height="55" alt="${emogiX.id}"></span>` : ``;
     return emojiY;
+    }
+    return ``
   };
 
   const getActiveClass = (param) => {
@@ -220,7 +225,7 @@ export default class Popup extends SmartView {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._setInnerHandlers();
     console.log(this._commentsModel);
-    // this._filmsModel.addObserver(this._handleModelEvent);
+    this._filmsModel.addObserver(this._handleModelEvent);
     this._commentsModel.addObserver(this._handleModelEvent);
     // this._comments.setComments({text: tyt})
     // console.log(this._comments);
@@ -287,6 +292,7 @@ export default class Popup extends SmartView {
     console.log(index);
     console.log(filmsX);
     console.log(filmsX[index]);
+    console.log(this._filmsModel.getFilms()[index]);
     return createPopupTemplate(this._filmsModel.getFilms()[index]/*.getFilms()*/, this._commentsModel.getComments());
   }
 
@@ -363,6 +369,11 @@ export default class Popup extends SmartView {
         id: evt.target.parentNode.getAttribute(`for`)
       }
     }
+    );
+    this._handleViewActionFilm(
+      UserAction.ADD_MESSAGE,
+      UpdateType.MINOR,
+      this._data
     );
   }
 
