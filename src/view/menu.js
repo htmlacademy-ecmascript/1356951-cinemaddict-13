@@ -9,7 +9,6 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
   );
 
 };
-// <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
 const createMenuTemplate = (filters, currentFilterType) => {
   const filterItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join(``);
   return (
@@ -42,8 +41,6 @@ export default class Menu extends Abstract {
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
-    // console.log(`watchlist`);
-    // console.log(evt.target.firstChild.textContent.toLowerCase());
-    this._callback.sortClick(evt.target.firstChild.textContent.toLowerCase());
+    this._callback.sortClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 }

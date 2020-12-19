@@ -2,7 +2,7 @@
 import FilterView from "../view/menu.js";
 import {render, RenderPosition, replace, remove} from "../utils.js";
 import {filter} from "../utils/filter.js";
-import {SortType, UpdateType} from "../const.js";
+import {FilterType, UpdateType} from "../const.js";
 
 export default class Filter {
   constructor(filterContainer, filterModel, filmsModel) {
@@ -43,6 +43,7 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
+    console.log(filterType);
     if (this._currentFilter === filterType) {
       return;
     }
@@ -55,24 +56,24 @@ export default class Filter {
 
     return [
       {
-        type: SortType.ALL,
+        type: FilterType.ALL,
         name: `All movies`,
-        count: filter[SortType.ALL](films).length
+        count: filter[FilterType.ALL](films).length
       },
       {
-        type: SortType.WATCHLIST,
+        type: FilterType.WATCHLIST,
         name: `Watchlist`,
-        count: filter[SortType.WATCHLIST](films).length
+        count: filter[FilterType.WATCHLIST](films).length
       },
       {
-        type: SortType.HISTORY,
+        type: FilterType.HISTORY,
         name: `History`,
-        count: filter[SortType.HISTORY](films).length
+        count: filter[FilterType.HISTORY](films).length
       },
       {
-        type: SortType.FAVORITES,
+        type: FilterType.FAVORITES,
         name: `Favorites`,
-        count: filter[SortType.FAVORITES](films).length
+        count: filter[FilterType.FAVORITES](films).length
       }
     ];
   }

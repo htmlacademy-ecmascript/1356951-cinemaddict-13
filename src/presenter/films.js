@@ -9,6 +9,8 @@ import FilmList from "../view/film-list.js";
 import FilmListTop from "../view/film-list-top.js";
 import FilmListCommented from "../view/film-list-commented.js";
 import FilmListContainer from "../view/film-list-container.js";
+import {filter} from "../utils/filter.js";
+
 // import Popup from "../view/popup.js";
 import ListEmpty from "../view/list-empty.js";
 import {mainElement} from "../main.js";
@@ -46,7 +48,7 @@ export default class Films {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._currentSortType = SortType.DEFAULT;
     this._filmsModel.addObserver(this._handleModelEvent);
-    this._filmsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
 
     // this._filmNewPresenter =
   }
@@ -59,39 +61,41 @@ export default class Films {
     }
   }
 
-  _getFilms() { // renderSortedFilms
+  _getFilms() {
+    // фильтрация
+    const filterType = this._filterModel.getFilter();
+    const films = this._filmsModel.getFilms();
+    const filtredFilms = filter[filterType](films);
     // сортировка
     switch (this._currentSortType) {
       case SortType.DATE:
-        this._filmsModel.getFilms().slice().sort(function (a, b) {
+        filtredFilms.sort(function (a, b) {
           return dayjs(b.releaseDate).diff(dayjs(a.releaseDate));
         });
         break;
       case SortType.RATING:
-        this._filmsModel.getFilms().slice().sort(function (a, b) {
+        filtredFilms.sort(function (a, b) {
           return b.rating - a.rating;
         }).slice();
         break;
-      // default:
+      default:
+        return filtredFilms.slice();
+
         // 3. А когда пользователь захочет "вернуть всё, как было",
         // мы просто запишем в _sourseFilms исходный массив
-       // this._filmsModel = this._sourseFilms.slice();
     }
-    return this._filmsModel.getFilms();
-    //  this._currentSortType = sortType;
+    return filtredFilms;
   }
 
   _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
-    console.log(this);
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this._filmsModel.updateFilm(updateType, update);
         break;
-      /* case UserAction.ADD_TASK:
-        this._filmsModel.addTask(updateType, update);
+      case UserAction.ADD_FILM_COMMENT:
+        this._filmsModel.addComments(updateType, update);
         break;
-      case UserAction.DELETE_TASK:
+      /* ase UserAction.DELETE_TASK:
         this._filmsModel.deleteTask(updateType, update);
         break;*/
     }
@@ -102,7 +106,6 @@ export default class Films {
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
     switch (updateType) {
       case UpdateType.PATCH:
         this._filmPresenter[data.id].init(data);
@@ -133,14 +136,10 @@ export default class Films {
       return;
     }
     this._currentSortType = sortType;
-    // сортировка
-    // this._getFilms(sortType);
     // очищаем список
     this._clearBoard({resetRenderedTaskCount: true});
-    // this._clearFilms();
     // рендерим новый
     this._renderBoard();
-    // this._renderFilmsList();
   }
 
   _renderFilms(films) {
@@ -149,16 +148,9 @@ export default class Films {
 
   _renderFilmsList() {
     // отрисовка фильмов
-    /* if (this._getFilms.slice().length < cardFilmQuantity) {
-      cardFilmQuantity = this._getFilms.length;
-    }*/
     const filmCount = this._getFilms().length;
-
     const filmsToRender = this._getFilms().slice(0, Math.min(filmCount, FILM_COUNT_PER_STEP));
     this._renderFilms(filmsToRender);
-    /* for (let i = 0; i < cardFilmQuantity; i++) {
-      this._renderFilm(this._filmListContainer.getElement(), this._getFilms[i]);
-    }*/
     if (this._filmContainer.getElement().querySelector(`.films-list__show-more`) === null) {
       this._renderButton();
     }
@@ -193,15 +185,6 @@ export default class Films {
       presenter.closePopup();
     });
   }
-
-  /* _clearFilms() {
-    Object
-      .values(this._filmPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._filmPresenter = {};
-    this._renderedFilmsCount = FILM_COUNT_PER_STEP;
-    remove(this._button);
-  }*/
 
   _renderEmptyFilmsList() {
     // пустой список фильмов

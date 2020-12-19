@@ -6,21 +6,6 @@ export default class Comments {
     this._comments = {};
   }
 
-  addObserver(observer) {
-    this._observer = Object.assign(
-        {},
-        observer
-    );
-  }
-
-  removeObserver(observer) {
-    this._observer = this._observer.filter((existedObserver) => existedObserver !== observer);
-  }
-
-  _notify(event, payload) {
-    this._observer.forEach((observer) => observer(event, payload));
-  }
-
   setComments(_comments) {
     if (!_comments) {
       return;
@@ -33,5 +18,23 @@ export default class Comments {
 
   getComments() {
     return this._comments;
+  }
+
+  deleteComment(updateType, update) {
+    if (this._comments[update.idMessage] !== `undefined`) {
+      delete this._comments[update.idMessage];
+    } else {
+      throw new Error(`Can't delete unexisting comment`);
+    }
+    this._notify(updateType, update);
+  }
+
+  addComment(updateType, update) {
+    if (this._comments[update.idMessage] === `undefined`) {
+      this._comments[update.idMessage] = update;
+    } else {
+      throw new Error(`Can't add already existing comment`);
+    }
+    this._notify(updateType, update);
   }
 }

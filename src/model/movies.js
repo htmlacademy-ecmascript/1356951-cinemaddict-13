@@ -14,7 +14,6 @@ export default class Movies extends Observer {
   }
 
   updateFilm(updateType, update) {
-    console.log(this._films);
     const index = this._films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -26,8 +25,23 @@ export default class Movies extends Observer {
       update,
       ...this._films.slice(index + 1)
     ];
-    console.log(this._films);
     this._notify(updateType, update);
   }
 
+  /* addComment(updateType, update, filmX) {
+    const index = this._films.findIndex((film) => film.id === filmX.id);
+
+    if (index === -1) {
+      throw new Error(`Can't add comment to unexisting film`);
+    }
+
+    // const tyt =
+
+    this._films = [
+      ...this._films.slice(0, index),
+      filmX.comments.push(update.idMessage),
+      ...this._films.slice(index + 1)
+    ];
+    this._notify(updateType, update);
+  }*/
 }

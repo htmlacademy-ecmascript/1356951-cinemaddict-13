@@ -7,7 +7,7 @@ import {commentsCollection} from "../mock/film.js";
 
 const commentsModel = new Comments();
 commentsModel.setComments(commentsCollection);
-console.log(commentsModel);
+console.log(commentsModel.getComments());
 /* let nanoid = (t = 5)=>{
   let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
     /*eslint-disable */
@@ -204,8 +204,9 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
 export default class Popup extends SmartView {
   constructor(film = {}) {
     super();
-    this._data = film; //Popup.parseFilmToData();
-    this._comments = commentsModel;
+    this._filmModel = film;
+    this._filmData = Popup.parseFilmToData(film);
+    this._commentsModel = commentsModel;
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
@@ -214,20 +215,58 @@ export default class Popup extends SmartView {
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
     this._setInnerHandlers();
-    console.log(this._comments);
+    console.log(this._commentsModel);
+    this._filmModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
     // this._comments.setComments({text: tyt})
     // console.log(this._comments);
   }
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewActionComments(actionType, updateType, update) {
     console.log(actionType, updateType, update);
+    switch (actionType) {
+      case UserActionMessage.ADD_MESSAGE:
+       //  this._filmsModel.addComment(updateType, update);
+        this._commentsModel.addComment(updateType, update)
+        break;
+      case UserActionMessage.DELETE_MESSAGE:
+        this._filmsModel.deleteComment(updateType, update);
+        break;
+    }
+
+
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
   }
 
+  _handleViewActionFilm(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    switch (actionType) {
+      case UserActionMessage.ADD_MESSAGE:
+       //  this._filmsModel.addComment(updateType, update);
+        this._commentsModel.addComment(updateType, update)
+        break;
+      case UserActionMessage.DELETE_MESSAGE:
+        this._filmsModel.deleteComment(updateType, update);
+        break;
+    }
+  }
+
   _handleModelEvent(updateType, data) {
     console.log(updateType, data);
+    switch (updateType) {
+      case UpdateType.PATCH:
+        //
+        break;
+      case UpdateType.MINOR:
+        this._clearBoard();
+        this._renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        //
+        break;
+      }
     // В зависимости от типа изменений решаем, что делать:
     // - обновить часть списка (например, когда поменялось описание)
     // - обновить список (например, когда задача ушла в архив)
@@ -235,7 +274,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._data, this._comments.getComments());
+    return createPopupTemplate(this._filmModel.getFilms(), this._commentsModel.getComments());
   }
 
   restoreHandlers() {
@@ -262,6 +301,7 @@ export default class Popup extends SmartView {
 
   _messageToggleHandler(evt) {
     if ((evt.metaKey || evt.ctrlKey) && evt.key === `Enter`) {
+      document.removeEventListener(`keydown`, this._messageToggleHandler);
       const emoji = this._data.emoji ? this._data.emoji.src : null;
       const text = this._data.text ? this._data.text : null;
       if (text === null && emoji === null) {
@@ -275,15 +315,27 @@ export default class Popup extends SmartView {
       daysAgo: 7,//date.getTime() / 86400000,
       author: `anon`
       };
-      this._comments.getComments()[newComment.idMessage] = newComment;
+      // this._commentsModel.addComment(newComment);
+      this._handleViewActionComments(
+        UserActionMessage.ADD_MESSAGE,
+        UpdateType.MINOR,
+        newComment
+      );
       delete this._data.text;
       delete this._data.emoji;
-      document.removeEventListener(`keydown`, this._messageToggleHandler);
-      this.updateData({
-       comments: [...this._data.comments, newComment.idMessage]
-      })
-    }
 
+      this.updateData({
+        comments: [...this._data.comments, newComment.idMessage]
+       })
+
+      console.log(this._data);
+
+      this._handleViewActionFilm(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        this._data
+      );
+    }
   }
 
   _smileChangeHandler(evt) {
@@ -346,14 +398,14 @@ export default class Popup extends SmartView {
     });
   }
 
-  /*static parseFilmToData(film) {
+  static parseFilmToData(film) {
     return Object.assign(
         {},
         film,
         {
          }
     );
-  }*/
+  }
 
   /* static parseDataToFilm(data) {
     let film = Object.assign({}, data);

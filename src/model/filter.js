@@ -1,10 +1,10 @@
 import Observer from "../model/observer.js";
-import {SortType} from "../const.js";
+import {FilterType} from "../const.js";
 
 export default class Filter extends Observer {
   constructor() {
     super();
-    this._activeFilter = SortType.ALL;
+    this._activeFilter = FilterType.ALL;
   }
 
   setFilter(updateType, filter) {
