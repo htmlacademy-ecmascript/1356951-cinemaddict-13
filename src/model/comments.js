@@ -1,10 +1,8 @@
-// import Observer from "../model/observer.js";
 import Observer from "../model/observer.js";
 
 export default class Comments extends Observer {
   constructor() {
     super();
-    // this._observer = {};
     this._comments = {};
   }
 
@@ -32,7 +30,7 @@ export default class Comments extends Observer {
   }
 
   addComment(updateType, update) {
-    if (!this._comments[update.idMessage]/* === `undefined`*/) {
+    if (!this._comments[update.idMessage]) {
       this._comments = Object.assign(
           {},
           this._comments,
@@ -40,7 +38,6 @@ export default class Comments extends Observer {
             [update.idMessage]: update
           }
       );
-
 
     } else {
       throw new Error(`Can't add already existing comment`);

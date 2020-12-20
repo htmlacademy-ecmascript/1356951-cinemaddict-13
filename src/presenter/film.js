@@ -32,7 +32,6 @@ export default class FilmPresenter {
     this._filmComponent.setWatchedlistClickHandler(this._handlerWatchedlistClick);
     this._filmComponent.setWatchlistClickHandler(this._handlerWatchlistClick);
     this._filmComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
-    // this._filmComponent.setDeleteMessageListener(this._handlerDeleteMessageClick);
 
     if (prevFilm === null) {
       render(this._filmListElement, this._filmComponent, RenderPosition.BEFOREEND);
@@ -95,7 +94,6 @@ export default class FilmPresenter {
             }
         )
     );
-
   }
 
   _handlerWatchlistClick() {

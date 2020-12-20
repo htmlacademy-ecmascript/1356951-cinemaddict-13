@@ -29,7 +29,6 @@ export default class Movies extends Observer {
   }
 
   addComment(updateType, update) {
-    console.log(update);
     const index = this._films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -38,14 +37,13 @@ export default class Movies extends Observer {
 
     this._films = [
       ...this._films.slice(0, index),
-      update/* .comments.push(update.idMessage)*/,
+      update,
       ...this._films.slice(index + 1)
     ];
     this._notify(updateType, update);
   }
 
   deleteComment(updateType, update) {
-    console.log(update);
     const index = this._films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -54,7 +52,7 @@ export default class Movies extends Observer {
 
     this._films = [
       ...this._films.slice(0, index),
-      update/* .comments.push(update.idMessage)*/,
+      update,
       ...this._films.slice(index + 1)
     ];
     this._notify(updateType, update);
