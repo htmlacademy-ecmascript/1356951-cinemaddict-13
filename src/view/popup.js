@@ -372,6 +372,9 @@ export default class Popup extends SmartView {
 
   _onClick(evt) {
     evt.preventDefault();
+    //
+    delete this._data.text;
+    delete this._data.emoji;
     this._callback.click();
   }
 
