@@ -1,5 +1,6 @@
 // import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
+import he from "he";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
@@ -8,7 +9,7 @@ import {UserActionMessage, UpdateType, UserAction} from "../const.js";
 
 const commentsModel = new Comments();
 commentsModel.setComments(commentsCollection);
-console.log(commentsModel.getComments());
+// console.log(commentsModel.getComments());
 /* let nanoid = (t = 5)=>{
   let e = ``; let r = crypto.getRandomValues(new Uint8Array(t)); for (;t--;) {
     /*eslint-disable */
@@ -56,7 +57,7 @@ const createComment = ({text, emoji, date, author}) => {
   return `<li class="film-details__comment">
   ${chosenEmoji}
     <div>
-      <p class="film-details__comment-text">${textMessage}</p>
+      <p class="film-details__comment-text">${he.encode(textMessage)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${dayAgo}${textX}</span>
@@ -223,6 +224,7 @@ export default class Popup extends SmartView {
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this._setInnerHandlers();
     console.log(this._commentsModel);
     this._filmsModel.addObserver(this._handleModelEvent);
@@ -249,12 +251,17 @@ export default class Popup extends SmartView {
     // update - обновленные данные
   }
 
+
   _handleViewActionFilm(actionType, updateType, update) {
     console.log(actionType, updateType, update);
     switch (actionType) {
+      case UserAction.UPDATE_FILM:
+        //  this._filmsModel.addComment(updateType, update);
+         this._filmsModel.updateFilm(updateType, update);
+         break;
       case UserAction.ADD_MESSAGE:
        //  this._filmsModel.addComment(updateType, update);
-        this._filmsModel.addComment(updateType, update)
+        this._filmsModel.addComment(updateType, update);
         break;
       case UserAction.DELETE_MESSAGE:
         this._filmsModel.deleteComment(updateType, update);
@@ -288,11 +295,11 @@ export default class Popup extends SmartView {
   getTemplate() {
     const index = this._filmsModel.getFilms().findIndex((film) => film.id === this._filmModel.id);
     const filmsX = this._filmsModel.getFilms();
-    console.log(this._filmModel.id);
+   /* console.log(this._filmModel.id);
     console.log(index);
     console.log(filmsX);
     console.log(filmsX[index]);
-    console.log(this._filmsModel.getFilms()[index]);
+    console.log(this._filmsModel.getFilms()[index]);*/
     return createPopupTemplate(this._filmsModel.getFilms()[index]/*.getFilms()*/, this._commentsModel.getComments());
   }
 
@@ -308,6 +315,8 @@ export default class Popup extends SmartView {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
     this.getElement().querySelectorAll(`.film-details__emoji-label`)
     .forEach((item) => item.addEventListener(`click`, this._smileChangeHandler));
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+    .forEach((deleteButton) => deleteButton.addEventListener(`click`, this._onDeleteMessageClick));
     document.addEventListener(`keydown`, this._messageToggleHandler);
   }
 
@@ -377,6 +386,33 @@ export default class Popup extends SmartView {
     );
   }
 
+  /* setDeleteMessageListener(callback) {
+    this._callback.DeleteMessageclick = callback;
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+    .forEach((deleteButton) => deleteButton.addEventListener(`click`, this._onClick));
+  }*/
+
+  _onDeleteMessageClick(evt) {
+    // evt.preventDefault();
+    console.log(evt.target.parentElement.parentElement.parentElement);
+    console.log(this._data);
+    const index = this._data.comments.findIndex((comment) => comment === evt.target)
+    const updateComments = [
+      ...this._data.comments.slice(0, index),
+      ...this._data.comments.slice(index)
+    ];
+    this.updateData({
+      comments: updateComments
+    }
+    );
+    console.log(this._data);
+    this._handleViewActionFilm(
+      UserAction.DELETE_MESSAGE,
+      UpdateType.MINOR,
+      this._data
+    );
+  }
+
   setCloseClickListener(callback) {
     this._callback.click = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onClick);
@@ -394,10 +430,17 @@ export default class Popup extends SmartView {
 
   _onFavoriteClick(evt) {
     evt.preventDefault();
+    this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
     this._callback.favoriteClick();
-    this.updateData({
+
+    /*this.updateData({
       isInFavorites: !this._data.isInFavorites
     });
+    this._handleViewActionFilm(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this._data
+    );*/
   }
 
   setWatchlistClickHandler(callback) {
@@ -407,10 +450,17 @@ export default class Popup extends SmartView {
 
   _onWatchlistClick(evt) {
     evt.preventDefault();
+    this.getElement().querySelector(`input[name="watchlist"]`).removeEventListener(`change`, this._onWatchlistClick);
     this._callback.watchlistClick();
-    this.updateData({
+
+    /*this.updateData({
       isInWatchlist: !this._data.isInWatchlist
     });
+    this._handleViewActionFilm(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this._data
+    );*/
   }
 
   setWatchedlistClickHandler(callback) {
@@ -420,10 +470,17 @@ export default class Popup extends SmartView {
 
   _onWatchedlistClick(evt) {
     evt.preventDefault();
+    this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
     this._callback.watchedlistClick();
-    this.updateData({
+
+    /*this.updateData({
       isInHistory: !this._data.isInHistory
     });
+    this._handleViewActionFilm(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this._data
+    );*/
   }
 
   static parseFilmToData(film) {
