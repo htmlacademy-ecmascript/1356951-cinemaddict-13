@@ -41,7 +41,6 @@ export default class Menu extends Abstract {
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target.firstChild.textContent.toLowerCase());
     this._callback.sortClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 }

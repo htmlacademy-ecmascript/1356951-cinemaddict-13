@@ -1,4 +1,3 @@
-// import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
 import he from "he";
 import SmartView from "../view/smart.js";
@@ -199,7 +198,6 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
 export default class Popup extends SmartView {
   constructor(film = {}, films) {
     super();
-    this._filmModel = film;
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
     this._commentsModel = commentsModel;
@@ -211,11 +209,8 @@ export default class Popup extends SmartView {
     this._messageToggleHandler = this._messageToggleHandler.bind(this);
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
-    //  this._handleModelEvent = this._handleModelEvent.bind(this);
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this._setInnerHandlers();
-    // this._filmsModel.addObserver(this._handleModelEvent);
-    // this._commentsModel.addObserver(this._handleModelEvent);
   }
   _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
@@ -246,28 +241,8 @@ export default class Popup extends SmartView {
     }
   }
 
-  /* _ handleModelEvent(updateType, data) {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        // тут я просто не знала какую функцию ставить чтобы не ругался линтер на не используемый data
-        this._data = Popup.parseFilmToData(data);
-        break;
-      case UpdateType.MINOR:
-        this.updateElement();
-        break;
-      case UpdateType.MAJOR:
-        this.updateElement();
-        break;
-    }
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
-  }*/
-
   getTemplate() {
-    // const index = this._filmsModel.getFilms().findIndex((film) => film.id === this._filmModel.id);
-    return createPopupTemplate(/* this._filmsModel.getFilms()[index]*/this._data, this._commentsModel.getComments());
+    return createPopupTemplate(this._data, this._commentsModel.getComments());
   }
 
   restoreHandlers() {
@@ -305,7 +280,7 @@ export default class Popup extends SmartView {
       const newComment = {
         idMessage: nanoid(),
         text,
-        emoji, // this._data.emoji.src,
+        emoji,
         date: dayjs(),
         daysAgo: 7, // date.getTime() / 86400000,
         author: `anon`
@@ -324,14 +299,11 @@ export default class Popup extends SmartView {
         comments: [...this._data.comments, newComment.idMessage]
       });
 
-
       this._handleViewActionFilm(
           UserAction.ADD_MESSAGE,
-          UpdateType.PATCH,
+          UpdateType.MINOR,
           this._data
       );
-
-
     }
   }
 
@@ -344,15 +316,11 @@ export default class Popup extends SmartView {
       }
     }
     );
-    /* this._handleViewActionFilm(
-        UserAction.ADD_MESSAGE,
-        UpdateType.MINOR,
-        this._data
-    );*/
   }
 
   _onDeleteMessageClick(evt) {
     evt.preventDefault();
+    // this._commentsModel.deleteComment(updateType, update); пока оставлю эту строку , чтобы вспомнить про удаление
     const index = this._data.comments.findIndex((comment) => comment === evt.target.id);
     const updateComments = [
       ...this._data.comments.slice(0, index),
@@ -375,7 +343,6 @@ export default class Popup extends SmartView {
 
   _onClick(evt) {
     evt.preventDefault();
-    //
     delete this._data.text;
     delete this._data.emoji;
     this._callback.click();
@@ -388,17 +355,10 @@ export default class Popup extends SmartView {
 
   _onFavoriteClick(evt) {
     evt.preventDefault();
-    // this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
     this._callback.favoriteClick();
-
-    /* this.updateData({
+    this.updateData({
       isInFavorites: !this._data.isInFavorites
-    });
-    this._handleViewActionFilm(
-      UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
-      this._data
-    );*/
+    }, true);
   }
 
   setWatchlistClickHandler(callback) {
@@ -408,17 +368,10 @@ export default class Popup extends SmartView {
 
   _onWatchlistClick(evt) {
     evt.preventDefault();
-    // this.getElement().querySelector(`input[name="watchlist"]`).removeEventListener(`change`, this._onWatchlistClick);
     this._callback.watchlistClick();
-
-    /* this.updateData({
+    this.updateData({
       isInWatchlist: !this._data.isInWatchlist
-    });
-    this._handleViewActionFilm(
-      UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
-      this._data
-    );*/
+    }, true);
   }
 
   setWatchedlistClickHandler(callback) {
@@ -428,17 +381,10 @@ export default class Popup extends SmartView {
 
   _onWatchedlistClick(evt) {
     evt.preventDefault();
-    // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
     this._callback.watchedlistClick();
-
-    /* this.updateData({
+    this.updateData({
       isInHistory: !this._data.isInHistory
-    });
-    this._handleViewActionFilm(
-      UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
-      this._data
-    );*/
+    }, true);
   }
 
   static parseFilmToData(film) {
@@ -449,18 +395,4 @@ export default class Popup extends SmartView {
         }
     );
   }
-
-  /* static parseDataToFilm(data) {
-    let film = Object.assign({}, data);
-    return film;
-  }*/
-
-  /* static parsecommentsToData(comments) {
-    return Object.assign(
-      {},
-      comments,
-
-    )
-  }*/
-
 }

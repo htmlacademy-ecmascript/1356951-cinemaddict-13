@@ -37,7 +37,6 @@ export default class Sort extends Abstract {
     if (evt.target.tagName !== `A`) {
       return;
     }
-    console.log(evt.target.dataset.sortType);
     evt.preventDefault();
     // this._clearActiveClass();
     // evt.target.classList.add(`sort__button--active`);

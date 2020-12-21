@@ -20,7 +20,6 @@ export default class Smart extends Abstract {
     if (justDataUpdating) {
       return;
     }
-    console.log(this._data);
     this.updateElement();
   }
 

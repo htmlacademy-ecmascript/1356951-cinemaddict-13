@@ -57,4 +57,13 @@ export default class Movies extends Observer {
     ];
     this._notify(updateType, update);
   }
+
+  getFilm(id) {
+    const index = this._films.findIndex((film) => film.id === id);
+
+    if (index === -1) {
+      throw new Error(`Can't find an unexisting film`);
+    }
+    return this._films[index];
+  }
 }

@@ -70,10 +70,6 @@ export default class Films {
           return b.rating - a.rating;
         }).slice();
         break;
-      /* case SortType.DEFAULT:
-        console.log();
-        return filtredFilms.slice();*/
-        // break;
         // 3. А когда пользователь захочет "вернуть всё, как было",
         // мы просто запишем в _sourseFilms исходный массив
     }
