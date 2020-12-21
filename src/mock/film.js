@@ -104,10 +104,6 @@ export const createfilm = () => {
     actors: getActors(),
     releaseDate: dayjs().format(`D MMMM`) + ` ${year}`,
     country: getCountry(),
-    //
-    message: null,
-    // isMessage: false,
-    //
     isInHistory: Boolean(getRandomInteger(0, 1)),
     isInWatchlist: Boolean(getRandomInteger(0, 1)),
     isInFavorites: Boolean(getRandomInteger(0, 1))

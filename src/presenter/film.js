@@ -2,12 +2,16 @@ import FilmCard from "../view/film-card.js";
 import Popup from "../view/popup.js";
 // import Films from "../presenter/films.js";
 import {render, RenderPosition, remove, replace} from "../utils.js";
-import {commentsCollection} from "../mock/film.js";
+// import {commentsCollection} from "../mock/film.js";
+// import Comments from "../model/comments.js";
+import {UserAction, UpdateType} from "../const.js";
+
 
 const bodyElement = document.querySelector(`body`);
 
-export default class Film {
-  constructor(changeData, viewChange, container) {
+export default class FilmPresenter {
+  constructor(changeData, viewChange, container, films) {
+    this._filmsModel = films;
     this._filmListElement = container;
     this._changeData = changeData;
     this._viewChange = viewChange;
@@ -42,7 +46,7 @@ export default class Film {
 
   _onOpenPopup() {
     this._viewChange();
-    this._popup = new Popup(this._film, commentsCollection);
+    this._popup = new Popup(this._film, this._filmsModel);
 
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
@@ -80,6 +84,8 @@ export default class Film {
 
   _handlerFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
@@ -88,11 +94,12 @@ export default class Film {
             }
         )
     );
-
   }
 
   _handlerWatchlistClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
@@ -105,6 +112,8 @@ export default class Film {
 
   _handlerWatchedlistClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
