@@ -211,11 +211,11 @@ export default class Popup extends SmartView {
     this._messageToggleHandler = this._messageToggleHandler.bind(this);
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    //  this._handleModelEvent = this._handleModelEvent.bind(this);
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this._setInnerHandlers();
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._commentsModel.addObserver(this._handleModelEvent);
+    // this._filmsModel.addObserver(this._handleModelEvent);
+    // this._commentsModel.addObserver(this._handleModelEvent);
   }
   _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
@@ -246,7 +246,7 @@ export default class Popup extends SmartView {
     }
   }
 
-  _handleModelEvent(updateType, data) {
+  /* _ handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
         // тут я просто не знала какую функцию ставить чтобы не ругался линтер на не используемый data
@@ -263,7 +263,7 @@ export default class Popup extends SmartView {
     // - обновить часть списка (например, когда поменялось описание)
     // - обновить список (например, когда задача ушла в архив)
     // - обновить всю доску (например, при переключении фильтра)
-  }
+  }*/
 
   getTemplate() {
     const index = this._filmsModel.getFilms().findIndex((film) => film.id === this._filmModel.id);
@@ -385,7 +385,7 @@ export default class Popup extends SmartView {
 
   _onFavoriteClick(evt) {
     evt.preventDefault();
-    this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
+    // this.getElement().querySelector(`input[name="favorite"`).removeEventListener(`change`, this._onFavoriteClick);
     this._callback.favoriteClick();
 
     /* this.updateData({
@@ -405,7 +405,7 @@ export default class Popup extends SmartView {
 
   _onWatchlistClick(evt) {
     evt.preventDefault();
-    this.getElement().querySelector(`input[name="watchlist"]`).removeEventListener(`change`, this._onWatchlistClick);
+    // this.getElement().querySelector(`input[name="watchlist"]`).removeEventListener(`change`, this._onWatchlistClick);
     this._callback.watchlistClick();
 
     /* this.updateData({
@@ -425,7 +425,7 @@ export default class Popup extends SmartView {
 
   _onWatchedlistClick(evt) {
     evt.preventDefault();
-    this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
+    // this.getElement().querySelector(`input[name="watched"`).removeEventListener(`change`, this._onWatchedlistClick);
     this._callback.watchedlistClick();
 
     /* this.updateData({

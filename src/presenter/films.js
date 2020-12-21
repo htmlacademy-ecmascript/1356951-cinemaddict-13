@@ -56,23 +56,24 @@ export default class Films {
   _getFilms() {
     // фильтрация
     const filterType = this._filterModel.getFilter();
-    const films = this._filmsModel.getFilms();
+    const films = this._filmsModel.getFilms().slice();
     const filtredFilms = filter[filterType](films);
     // сортировка
     switch (this._currentSortType) {
       case SortType.DATE:
         filtredFilms.sort(function (a, b) {
           return dayjs(b.releaseDate).diff(dayjs(a.releaseDate));
-        });
+        }).slice();
         break;
       case SortType.RATING:
         filtredFilms.sort(function (a, b) {
           return b.rating - a.rating;
         }).slice();
         break;
-      default:
-        return filtredFilms.slice();
-
+      /* case SortType.DEFAULT:
+        console.log();
+        return filtredFilms.slice();*/
+        // break;
         // 3. А когда пользователь захочет "вернуть всё, как было",
         // мы просто запишем в _sourseFilms исходный массив
     }
