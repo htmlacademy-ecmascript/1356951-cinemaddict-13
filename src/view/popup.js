@@ -266,8 +266,8 @@ export default class Popup extends SmartView {
   }*/
 
   getTemplate() {
-    const index = this._filmsModel.getFilms().findIndex((film) => film.id === this._filmModel.id);
-    return createPopupTemplate(this._filmsModel.getFilms()[index], this._commentsModel.getComments());
+    // const index = this._filmsModel.getFilms().findIndex((film) => film.id === this._filmModel.id);
+    return createPopupTemplate(/* this._filmsModel.getFilms()[index]*/this._data, this._commentsModel.getComments());
   }
 
   restoreHandlers() {
@@ -311,12 +311,19 @@ export default class Popup extends SmartView {
         author: `anon`
       };
 
+      this._handleViewActionComments(
+          UserActionMessage.ADD_MESSAGE,
+          UpdateType.PATCH,
+          newComment
+      );
+
+      delete this._data.text;
+      delete this._data.emoji;
 
       this.updateData({
         comments: [...this._data.comments, newComment.idMessage]
       });
-      delete this._data.text;
-      delete this._data.emoji;
+
 
       this._handleViewActionFilm(
           UserAction.ADD_MESSAGE,
@@ -324,11 +331,7 @@ export default class Popup extends SmartView {
           this._data
       );
 
-      this._handleViewActionComments(
-          UserActionMessage.ADD_MESSAGE,
-          UpdateType.MINOR,
-          newComment
-      );
+
     }
   }
 
@@ -341,11 +344,11 @@ export default class Popup extends SmartView {
       }
     }
     );
-    this._handleViewActionFilm(
+    /* this._handleViewActionFilm(
         UserAction.ADD_MESSAGE,
         UpdateType.MINOR,
         this._data
-    );
+    );*/
   }
 
   _onDeleteMessageClick(evt) {
@@ -360,7 +363,7 @@ export default class Popup extends SmartView {
     });
     this._handleViewActionFilm(
         UserAction.DELETE_MESSAGE,
-        UpdateType.MINOR,
+        UpdateType.PATCH,
         this._data
     );
   }
