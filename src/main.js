@@ -5,6 +5,15 @@ import Films from "./presenter/films.js";
 import Movies from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
+import Api from "./api.js";
+
+const AUTHORIZATOIN = `Basic oimtcs2fdgf`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;
+const api = new Api(END_POINT, AUTHORIZATOIN);
+
+api.getFilms().then((film) => {
+  console.log(film);
+});
 
 
 const filmsQuantity = getRandomInteger(0, 20);
