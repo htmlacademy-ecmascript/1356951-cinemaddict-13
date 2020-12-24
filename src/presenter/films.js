@@ -110,7 +110,9 @@ export default class Films {
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        if (data) {
+          this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        }
         this._renderBoard();
         break;
     }
