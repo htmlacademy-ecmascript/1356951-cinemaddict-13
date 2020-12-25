@@ -83,7 +83,7 @@ export default class Movies extends Observer {
           filmName: film.film_info.title,
           altFilmName: film.film_info.alternative_title,
           genre: film.film_info.genre,
-          id: film.film_info.id,
+          id: film.id,
           isInFavorites: film.user_details.favorite,
           isInHistory: film.user_details.already_watched,
           isInWatchlist: film.user_details.watchlist,
@@ -99,7 +99,7 @@ export default class Movies extends Observer {
     );
     // delete adaptedFilm.comments;
     delete adaptedFilm.film_info;
-    delete adaptedFilm.id;
+    // delete adaptedFilm.id;
     delete adaptedFilm.user_details;
     // Ненужные ключи мы удаляем
     return adaptedFilm;
@@ -148,7 +148,7 @@ export default class Movies extends Observer {
     delete adaptedFilm.filmName;
     delete adaptedFilm.altFilmName;
     delete adaptedFilm.genre;
-    delete adaptedFilm.id;
+    // delete adaptedFilm.id;
     delete adaptedFilm.isInFavorites;
     delete adaptedFilm.isInHistory;
     delete adaptedFilm.isInWatchlist;
