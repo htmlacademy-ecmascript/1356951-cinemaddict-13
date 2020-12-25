@@ -12,6 +12,7 @@ import FilmListContainer from "../view/film-list-container.js";
 import {filter} from "../utils/filter.js";
 import ListEmpty from "../view/list-empty.js";
 import {mainElement} from "../main.js";
+import LoadingView from "../view/loading.js";
 import {SortType, UserAction, UpdateType} from "../const.js";
 const TOP_CARD_FILM_QUANTITY = 2;
 const COMMENTED_CARD_FILM_QUANTITY = 2;
@@ -30,6 +31,8 @@ export default class Films {
     this._filmListContainer = new FilmListContainer();
     this._listEmpty = new ListEmpty();
     this._button = new Button();
+    this._loadingComponent = new LoadingView();
+    this._isLoading = true;
     this._filmPresenter = {};
     this._filmTopPresenter = {};
     this._filmCommentedPresenter = {};
@@ -46,18 +49,20 @@ export default class Films {
   }
 
   init() {
-    if (this._filmsModel.getFilms().slice().length === 0) {
+    /* if (this._filmsModel.getFilms().slice().length === 0) {
       this._renderEmptyFilmsList();
-    } else {
-      this._renderBoard();
-    }
+    } else {*/
+    this._renderBoard();
+    // }
   }
 
   _getFilms() {
     // фильтрация
     const filterType = this._filterModel.getFilter();
     const films = this._filmsModel.getFilms().slice();
+    // console.log(films);
     const filtredFilms = filter[filterType](films);
+    console.log(filtredFilms);
     // сортировка
     switch (this._currentSortType) {
       case SortType.DATE:
@@ -110,11 +115,19 @@ export default class Films {
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        if (data) {
+        this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
+        /* if (data) {
           this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
         }
         this._renderBoard();
-        break;
+        break;*/
     }
     // В зависимости от типа изменений решаем, что делать:
     // - обновить часть списка (например, когда поменялось описание)
@@ -140,6 +153,7 @@ export default class Films {
   _renderFilmsList() {
     // отрисовка фильмов
     const filmCount = this._getFilms().length;
+    console.log(filmCount);
     const filmsToRender = this._getFilms().slice(0, Math.min(filmCount, FILM_COUNT_PER_STEP));
     this._renderFilms(filmsToRender);
     if (this._filmContainer.getElement().querySelector(`.films-list__show-more`) === null) {
@@ -180,6 +194,14 @@ export default class Films {
   _renderEmptyFilmsList() {
     // пустой список фильмов
     render(mainElement, this._listEmpty, RenderPosition.BEFOREEND);
+    this._renderFooter();
+  }
+
+  _renderFooter() {
+    const footer = document.querySelector(`footer`);
+    const footerStat = footer.querySelector(`.footer__statistics`);
+    // console.log(${this._getFilms().length});
+    render(footerStat, `${this._getFilms().length}`, RenderPosition.BEFOREEND);
   }
 
   _hadleFilmChange(updateFilm) {
@@ -237,13 +259,20 @@ export default class Films {
       return b.comments.length - a.comments.length;
     }).slice(0, commentedCardQuantity);
     commentedFilms.forEach((film) => this._renderCommentedFilm(this._filmListContainerCommented.getElement(), film));
+    this._renderFooter();
   }
 
   _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
     this._renderSort();
-
     render(mainElement, this._filmContainer, RenderPosition.BEFOREEND);
     render(this._filmContainer, this._filmList, RenderPosition.BEFOREEND);
+    if (this._getFilms().slice().length === 0) {
+      this._renderEmptyFilmsList();
+    }
     render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
     this._renderFilmsList();
   }
@@ -267,6 +296,7 @@ export default class Films {
     this._filmCommentedPresenter = {};
 
     remove(this._sortComponent);
+    remove(this._loadingComponent);
     remove(this._listEmpty);
     remove(this._button);
     remove(this._filmListTop);
@@ -284,6 +314,12 @@ export default class Films {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+  }
+
+  _renderLoading() {
+    render(mainElement, this._filmContainer, RenderPosition.BEFOREEND);
+    render(this._filmContainer, this._filmList, RenderPosition.BEFOREEND);
+    render(this._filmList, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderSort() {

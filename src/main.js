@@ -15,17 +15,23 @@ const filmsModel = new Movies();
 /* api.getFilms().then((films) => {
   console.log(films);
 });*/
-api.getFilms().then((films) => {
-  filmsModel.setFilms(UpdateType.MAJOR, films);
-});
-console.log(filmsModel.getFilms());
-console.log(api.getFilms());
+api.getFilms()
+  .then((films) => {
+    filmsModel.setFilms(UpdateType.INIT, films);
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });
+// console.log(filmsModel);
+// console.log(api.getFilms().length);
 
 // const filmsQuantity = getRandomInteger(0, 20);
 // const films = new Array(filmsQuantity).fill().map(createfilm);
 
 // filmsModel.setFilms(films);
-// console.log(filmsModel.getFilms());
+// const tyt = filmsModel.getFilms();
+// console.log(tyt);
+// console.log(filmsModel.getFilms().length);
 const filterModel = new FilterModel();
 const filmsPresenter = new Films(filmsModel, filterModel);
 const headerElement = document.querySelector(`.header`);
@@ -39,6 +45,6 @@ render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 filterPresenter.init();
 filmsPresenter.init();
 
-const footer = document.querySelector(`footer`);
+/* const footer = document.querySelector(`footer`);
 const footerStat = footer.querySelector(`.footer__statistics`);
-render(footerStat, `${filmsModel.getFilms().length}`, RenderPosition.BEFOREEND);
+render(footerStat, `${filmsModel.getFilms().length}`, RenderPosition.BEFOREEND);*/
