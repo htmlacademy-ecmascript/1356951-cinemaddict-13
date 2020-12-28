@@ -22,7 +22,7 @@ export default class Films {
   constructor(filmsModel = [], filterModel) {
     this._filterModel = filterModel;
     this._filmsModel = filmsModel;
-    this._renderedFilmsCount = FILM_COUNT_PER_STEP;
+    this._renderedFilmsCount = 0;
     this._sortComponent = null;// new Sort();
     this._filmContainer = new FilmContainer();
     this._filmList = new FilmList();
@@ -220,19 +220,27 @@ export default class Films {
   _renderButton() {
     // отрисовка кнопки
     const filmCount = this._getFilms().length;
-    const filmsToRender = this._getFilms().slice(this._renderedFilmsCount, Math.min(this._renderedFilmsCount + FILM_COUNT_PER_STEP, filmCount));
-
-    if (filmCount > FILM_COUNT_PER_STEP) {
+    // const filmsToRender = this._getFilms().slice(this._renderedFilmsCount, Math.min(this._renderedFilmsCount + FILM_COUNT_PER_STEP, filmCount));
+    // console.log(this._getFilms());
+    if (filmCount > this._renderedFilmsCount && filmCount > FILM_COUNT_PER_STEP) {
       // Добавляем кнопку
       render(this._filmList, this._button, RenderPosition.BEFOREEND);
       this._button.setButtonClickListeners(() => {
+        const filmsToRender = this._getFilms().slice(this._renderedFilmsCount, Math.min(this._renderedFilmsCount + FILM_COUNT_PER_STEP, filmCount));
         filmsToRender.forEach((film) => this._renderFilm(this._filmListContainer.getElement(), film));
-
         this._renderedFilmsCount += FILM_COUNT_PER_STEP;
-        this._button.getElement().remove();
-        this._button.removeElement();
+        // this._button.getElement().remove();
+        // this._button.removeElement();
+        if (filmCount <= this._renderedFilmsCount) {
+          this._button.getElement().remove();
+          this._button.removeElement();
+        }
+
       });
     }
+
+
+    this._renderedFilmsCount += FILM_COUNT_PER_STEP;
     if (this._filmContainer.getElement().querySelector(`.films-list--extra`) === null) {
       this._renderTopFilms();
       this._renderCommentedFilms();
@@ -276,6 +284,7 @@ export default class Films {
       render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
       this._renderFilmsList();
     }
+    console.log(this._getFilms());
   }
 
   _clearBoard({resetRenderedTaskCount = false, resetSortType = false} = {}) {
@@ -304,7 +313,7 @@ export default class Films {
     remove(this._filmListCommented);
 
     if (resetRenderedTaskCount) {
-      this._renderedFilmsCount = FILM_COUNT_PER_STEP;
+      this._renderedFilmsCount = 0;
     } else {
       // На случай, если перерисовка доски вызвана
       // уменьшением количества задач (например, удаление или перенос в архив)
