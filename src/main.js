@@ -6,10 +6,11 @@ import Movies from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
 import Api from "./api.js";
-import {UpdateType} from "./const.js";
+// import ApiComments from "./api-comments.js";
+import {UpdateType, AUTHORIZATOIN, END_POINT} from "./const.js";
 
-const AUTHORIZATOIN = `Basic oimtcs2fdgf`;
-const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;
+// const AUTHORIZATOIN = `Basic oimtcs2fdgf`;
+// const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;
 const api = new Api(END_POINT, AUTHORIZATOIN);
 const filmsModel = new Movies();
 /* api.getFilms().then((films) => {

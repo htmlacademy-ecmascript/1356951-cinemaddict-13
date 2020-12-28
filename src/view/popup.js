@@ -3,11 +3,15 @@ import he from "he";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
-import {commentsCollection} from "../mock/film.js";
-import {UserActionMessage, UpdateType, UserAction} from "../const.js";
+// import {commentsCollection} from "../mock/film.js";
+import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
+import ApiComments from "../api-comments.js";
+
+
+const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
 const commentsModel = new Comments();
-commentsModel.setComments(commentsCollection);
+// commentsModel.setComments(commentsCollection);
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
@@ -201,6 +205,12 @@ export default class Popup extends SmartView {
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
     this._commentsModel = commentsModel;
+    // console.log(apiComments.getComments(this._data));
+    apiComments.getComments(this._data)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+      });
+    // console.log(this._commentsModel.getComments());
     this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);

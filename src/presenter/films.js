@@ -62,7 +62,6 @@ export default class Films {
     const films = this._filmsModel.getFilms().slice();
     // console.log(films);
     const filtredFilms = filter[filterType](films);
-    console.log(filtredFilms);
     // сортировка
     switch (this._currentSortType) {
       case SortType.DATE:
@@ -153,7 +152,6 @@ export default class Films {
   _renderFilmsList() {
     // отрисовка фильмов
     const filmCount = this._getFilms().length;
-    console.log(filmCount);
     const filmsToRender = this._getFilms().slice(0, Math.min(filmCount, FILM_COUNT_PER_STEP));
     this._renderFilms(filmsToRender);
     if (this._filmContainer.getElement().querySelector(`.films-list__show-more`) === null) {
@@ -284,7 +282,6 @@ export default class Films {
       render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
       this._renderFilmsList();
     }
-    console.log(this._getFilms());
   }
 
   _clearBoard({resetRenderedTaskCount = false, resetSortType = false} = {}) {

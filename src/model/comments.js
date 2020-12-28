@@ -44,4 +44,59 @@ export default class Comments extends Observer {
     }
     this._notify(updateType, update);
   }
+
+  static adaptToClient(comments) {
+    const adaptedComments = Object.assign(
+        {},
+        comments,
+        {
+          idMessage: comments.id,
+          text: comments.comments,
+          emoji: comments.emotion,
+          date: comments.date,
+          author: comments.author
+        });
+
+    delete comments.emotion;
+    delete comments.id;
+    delete comments.comments;
+
+    /* const arrayToObject = (arr) => {
+      let object = {};
+      for (let i = 0; i < arr.length; i++) {
+        object[i] = arr[i];
+      }
+      return object;
+    };*/
+    // const tyt = () => {
+    /* function toObject(arr) {
+        var rv = {};
+        for (var i = 0; i < arr.length; ++i)
+          rv[i] = arr[i];
+        return rv;
+      }
+    //  };*/
+    // const tyt = arrayToObject(adaptedComments);
+    return adaptedComments;
+  }
+
+  /* static adaptToServer(comments) {
+    const adaptedComments = Object.assign(
+        {},
+        comments,
+        {
+          id: comments.idMessage,
+          comments: comments.text,
+          emotion: comments.emoji,
+          date: comments.date,
+          author: comments.author
+        });
+
+    delete comments.idMessage;
+    delete comments.text;
+    delete comments.emoji;
+
+    return adaptedComments;
+  }*/
 }
+

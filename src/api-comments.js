@@ -1,4 +1,4 @@
-import FilmsModel from "./model/movies.js";
+import Comments from "./model/comments.js";
 
 const Method = {
   GET: `GET`,
@@ -9,27 +9,39 @@ const SuccessHTTPStatusRange = {
   MAX: 299
 };
 
-export default class Api {
+export default class ApiComments {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
   }
 
-  getFilms() {
-    return this._load({url: `/movies`})
-      .then(Api.toJSON)
-      .then((films) => films.map(FilmsModel.adaptToClient));
+  getComments(film) {
+    return this._load({url: `/comments/${film.id}`})
+      .then(ApiComments.toJSON)
+      // .then((comments) => comments.reduce(Comments.adaptToClient));
+      .then((comments) => comments.map(Comments.adaptToClient))
+      .then((comments) => {
+        let object = {};
+        for (let i = 0; i < comments.length; i++) {
+          object[i] = comments[i];
+        }
+        return object;
+      });
+    /* .then((comments) => comments.reduce(function (obj, item) {
+        obj[item.key] = item.value;
+        return obj;
+      }, {}));*/
   }
 
-  updateFilms(film) {
+  updateComments(film) {
     return this._load({
       url: `/movies/${film.id}`,
       method: Method.PUT,
-      body: JSON.stringify(FilmsModel.adaptToServer(film)),
+      body: JSON.stringify(Comments.adaptToServer(film)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON)
-      .then(FilmsModel.adaptToClient);
+      .then(ApiComments.toJSON)
+      .then(Comments.adaptToClient);
   }
 
   _load({
@@ -44,8 +56,8 @@ export default class Api {
         `${this._endPoint}${url}`,
         {method, body, headers}
     )
-      .then(Api.checkStatus)
-      .catch(Api.catchError);
+      .then(ApiComments.checkStatus)
+      .catch(ApiComments.catchError);
   }
 
   static checkStatus(response) {
@@ -67,3 +79,4 @@ export default class Api {
     throw err;
   }
 }
+
