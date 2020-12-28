@@ -3,14 +3,14 @@ import he from "he";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
-// import {commentsCollection} from "../mock/film.js";
+import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
-
+console.log(commentsCollection);
 
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
-const commentsModel = new Comments();
+// const commentsModel = new Comments();
 // commentsModel.setComments(commentsCollection);
 
 const createFilmDetails = (name, data) => {
@@ -100,6 +100,10 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     return activeClass;
   };
 
+  const commentsToRender = commentsX.length > 0 ?
+    comments.map((item) => createComment(commentsX[item])).join(` `) :
+    `Loading ...`;
+
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -160,8 +164,8 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-            ${comments.map((item) => createComment(commentsX[item])).join(` `)}
 
+            ${commentsToRender}
             </ul>
 
             <div class="film-details__new-comment">
@@ -204,12 +208,16 @@ export default class Popup extends SmartView {
     super();
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
-    this._commentsModel = commentsModel;
-    // console.log(apiComments.getComments(this._data));
+    this._commentsModel = new Comments();// commentsModel;
+    console.log(apiComments.getComments(this._data));
     apiComments.getComments(this._data)
       .then((comments) => {
+        console.log(comments);
         this._commentsModel.setComments(comments);
+        console.log(this._commentsModel.getComments());
+        this.updateElement();
       });
+    // .then(console.log(this._commentsModel.getComments())); // this.updateElement());
     // console.log(this._commentsModel.getComments());
     this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
