@@ -51,15 +51,15 @@ export default class Comments extends Observer {
         comments,
         {
           idMessage: comments.id,
-          text: comments.comments,
+          text: comments.comment,
           emoji: comments.emotion,
           date: comments.date,
           author: comments.author
         });
 
-    delete comments.emotion;
-    delete comments.id;
-    delete comments.comments;
+    delete adaptedComments.emotion;
+    delete adaptedComments.id;
+    delete adaptedComments.comment;
 
     /* const arrayToObject = (arr) => {
       let object = {};
@@ -77,6 +77,7 @@ export default class Comments extends Observer {
       }
     //  };*/
     // const tyt = arrayToObject(adaptedComments);
+    // console.log(adaptedComments);
     return adaptedComments;
   }
 

@@ -3,10 +3,10 @@ import he from "he";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
-import {commentsCollection} from "../mock/film.js";
+// import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
-console.log(commentsCollection);
+// console.log(commentsCollection);
 
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
@@ -209,14 +209,8 @@ export default class Popup extends SmartView {
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
     this._commentsModel = new Comments();// commentsModel;
-    console.log(apiComments.getComments(this._data));
-    apiComments.getComments(this._data)
-      .then((comments) => {
-        console.log(comments);
-        this._commentsModel.setComments(comments);
-        console.log(this._commentsModel.getComments());
-        this.updateElement();
-      });
+    // console.log(apiComments.getComments(this._data));
+    this._getComments();
     // .then(console.log(this._commentsModel.getComments())); // this.updateElement());
     // console.log(this._commentsModel.getComments());
     this.updateElement = this.updateElement.bind(this);
@@ -230,6 +224,18 @@ export default class Popup extends SmartView {
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this._setInnerHandlers();
   }
+  _getComments() {
+    apiComments.getComments(this._data)
+    .then((comments) => {
+      // console.log(comments);
+      this._commentsModel.setComments(comments);
+      // console.log(this._commentsModel.getComments());
+      // this.updateData(this._data);
+      // this.updateElement(this._data);
+      this.updateElement();
+    });
+  }
+
   _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
       case UserActionMessage.ADD_MESSAGE:
@@ -260,6 +266,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
+    // console.log(this._commentsModel.getComments());
     return createPopupTemplate(this._data, this._commentsModel.getComments());
   }
 

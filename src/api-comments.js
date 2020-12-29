@@ -20,11 +20,13 @@ export default class ApiComments {
       .then(ApiComments.toJSON)
       // .then((comments) => comments.reduce(Comments.adaptToClient));
       .then((comments) => comments.map(Comments.adaptToClient))
-      .then((comments) => {
+      .then((commentsArr) => {
+        // console.log(commentsArr);
         let object = {};
-        for (let i = 0; i < comments.length; i++) {
-          object[i] = comments[i];
+        for (let i = 0; i < commentsArr.length; i++) {
+          object[commentsArr[i].idMessage] = commentsArr[i];
         }
+        // console.log(object);
         return object;
       });
     /* .then((comments) => comments.reduce(function (obj, item) {
