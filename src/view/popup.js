@@ -3,15 +3,15 @@ import he from "he";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
-// import {commentsCollection} from "../mock/film.js";
+import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
 // console.log(commentsCollection);
 
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
-// const commentsModel = new Comments();
-// commentsModel.setComments(commentsCollection);
+const commentsModel = new Comments();
+commentsModel.setComments(commentsCollection);
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
@@ -43,8 +43,9 @@ const createComment = ({text, emoji, date, author, idMessage}) => {
   const textX = dayAgo === 0 ? `today` : ` days ago`;
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
+  // `./images/emoji/smile.png`
     `<span class="film-details__comment-emoji">
-      <img src=${emoji} width="55" height="55" alt="emoji-smile">
+      <img src=./images/emoji/${emoji}.png width="55" height="55" alt="emoji-smile">
     </span>` :
     `<span class="film-details__comment-emoji">
     <img style="opacity: 0" width="55" height="55">
@@ -82,6 +83,7 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     emoji,
     text
   } = data;
+  // console.log(Object.keys(commentsX).length);
   const renderPlaceholder = (textMessage) => {
     const placeholder = textMessage ? `${data.text}` : ``;
     return placeholder;
@@ -99,8 +101,8 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
   };
-
-  const commentsToRender = commentsX.length > 0 ?
+  // commentsX.keys(obj).length === 0
+  const commentsToRender = Object.keys(commentsX).length > 0 ?
     comments.map((item) => createComment(commentsX[item])).join(` `) :
     `Loading ...`;
 
@@ -226,14 +228,14 @@ export default class Popup extends SmartView {
   }
   _getComments() {
     apiComments.getComments(this._data)
-    .then((comments) => {
-      // console.log(comments);
-      this._commentsModel.setComments(comments);
-      // console.log(this._commentsModel.getComments());
-      // this.updateData(this._data);
-      // this.updateElement(this._data);
-      this.updateElement();
-    });
+      .then((comments) => {
+        // console.log(comments);
+        this._commentsModel.setComments(comments);
+        // console.log(this._commentsModel.getComments());
+        // this.updateData(this._data);
+        // this.updateElement(this._data);
+        this.updateElement();
+      });
   }
 
   _handleViewActionComments(actionType, updateType, update) {
@@ -267,7 +269,7 @@ export default class Popup extends SmartView {
 
   getTemplate() {
     // console.log(this._commentsModel.getComments());
-    return createPopupTemplate(this._data, this._commentsModel.getComments());
+    return createPopupTemplate(this._data, this._commentsModel/* commentsModel*/.getComments());
   }
 
   restoreHandlers() {
