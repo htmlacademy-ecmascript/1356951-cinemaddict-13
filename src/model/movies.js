@@ -93,7 +93,9 @@ export default class Movies extends Observer {
           releaseDate: new Date(film.film_info.release.date),
           releaseCountry: film.film_info.release.release_country,
           writers: film.film_info.writers,
-          year: new Date(film.film_info.release.date)
+          year: new Date(film.film_info.release.date),
+          ageRating: film.film_info.age_rating
+
           // dayjs(film.film_info.release.date).format(`YYYY`)
         }
     );
@@ -120,7 +122,7 @@ export default class Movies extends Observer {
           },
           "film_info": {
             "actors": film.actors,
-            "age_rating": film.rating,
+            "age_rating": film.ageRating,
             "alternative_title": film.altFilmName,
             "description": film.description,
             "director": film.director,

@@ -81,9 +81,10 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     isInHistory,
     isInWatchlist,
     emoji,
-    text
+    text,
+    altFilmName,
+    ageRating
   } = data;
-  // console.log(Object.keys(commentsX).length);
   const renderPlaceholder = (textMessage) => {
     const placeholder = textMessage ? `${data.text}` : ``;
     return placeholder;
@@ -95,6 +96,12 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
       return emojiY;
     }
     return ``;
+  };
+
+  const getTimeFromMins = (mins) => {
+    let hours = Math.trunc(mins / 60);
+    let minutes = (mins % 60) < 10 ? `0` + `${(mins % 60)}` : mins % 60;
+    return hours + `h. ` + minutes + `m.`;
   };
 
   const getActiveClass = (param) => {
@@ -117,14 +124,14 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
             <div class="film-details__poster">
               <img class="film-details__poster-img" src=${poster} alt="">
 
-              <p class="film-details__age">18+</p>
+              <p class="film-details__age">${ageRating}+</p>
             </div>
 
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${filmName}</h3>
-                  <p class="film-details__title-original">Original: ${filmName}</p>
+                  <p class="film-details__title-original">Original: ${altFilmName}</p>
                 </div>
 
                 <div class="film-details__rating">
@@ -137,7 +144,7 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
               ${createFilmDetails(`Writers`, writers)}
               ${createFilmDetails(`Actors`, actors)}
               ${createFilmDetails(`Release Date`, releaseDate)}
-              ${createFilmDetails(`Runtime`, duration)}
+              ${createFilmDetails(`Runtime`, getTimeFromMins(duration))}
               ${createFilmDetails(`Country`, country)}
               ${createFilmDetails(`Genres`, genre)}
 
