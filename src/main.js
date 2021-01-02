@@ -16,13 +16,7 @@ const filmsModel = new Movies();
 /* api.getFilms().then((films) => {
   console.log(films);
 });*/
-api.getFilms()
-  .then((films) => {
-    filmsModel.setFilms(UpdateType.INIT, films);
-  })
-  .catch(() => {
-    filmsModel.setFilms(UpdateType.INIT, []);
-  });
+
 // console.log(filmsModel);
 // console.log(api.getFilms().length);
 
@@ -34,7 +28,7 @@ api.getFilms()
 // console.log(tyt);
 // console.log(filmsModel.getFilms().length);
 const filterModel = new FilterModel();
-const filmsPresenter = new Films(filmsModel, filterModel);
+const filmsPresenter = new Films(filmsModel, filterModel, api);
 const headerElement = document.querySelector(`.header`);
 
 
@@ -43,9 +37,18 @@ const filterPresenter = new FilterPresenter(mainElement, filterModel, filmsModel
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 
-filterPresenter.init();
+// filterPresenter.init();
 filmsPresenter.init();
 
 /* const footer = document.querySelector(`footer`);
 const footerStat = footer.querySelector(`.footer__statistics`);
 render(footerStat, `${filmsModel.getFilms().length}`, RenderPosition.BEFOREEND);*/
+api.getFilms()
+  .then((films) => {
+    filterPresenter.init();
+    filmsModel.setFilms(UpdateType.INIT, films);
+  })
+  .catch(() => {
+    filterPresenter.init();
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });

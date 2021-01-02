@@ -19,9 +19,10 @@ const COMMENTED_CARD_FILM_QUANTITY = 2;
 const FILM_COUNT_PER_STEP = 5;
 
 export default class Films {
-  constructor(filmsModel = [], filterModel) {
+  constructor(filmsModel = [], filterModel, api) {
     this._filterModel = filterModel;
     this._filmsModel = filmsModel;
+    this._api = api;
     this._renderedFilmsCount = 0;
     this._sortComponent = null;// new Sort();
     this._filmContainer = new FilmContainer();
@@ -83,7 +84,9 @@ export default class Films {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilms(update).then((response) => {
+          this._filmsModel.updateFilm(updateType, response);
+        });
         break;
       case UserAction.ADD_FILM_COMMENT:
         this._filmsModel.addComment(updateType, update);

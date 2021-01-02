@@ -1,5 +1,4 @@
 import Observer from "../model/observer.js";
-// import dayjs from "dayjs";
 
 export default class Movies extends Observer {
   constructor() {
@@ -95,15 +94,10 @@ export default class Movies extends Observer {
           writers: film.film_info.writers,
           year: new Date(film.film_info.release.date),
           ageRating: film.film_info.age_rating
-
-          // dayjs(film.film_info.release.date).format(`YYYY`)
         }
     );
-    // delete adaptedFilm.comments;
     delete adaptedFilm.film_info;
-    // delete adaptedFilm.id;
     delete adaptedFilm.user_details;
-    // Ненужные ключи мы удаляем
     return adaptedFilm;
   }
 
@@ -134,14 +128,13 @@ export default class Movies extends Observer {
             },
             "runtime": film.duration,
             "title": film.filmName,
-            "total_rating": film.rating,
+            "total_rating": +film.rating,
             "writers": film.writers,
           },
         }
     );
 
     // Ненужные ключи мы удаляем
-    // delete adaptedFilm.comments;
     delete adaptedFilm.actors;
     delete adaptedFilm.country;
     delete adaptedFilm.description;
@@ -150,7 +143,6 @@ export default class Movies extends Observer {
     delete adaptedFilm.filmName;
     delete adaptedFilm.altFilmName;
     delete adaptedFilm.genre;
-    // delete adaptedFilm.id;
     delete adaptedFilm.isInFavorites;
     delete adaptedFilm.isInHistory;
     delete adaptedFilm.isInWatchlist;
@@ -161,7 +153,7 @@ export default class Movies extends Observer {
     delete adaptedFilm.releaseCountry;
     delete adaptedFilm.writers;
     delete adaptedFilm.year;
-
+    delete adaptedFilm.ageRating;
     return adaptedFilm;
   }
 }
