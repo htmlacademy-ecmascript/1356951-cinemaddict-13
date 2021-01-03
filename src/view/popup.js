@@ -6,7 +6,6 @@ import Comments from "../model/comments.js";
 import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
-// console.log(commentsCollection);
 
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
@@ -43,7 +42,6 @@ const createComment = ({text, emoji, date, author, idMessage}) => {
   const textX = dayAgo === 0 ? `today` : ` days ago`;
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
-  // `./images/emoji/smile.png`
     `<span class="film-details__comment-emoji">
       <img src=./images/emoji/${emoji}.png width="55" height="55" alt="emoji-smile">
     </span>` :
@@ -63,7 +61,7 @@ const createComment = ({text, emoji, date, author, idMessage}) => {
   </li>`;
 };
 
-const createPopupTemplate = (data = {}, commentsX = []) => {
+const createPopupTemplate = (data = {}, commentsAll = []) => {
   const {
     filmName,
     poster,
@@ -89,28 +87,21 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     const placeholder = textMessage ? `${data.text}` : ``;
     return placeholder;
   };
-  const renderEmogi = (emogiX) => {
-    if (emogiX !== undefined) {
-      const emojiY = emogiX ?
-        `<span><img src="${emogiX.src}" width="55" height="55" alt="${emogiX.id}"></span>` : ``;
+  const renderEmogi = (emotion) => {
+    if (emotion !== undefined) {
+      const emojiY = emotion ?
+        `<span><img src="./images/emoji/${emotion.src}.png" width="55" height="55" alt="${emotion.id}"></span>` : ``;
       return emojiY;
     }
     return ``;
-  };
-
-  const getTimeFromMins = (mins) => {
-    let hours = Math.trunc(mins / 60);
-    let minutes = (mins % 60) < 10 ? `0` + `${(mins % 60)}` : mins % 60;
-    return hours + `h. ` + minutes + `m.`;
   };
 
   const getActiveClass = (param) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
   };
-  // commentsX.keys(obj).length === 0
-  const commentsToRender = Object.keys(commentsX).length > 0 ?
-    comments.map((item) => createComment(commentsX[item])).join(` `) :
+  const commentsToRender = Object.keys(commentsAll).length > 0 ?
+    comments.map((item) => createComment(commentsAll[item])).join(` `) :
     `Loading ...`;
 
   return (
@@ -143,8 +134,8 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
               ${createFilmDetails(`Director`, director)}
               ${createFilmDetails(`Writers`, writers)}
               ${createFilmDetails(`Actors`, actors)}
-              ${createFilmDetails(`Release Date`, releaseDate)}
-              ${createFilmDetails(`Runtime`, getTimeFromMins(duration))}
+              ${createFilmDetails(`Release Date`, dayjs(releaseDate).format(`DD MMMM YYYY`))}
+              ${createFilmDetails(`Runtime`, dayjs(duration).format(`h`) + `h ` + dayjs(duration).format(`mm`) + `min`)}
               ${createFilmDetails(`Country`, country)}
               ${createFilmDetails(`Genres`, genre)}
 
@@ -218,10 +209,7 @@ export default class Popup extends SmartView {
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
     this._commentsModel = new Comments();// commentsModel;
-    // console.log(apiComments.getComments(this._data));
     this._getComments();
-    // .then(console.log(this._commentsModel.getComments())); // this.updateElement());
-    // console.log(this._commentsModel.getComments());
     this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -236,11 +224,7 @@ export default class Popup extends SmartView {
   _getComments() {
     apiComments.getComments(this._data)
       .then((comments) => {
-        // console.log(comments);
         this._commentsModel.setComments(comments);
-        // console.log(this._commentsModel.getComments());
-        // this.updateData(this._data);
-        // this.updateElement(this._data);
         this.updateElement();
       });
   }
@@ -255,9 +239,6 @@ export default class Popup extends SmartView {
         break;
     }
     // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
   }
 
   _handleViewActionFilm(actionType, updateType, update) {
@@ -275,8 +256,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    // console.log(this._commentsModel.getComments());
-    return createPopupTemplate(this._data, this._commentsModel/* commentsModel*/.getComments());
+    return createPopupTemplate(this._data, this._commentsModel.getComments());
   }
 
   restoreHandlers() {
@@ -345,7 +325,8 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     this.updateData({
       emoji: {
-        src: evt.target.src,
+        // если есть вариант проще и красивее, то не держи в себе
+        src: evt.target.getAttribute(`src`).slice(0, -4).replace(`./images/emoji/`, ``),
         id: evt.target.parentNode.getAttribute(`for`)
       }
     }
@@ -354,7 +335,6 @@ export default class Popup extends SmartView {
 
   _onDeleteMessageClick(evt) {
     evt.preventDefault();
-    // this._commentsModel.deleteComment(updateType, update); пока оставлю эту строку , чтобы вспомнить про удаление
     const index = this._data.comments.findIndex((comment) => comment === evt.target.id);
     const updateComments = [
       ...this._data.comments.slice(0, index),
