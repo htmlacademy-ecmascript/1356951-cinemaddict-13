@@ -1,18 +1,20 @@
-import {getRandomInteger, render, RenderPosition} from "./utils.js";
-import {createfilm} from "./mock/film.js";
+import {render, RenderPosition} from "./utils.js";
+// import {createfilm} from "./mock/film.js";
 import User from "./view/user.js";
 import Films from "./presenter/films.js";
 import Movies from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
+import Api from "./api.js";
+// import ApiComments from "./api-comments.js";
+import {UpdateType, AUTHORIZATOIN, END_POINT} from "./const.js";
 
 
-const filmsQuantity = getRandomInteger(0, 20);
-const films = new Array(filmsQuantity).fill().map(createfilm);
+const api = new Api(END_POINT, AUTHORIZATOIN);
 const filmsModel = new Movies();
-filmsModel.setFilms(films);
+
 const filterModel = new FilterModel();
-const filmsPresenter = new Films(filmsModel, filterModel);
+const filmsPresenter = new Films(filmsModel, filterModel, api);
 const headerElement = document.querySelector(`.header`);
 
 
@@ -21,9 +23,16 @@ const filterPresenter = new FilterPresenter(mainElement, filterModel, filmsModel
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 
-filterPresenter.init();
+// сл строку надо убрать(она не нужна), но тогда линтер будет ругать, оставлю это на попозже
 filmsPresenter.init();
 
-const footer = document.querySelector(`footer`);
-const footerStat = footer.querySelector(`.footer__statistics`);
-render(footerStat, `${filmsQuantity}`, RenderPosition.BEFOREEND);
+
+api.getFilms()
+  .then((films) => {
+    filterPresenter.init();
+    filmsModel.setFilms(UpdateType.INIT, films);
+  })
+  .catch(() => {
+    filterPresenter.init();
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });

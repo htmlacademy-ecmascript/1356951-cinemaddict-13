@@ -5,8 +5,9 @@ export default class Movies extends Observer {
     super();
     this._films = [];
   }
-  setFilms(films) {
+  setFilms(updateType, films) {
     this._films = films.slice();
+    this._notify(updateType);
   }
 
   getFilms() {
@@ -65,5 +66,94 @@ export default class Movies extends Observer {
       throw new Error(`Can't find an unexisting film`);
     }
     return this._films[index];
+  }
+
+  static adaptToClient(film) {
+    const adaptedFilm = Object.assign(
+        {},
+        film,
+        {
+          comments: film.comments,
+          actors: film.film_info.actors,
+          country: film.film_info.release.release_country,
+          description: film.film_info.description,
+          director: film.film_info.director,
+          duration: film.film_info.runtime,
+          filmName: film.film_info.title,
+          altFilmName: film.film_info.alternative_title,
+          genre: film.film_info.genre,
+          id: film.id,
+          isInFavorites: film.user_details.favorite,
+          isInHistory: film.user_details.already_watched,
+          isInWatchlist: film.user_details.watchlist,
+          watchingDate: film.user_details.watching_date,
+          poster: film.film_info.poster,
+          rating: film.film_info.total_rating.toString(),
+          releaseDate: new Date(film.film_info.release.date),
+          releaseCountry: film.film_info.release.release_country,
+          writers: film.film_info.writers,
+          year: new Date(film.film_info.release.date),
+          ageRating: film.film_info.age_rating
+        }
+    );
+    delete adaptedFilm.film_info;
+    delete adaptedFilm.user_details;
+    return adaptedFilm;
+  }
+
+  static adaptToServer(film) {
+    const adaptedFilm = Object.assign(
+        {},
+        film,
+        {
+          "comments": film.comments,
+          "id": film.id,
+          "user_details": {
+            "watchlist": film.isInWatchlist,
+            "already_watched": film.isInHistory,
+            "watching_date": film.watchingDate,
+            "favorite": film.isInFavorites,
+          },
+          "film_info": {
+            "actors": film.actors,
+            "age_rating": film.ageRating,
+            "alternative_title": film.altFilmName,
+            "description": film.description,
+            "director": film.director,
+            "genre": film.genre,
+            "poster": film.poster,
+            "release": {
+              "date": film.releaseDate.toISOString(),
+              "release_country": film.releaseCountry
+            },
+            "runtime": film.duration,
+            "title": film.filmName,
+            "total_rating": +film.rating,
+            "writers": film.writers,
+          },
+        }
+    );
+
+    // Ненужные ключи мы удаляем
+    delete adaptedFilm.actors;
+    delete adaptedFilm.country;
+    delete adaptedFilm.description;
+    delete adaptedFilm.director;
+    delete adaptedFilm.duration;
+    delete adaptedFilm.filmName;
+    delete adaptedFilm.altFilmName;
+    delete adaptedFilm.genre;
+    delete adaptedFilm.isInFavorites;
+    delete adaptedFilm.isInHistory;
+    delete adaptedFilm.isInWatchlist;
+    delete adaptedFilm.watchingDate;
+    delete adaptedFilm.poster;
+    delete adaptedFilm.rating;
+    delete adaptedFilm.releaseDate;
+    delete adaptedFilm.releaseCountry;
+    delete adaptedFilm.writers;
+    delete adaptedFilm.year;
+    delete adaptedFilm.ageRating;
+    return adaptedFilm;
   }
 }

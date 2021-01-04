@@ -25,7 +25,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const UserActionMessage = {
@@ -33,3 +34,6 @@ export const UserActionMessage = {
   ADD_MESSAGE: `ADD_MESSAGE`,
   DELETE_MESSAGE: `DELETE_MESSAGE`
 };
+
+export const AUTHORIZATOIN = `Basic oimtcs2fdgf`;
+export const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;

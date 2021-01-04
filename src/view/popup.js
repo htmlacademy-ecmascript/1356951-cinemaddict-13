@@ -4,7 +4,10 @@ import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
 import {commentsCollection} from "../mock/film.js";
-import {UserActionMessage, UpdateType, UserAction} from "../const.js";
+import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
+import ApiComments from "../api-comments.js";
+
+const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
 const commentsModel = new Comments();
 commentsModel.setComments(commentsCollection);
@@ -40,7 +43,7 @@ const createComment = ({text, emoji, date, author, idMessage}) => {
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
     `<span class="film-details__comment-emoji">
-      <img src=${emoji} width="55" height="55" alt="emoji-smile">
+      <img src=./images/emoji/${emoji}.png width="55" height="55" alt="emoji-smile">
     </span>` :
     `<span class="film-details__comment-emoji">
     <img style="opacity: 0" width="55" height="55">
@@ -58,7 +61,7 @@ const createComment = ({text, emoji, date, author, idMessage}) => {
   </li>`;
 };
 
-const createPopupTemplate = (data = {}, commentsX = []) => {
+const createPopupTemplate = (data = {}, commentsAll = []) => {
   const {
     filmName,
     poster,
@@ -76,16 +79,18 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     isInHistory,
     isInWatchlist,
     emoji,
-    text
+    text,
+    altFilmName,
+    ageRating
   } = data;
   const renderPlaceholder = (textMessage) => {
     const placeholder = textMessage ? `${data.text}` : ``;
     return placeholder;
   };
-  const renderEmogi = (emogiX) => {
-    if (emogiX !== undefined) {
-      const emojiY = emogiX ?
-        `<span><img src="${emogiX.src}" width="55" height="55" alt="${emogiX.id}"></span>` : ``;
+  const renderEmogi = (emotion) => {
+    if (emotion !== undefined) {
+      const emojiY = emotion ?
+        `<span><img src="./images/emoji/${emotion.src}.png" width="55" height="55" alt="${emotion.id}"></span>` : ``;
       return emojiY;
     }
     return ``;
@@ -95,6 +100,9 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
   };
+  const commentsToRender = Object.keys(commentsAll).length > 0 ?
+    comments.map((item) => createComment(commentsAll[item])).join(` `) :
+    `Loading ...`;
 
   return (
     `<section class="film-details">
@@ -107,14 +115,14 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
             <div class="film-details__poster">
               <img class="film-details__poster-img" src=${poster} alt="">
 
-              <p class="film-details__age">18+</p>
+              <p class="film-details__age">${ageRating}+</p>
             </div>
 
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${filmName}</h3>
-                  <p class="film-details__title-original">Original: ${filmName}</p>
+                  <p class="film-details__title-original">Original: ${altFilmName}</p>
                 </div>
 
                 <div class="film-details__rating">
@@ -126,8 +134,8 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
               ${createFilmDetails(`Director`, director)}
               ${createFilmDetails(`Writers`, writers)}
               ${createFilmDetails(`Actors`, actors)}
-              ${createFilmDetails(`Release Date`, releaseDate)}
-              ${createFilmDetails(`Runtime`, duration)}
+              ${createFilmDetails(`Release Date`, dayjs(releaseDate).format(`DD MMMM YYYY`))}
+              ${createFilmDetails(`Runtime`, dayjs(duration).format(`h`) + `h ` + dayjs(duration).format(`mm`) + `min`)}
               ${createFilmDetails(`Country`, country)}
               ${createFilmDetails(`Genres`, genre)}
 
@@ -156,8 +164,8 @@ const createPopupTemplate = (data = {}, commentsX = []) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-            ${comments.map((item) => createComment(commentsX[item])).join(` `)}
 
+            ${commentsToRender}
             </ul>
 
             <div class="film-details__new-comment">
@@ -200,7 +208,8 @@ export default class Popup extends SmartView {
     super();
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
-    this._commentsModel = commentsModel;
+    this._commentsModel = new Comments();// commentsModel;
+    this._getComments();
     this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -212,6 +221,14 @@ export default class Popup extends SmartView {
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this._setInnerHandlers();
   }
+  _getComments() {
+    apiComments.getComments(this._data)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+        this.updateElement();
+      });
+  }
+
   _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
       case UserActionMessage.ADD_MESSAGE:
@@ -222,9 +239,6 @@ export default class Popup extends SmartView {
         break;
     }
     // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
   }
 
   _handleViewActionFilm(actionType, updateType, update) {
@@ -311,7 +325,8 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     this.updateData({
       emoji: {
-        src: evt.target.src,
+        // если есть вариант проще и красивее, то не держи в себе
+        src: evt.target.getAttribute(`src`).slice(0, -4).replace(`./images/emoji/`, ``),
         id: evt.target.parentNode.getAttribute(`for`)
       }
     }
@@ -320,7 +335,6 @@ export default class Popup extends SmartView {
 
   _onDeleteMessageClick(evt) {
     evt.preventDefault();
-    // this._commentsModel.deleteComment(updateType, update); пока оставлю эту строку , чтобы вспомнить про удаление
     const index = this._data.comments.findIndex((comment) => comment === evt.target.id);
     const updateComments = [
       ...this._data.comments.slice(0, index),
