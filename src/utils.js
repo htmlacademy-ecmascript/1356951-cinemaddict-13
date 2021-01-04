@@ -112,3 +112,9 @@ export const sortRating = (filmA, filmB) => {
   }
   return filmB.rating - filmA.rating;
 };
+
+export const getTimeFromMins = (mins) => {
+  let hours = Math.trunc(mins / 60);
+  let minutes = (mins % 60) < 10 ? `0` + `${(mins % 60)}` : mins % 60;
+  return hours + `h ` + minutes + `m`;
+};
