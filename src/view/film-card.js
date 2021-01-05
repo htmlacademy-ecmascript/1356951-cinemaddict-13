@@ -1,4 +1,5 @@
 import Abstract from "../view/abstract.js";
+import {getTimeFromMins} from "../utils.js";
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -25,11 +26,11 @@ const createFilmCardTemplate = (film) => {
     return onlyYear;
   };
 
-  const getTimeFromMins = (mins) => {
+  /* const getTimeFromMins = (mins) => {
     let hours = Math.trunc(mins / 60);
     let minutes = (mins % 60) < 10 ? `0` + `${(mins % 60)}` : mins % 60;
     return hours + `h. ` + minutes + `m.`;
-  };
+  };*/
 
   const getDescription = () => {
     const totalDescription = description.length > 140 ?

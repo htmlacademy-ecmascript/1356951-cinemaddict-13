@@ -6,7 +6,10 @@ import Comments from "../model/comments.js";
 import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
+import {getTimeFromMins} from "../utils.js";
+import relativeTime from "dayjs/plugin/relativeTime";
 
+dayjs.extend(relativeTime);
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
 const commentsModel = new Comments();
@@ -37,9 +40,10 @@ const createFilmDetails = (name, data) => {
 };
 
 const createComment = ({text, emoji, date, author, idMessage}) => {
-  const today = dayjs();
-  const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
-  const textX = dayAgo === 0 ? `today` : ` days ago`;
+  // const today = dayjs();
+  // const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
+  // const textX = dayAgo === 0 ? `today` : ` ago`;
+  // console.log(dayjs(date).toNow(true));
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
     `<span class="film-details__comment-emoji">
@@ -54,7 +58,7 @@ const createComment = ({text, emoji, date, author, idMessage}) => {
       <p class="film-details__comment-text">${he.encode(textMessage)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${dayAgo}${textX}</span>
+        <span class="film-details__comment-day">${dayjs(date).toNow(true)} ago</span>
         <button id="${idMessage}" class="film-details__comment-delete">Delete</button>
       </p>
     </div>
@@ -135,7 +139,7 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
               ${createFilmDetails(`Writers`, writers)}
               ${createFilmDetails(`Actors`, actors)}
               ${createFilmDetails(`Release Date`, dayjs(releaseDate).format(`DD MMMM YYYY`))}
-              ${createFilmDetails(`Runtime`, dayjs(duration).format(`h`) + `h ` + dayjs(duration).format(`mm`) + `min`)}
+              ${createFilmDetails(`Runtime`, getTimeFromMins(duration))}
               ${createFilmDetails(`Country`, country)}
               ${createFilmDetails(`Genres`, genre)}
 
@@ -296,7 +300,7 @@ export default class Popup extends SmartView {
         text,
         emoji,
         date: dayjs(),
-        daysAgo: 7, // date.getTime() / 86400000,
+        daysAgo: 7, // date.getTime() / 86400000, /*eslint-disable */
         author: `anon`
       };
 
