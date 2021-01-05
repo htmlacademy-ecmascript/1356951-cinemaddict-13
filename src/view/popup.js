@@ -7,10 +7,8 @@ import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
 import {getTimeFromMins} from "../utils.js";
+import relativeTime from "dayjs/plugin/relativeTime";
 
-/*eslint-disable */
-const relativeTime = require(`dayjs/plugin/relativeTime`);
- /*eslint-disable */
 dayjs.extend(relativeTime);
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
@@ -44,7 +42,7 @@ const createFilmDetails = (name, data) => {
 const createComment = ({text, emoji, date, author, idMessage}) => {
   // const today = dayjs();
   // const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
-  //const textX = dayAgo === 0 ? `today` : ` ago`;
+  // const textX = dayAgo === 0 ? `today` : ` ago`;
   console.log(dayjs(date).toNow(true));
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
