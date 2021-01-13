@@ -17,7 +17,9 @@ const createMenuTemplate = (filters, currentFilterType) => {
       <div class="main-navigation__items">
         ${filterItemsTemplate}
         </div>
-      <a href="#stats" class="main-navigation__additional">Stats</a>
+      <a href="#stats" class="main-navigation__additional ${currentFilterType === `stat` ?
+      `main-navigation__additional--active` :
+      ``}">Stats</a>
     </nav>`
   );
 };
@@ -33,6 +35,32 @@ export default class Menu extends Abstract {
 
   getTemplate() {
     return createMenuTemplate(this._filters, this._currentFilter);
+  }
+
+  /* updateClasses() {
+    const statisticCtx = document.querySelector(`.main-navigation__additional`);
+    statisticCtx.innerHtml = ``;
+    this._setChart(statisticCtx);
+
+  }*/
+  updateElement() {
+    let prevElement = this.getElement();
+    const scroll = prevElement.scrollTop;
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    newElement.scrollTop = scroll;
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    // throw new Error(`Abstract method not implemented: resetHandlers`);
+    this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.addEventListener(`click`, this._filterTypeChangeHandler));
+    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);
+    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._menuTypeChangeHandler);
   }
 
   setFilterTypeChangeHandler(callback) {
@@ -55,7 +83,10 @@ export default class Menu extends Abstract {
     } else {
       this.getElement().querySelector(`main-navigation__additional`).classList.remove(`.main-navigation__additional--active`);
     }*/
-
+    if (evt.target.firstChild.textContent.toLowerCase().slice(0, -1) === `stat`) {
+      this._currentFilter = `stat`;
+      this.updateElement();
+    }
     this._callback.sortClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 
