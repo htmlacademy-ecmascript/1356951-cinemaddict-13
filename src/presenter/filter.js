@@ -44,7 +44,7 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    console.log(filterType);
+    // console.log(filterType);
     this._menuTypeChangeHandler(filterType);
     if (filterType !== `stat`) {
       if (this._currentFilter === filterType) {
