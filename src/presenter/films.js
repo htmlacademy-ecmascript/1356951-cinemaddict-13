@@ -198,11 +198,21 @@ export default class Films {
     this._renderFooter();
   }
 
-  _renderFooter() {
+  updateFooter() {
+    console.log(this._filmsModel.getFilms().slice().length);
+    this._renderFooter(this._filmsModel.getFilms().slice().length);
+  }
+
+  _renderFooter(number) {
+    console.log(number);
     const footer = document.querySelector(`footer`);
     const footerStat = footer.querySelector(`.footer__statistics`);
-    // console.log(${this._getFilms().length});
-    render(footerStat, `${this._getFilms().length}`, RenderPosition.BEFOREEND);
+    footerStat.innerHTML = ``;
+    if (number) {
+      render(footerStat, `${number}`, RenderPosition.BEFOREEND);
+    } else {
+      render(footerStat, `${this._getFilms().length}`, RenderPosition.BEFOREEND);
+    }
   }
 
   _hadleFilmChange(updateFilm) {

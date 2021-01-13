@@ -81,6 +81,7 @@ const handleSiteMenuClick = (menuItem) => {
       filmsPresenter.hide();
       statComponent.updateElement();
       statComponent.show();
+      filmsPresenter.updateFooter();
       // Показать статистику
       break;
     default:
