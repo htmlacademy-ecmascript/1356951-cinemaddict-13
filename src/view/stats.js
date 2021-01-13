@@ -2,8 +2,9 @@ import Smart from "../view/smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
-// import {countWatchedFilmInDateRange} from "../utils/stats.js";
+import {countWatchedFilmInDateRange, countTotalDurationWatchedFilm} from "../utils/stats.js";
 
+const MINUTS_OF_HOUR = 60;
 
 const renderGenreChart = (statisticCtx/* , films*/) => {
   // график по датам
@@ -71,10 +72,17 @@ const renderGenreChart = (statisticCtx/* , films*/) => {
 };
 
 const createStatsTemplate = (data) => {
-  const {/* films, dateFrom, dateTo*/} = data;
-  // console.log(films);
-  const watchedFilmsCount = 22;// countWatchedFilmInDateRange(films, dateFrom, dateTo);
+  const {films, dateFrom, dateTo} = data;
+  // console.log(films, dateFrom, dateTo);
+  const watchedFilmsCount = films.length !== 0 ?
+    countWatchedFilmInDateRange(films, dateFrom, dateTo) :
+    `0`;
+  const totalDurationWatchedFilm = films.length !== 0 ?
+    countTotalDurationWatchedFilm(films, dateFrom, dateTo) :
+    `0`;
 
+  const hoursDurationWatchedFilm = Math.trunc(+totalDurationWatchedFilm / MINUTS_OF_HOUR);
+  const minutesDurationWatchedFilm = +totalDurationWatchedFilm % MINUTS_OF_HOUR;
   return (
     `<section class="statistic visually-hidden">
       <p class="statistic__rank">
@@ -109,7 +117,7 @@ const createStatsTemplate = (data) => {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${hoursDurationWatchedFilm} <span class="statistic__item-description">h</span> ${minutesDurationWatchedFilm} <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
@@ -141,7 +149,7 @@ export default class Stats extends Smart {
 
   getTemplate() {
     this._data = {
-      films: this._films,
+      films: this._films.getFilms().slice(),
       dateFrom: this._dateFrom,
       dateTo: this._dateTo
     };

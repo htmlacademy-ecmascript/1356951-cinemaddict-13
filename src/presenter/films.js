@@ -199,12 +199,10 @@ export default class Films {
   }
 
   updateFooter() {
-    console.log(this._filmsModel.getFilms().slice().length);
     this._renderFooter(this._filmsModel.getFilms().slice().length);
   }
 
   _renderFooter(number) {
-    console.log(number);
     const footer = document.querySelector(`footer`);
     const footerStat = footer.querySelector(`.footer__statistics`);
     footerStat.innerHTML = ``;
