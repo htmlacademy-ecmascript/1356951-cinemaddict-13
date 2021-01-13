@@ -29,6 +29,7 @@ export default class Filter {
     this._filterComponent = new FilterView(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
+
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
       return;
@@ -43,11 +44,19 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._currentFilter === filterType) {
-      return;
+    console.log(filterType);
+    this._menuTypeChangeHandler(filterType);
+    if (filterType !== `stat`) {
+      if (this._currentFilter === filterType) {
+        return;
+      }
+      this._filterModel.setFilter(UpdateType.MAJOR, filterType);
     }
+  }
 
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+  setMenuTypeChangeHandler(par) {
+    this._menuTypeChangeHandler = par;
+    this._filterComponent.setMenuClickHandler(this._menuTypeChangeHandler);
   }
 
   _getFilters() {

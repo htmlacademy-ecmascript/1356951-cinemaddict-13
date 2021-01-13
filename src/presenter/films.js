@@ -3,7 +3,7 @@ import Button from "../view/button.js";
 import FilmPresenter from "../presenter/film.js";
 import dayjs from "dayjs";
 import Sort from "../view/sort.js";
-import Stats from "../view/stats.js";
+// import Stats from "../view/stats.js";
 import FilmContainer from "../view/film-container.js";
 import FilmList from "../view/film-list.js";
 import FilmListTop from "../view/film-list-top.js";
@@ -218,6 +218,17 @@ export default class Films {
     }
   }
 
+  hide() {
+    this._filmContainer.hide();
+    this._sortComponent.hide();
+  }
+
+  show() {
+    this._filmContainer.show();
+    this._sortComponent.show();
+    this._handleSortTypeChange(`default`);
+  }
+
   _renderButton() {
     // отрисовка кнопки
     const filmCount = this._getFilms().length;
@@ -341,9 +352,9 @@ export default class Films {
     render(mainElement, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
-
-  _renderStat() {
+/*
+  renderStat() {
     // статистика
     render(mainElement, new Stats(), RenderPosition.BEFOREEND);
-  }
+  }*/
 }

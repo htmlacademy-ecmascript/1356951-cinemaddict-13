@@ -10,6 +10,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
 };
 const createMenuTemplate = (filters, currentFilterType) => {
+  console.log(filters, currentFilterType);
   const filterItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join(``);
   return (
     `<nav class="main-navigation">
@@ -26,8 +27,8 @@ export default class Menu extends Abstract {
     super();
     this._filters = filters;
     this._currentFilter = currentFilterType;
-
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._menuTypeChangeHandler = this._menuTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
@@ -37,10 +38,29 @@ export default class Menu extends Abstract {
   setFilterTypeChangeHandler(callback) {
     this._callback.sortClick = callback;
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.addEventListener(`click`, this._filterTypeChangeHandler));
+    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);
+  }
+
+  setMenuClickHandler(callback) {
+    this._callback.menuClick = callback;
+    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._menuTypeChangeHandler);
   }
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
+    console.log(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
+    /* if (evt.target.firstChild.textContent.toLowerCase().slice(0, -1) === `stat`) {
+      this.getElement().querySelector(`main-navigation__item--active`).classList.remove(`.main-navigation__item--active`);
+      this.getElement().querySelector(`main-navigation__additional`).classList.add(`.main-navigation__additional--active`);
+    } else {
+      this.getElement().querySelector(`main-navigation__additional`).classList.remove(`.main-navigation__additional--active`);
+    }*/
+
     this._callback.sortClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
+  }
+
+  _menuTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.menuClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 }

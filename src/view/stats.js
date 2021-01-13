@@ -1,8 +1,82 @@
 import Abstract from "../view/abstract.js";
+import Chart from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import dayjs from "dayjs";
+// import {countWatchedFilmInDateRange} from "../utils/stats.js";
 
-const createStatsTemplate = () => {
+
+const renderGenreChart = (statisticCtx/* , films*/) => {
+  // график по датам
+  const BAR_HEIGHT = 50;
+  // const statisticCtx = document.querySelector(`.statistic__chart`);
+  // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+  statisticCtx.height = BAR_HEIGHT * 5;
+  // const myChart =
+  return new Chart(statisticCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+      datasets: [{
+        data: [11, 8, 7, 4, 3],
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
+};
+
+const createStatsTemplate = (data) => {
+  const {films, dateFrom, dateTo} = data;
+  console.log(films);
+  const watchedFilmsCount = 22;// countWatchedFilmInDateRange(films, dateFrom, dateTo);
+
   return (
-    `<section class="statistic">
+    `<section class="statistic visually-hidden">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -31,7 +105,7 @@ const createStatsTemplate = () => {
       <ul class="statistic__text-list">
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+          <p class="statistic__item-text">${watchedFilmsCount}<span class="statistic__item-description">movies</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
@@ -53,9 +127,35 @@ const createStatsTemplate = () => {
 };
 
 export default class Stats extends Abstract {
+  constructor(films) {
+    super();
+    this._films = films;
+    this._dateFrom = dayjs().subtract(45, `year`).toDate();
+    this._dateTo = dayjs().toDate();
+    console.log(this._films);
+    this._genreChart = null;
+    // this._setChart();
+  }
 
   getTemplate() {
-    return createStatsTemplate();
+    this._data = {
+      films: this._films,
+      dateFrom: this._dateFrom,
+      dateTo: this._dateTo
+    };
+    return createStatsTemplate(this._data);
+  }
+
+  updateChart() {
+    const statisticCtx = document.querySelector(`.statistic__chart`);
+    statisticCtx.innerHtml = ``;
+    this._setChart(statisticCtx);
+
+  }
+
+  _setChart(statisticCtx) {
+    // const statisticCtx = document.querySelector(`.statistic__chart`);
+    renderGenreChart(statisticCtx, this._films.getFilms());
   }
 }
 

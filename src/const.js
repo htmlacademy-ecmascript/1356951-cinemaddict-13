@@ -14,6 +14,7 @@ export const FilterType = {
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
   FAVORITES: `favorites`
+  //  STAT: `stat`
 };
 
 export const UserAction = {
@@ -34,6 +35,14 @@ export const UserActionMessage = {
   ADD_MESSAGE: `ADD_MESSAGE`,
   DELETE_MESSAGE: `DELETE_MESSAGE`
 };
+
+/* export const MenuItem = {
+  ALL: `all movies`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`,
+  STATS: `stat`
+};*/
 
 export const AUTHORIZATOIN = `Basic oimtcs2fdgf`;
 export const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;

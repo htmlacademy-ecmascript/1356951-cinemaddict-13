@@ -8,6 +8,7 @@ import FilterPresenter from "./presenter/filter.js";
 import Api from "./api.js";
 // import ApiComments from "./api-comments.js";
 import {UpdateType, AUTHORIZATOIN, END_POINT} from "./const.js";
+import Stats from "./view/stats.js";
 
 
 const api = new Api(END_POINT, AUTHORIZATOIN);
@@ -24,15 +25,66 @@ const filterPresenter = new FilterPresenter(mainElement, filterModel, filmsModel
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 
 // сл строку надо убрать(она не нужна), но тогда линтер будет ругать, оставлю это на попозже
-filmsPresenter.init();
-
+// filmsPresenter.init();
+// console.log(filmsModel.getFilms().slice());
+const statComponent = new Stats(filmsModel);
+statComponent.hide();
 
 api.getFilms()
   .then((films) => {
     filterPresenter.init();
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, films);
+    // filmsPresenter.renderStat();
+    render(mainElement, statComponent, RenderPosition.BEFOREEND);
+
   })
   .catch(() => {
     filterPresenter.init();
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, []);
+    // filmsPresenter.renderStat();
+    render(mainElement, statComponent, RenderPosition.BEFOREEND);
   });
+
+const handleSiteMenuClick = (menuItem) => {
+
+  switch (menuItem) {
+    /* case MenuItem.ALL:
+      console.log(`all`);
+      // Скрыть статистику
+      // Показать доску
+      // boardPresenter.createTask(handleTaskNewFormClose);
+      // statComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = true;
+      break;
+    case MenuItem.WATCHLIST:
+      console.log(`WATCHLIST`);
+      // Показать доску
+      // Скрыть статистику
+      break;
+    case MenuItem.HISTORY:
+      console.log(`HISTORY`);
+      // Показать доску
+      // Скрыть статистику
+      break;
+    case MenuItem.FAVORITES:
+      console.log(`FAVORITES`);
+      // Показать доску
+      // Скрыть статистику
+      break;*/
+    case `stat`:
+      // Скрыть доску
+      filmsPresenter.hide();
+      statComponent.updateChart();
+      statComponent.show();
+      // Показать статистику
+      break;
+    default:
+      // filmsPresenter.init();
+      filmsPresenter.show();
+      statComponent.hide();
+  }
+};
+
+// setMenuClickHandler;
+// filterPresenter.setMenuClickHandler(handleSiteMenuClick);
