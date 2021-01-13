@@ -1,4 +1,4 @@
-import Abstract from "../view/abstract.js";
+import Smart from "../view/smart.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
@@ -10,7 +10,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
 };
 const createMenuTemplate = (filters, currentFilterType) => {
-  console.log(filters, currentFilterType);
+  // console.log(filters, currentFilterType);
   const filterItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join(``);
   return (
     `<nav class="main-navigation">
@@ -24,7 +24,7 @@ const createMenuTemplate = (filters, currentFilterType) => {
   );
 };
 
-export default class Menu extends Abstract {
+export default class Menu extends Smart {
   constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
@@ -37,27 +37,7 @@ export default class Menu extends Abstract {
     return createMenuTemplate(this._filters, this._currentFilter);
   }
 
-  /* updateClasses() {
-    const statisticCtx = document.querySelector(`.main-navigation__additional`);
-    statisticCtx.innerHtml = ``;
-    this._setChart(statisticCtx);
-
-  }*/
-  updateElement() {
-    let prevElement = this.getElement();
-    const scroll = prevElement.scrollTop;
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    newElement.scrollTop = scroll;
-    this.restoreHandlers();
-  }
-
   restoreHandlers() {
-    // throw new Error(`Abstract method not implemented: resetHandlers`);
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.addEventListener(`click`, this._filterTypeChangeHandler));
     this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);
     this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._menuTypeChangeHandler);
@@ -65,6 +45,7 @@ export default class Menu extends Abstract {
 
   setFilterTypeChangeHandler(callback) {
     this._callback.sortClick = callback;
+    // console.log(this._filterTypeChangeHandler);
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.addEventListener(`click`, this._filterTypeChangeHandler));
     this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);
   }
@@ -76,7 +57,7 @@ export default class Menu extends Abstract {
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
+    // console.log(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
     /* if (evt.target.firstChild.textContent.toLowerCase().slice(0, -1) === `stat`) {
       this.getElement().querySelector(`main-navigation__item--active`).classList.remove(`.main-navigation__item--active`);
       this.getElement().querySelector(`main-navigation__additional`).classList.add(`.main-navigation__additional--active`);

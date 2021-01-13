@@ -24,11 +24,14 @@ const filterPresenter = new FilterPresenter(mainElement, filterModel, filmsModel
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 
+
 // сл строку надо убрать(она не нужна), но тогда линтер будет ругать, оставлю это на попозже
 // filmsPresenter.init();
 // console.log(filmsModel.getFilms().slice());
 const statComponent = new Stats(filmsModel);
+statComponent.setPeriodTypeChangeHandler();
 statComponent.hide();
+
 
 api.getFilms()
   .then((films) => {
@@ -37,6 +40,7 @@ api.getFilms()
     filmsModel.setFilms(UpdateType.INIT, films);
     // filmsPresenter.renderStat();
     render(mainElement, statComponent, RenderPosition.BEFOREEND);
+    // statComponent.setPeriodTypeChangeHandler();
 
   })
   .catch(() => {
@@ -75,7 +79,7 @@ const handleSiteMenuClick = (menuItem) => {
     case `stat`:
       // Скрыть доску
       filmsPresenter.hide();
-      statComponent.updateChart();
+      statComponent.updateElement();
       statComponent.show();
       // Показать статистику
       break;

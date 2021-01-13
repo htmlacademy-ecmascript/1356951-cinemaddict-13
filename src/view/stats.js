@@ -1,4 +1,4 @@
-import Abstract from "../view/abstract.js";
+import Smart from "../view/smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
@@ -72,7 +72,7 @@ const renderGenreChart = (statisticCtx/* , films*/) => {
 
 const createStatsTemplate = (data) => {
   const {films, dateFrom, dateTo} = data;
-  console.log(films);
+  // console.log(films);
   const watchedFilmsCount = 22;// countWatchedFilmInDateRange(films, dateFrom, dateTo);
 
   return (
@@ -126,15 +126,17 @@ const createStatsTemplate = (data) => {
 
 };
 
-export default class Stats extends Abstract {
+export default class Stats extends Smart {
   constructor(films) {
     super();
     this._films = films;
     this._dateFrom = dayjs().subtract(45, `year`).toDate();
     this._dateTo = dayjs().toDate();
-    console.log(this._films);
+    // console.log(this._films);
     this._genreChart = null;
     // this._setChart();
+    //  this._period =
+    this._periodTypeChange = this._periodTypeChange.bind(this);
   }
 
   getTemplate() {
@@ -146,15 +148,31 @@ export default class Stats extends Abstract {
     return createStatsTemplate(this._data);
   }
 
+  restoreHandlers() {
+    this.updateChart();
+  }
+
+  setPeriodTypeChangeHandler() {
+    console.log(this.getElement().querySelectorAll(`label`));
+    console.log(this._periodTypeChange);
+    this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((periodItem) => periodItem.addEventListener(`click`, this._periodTypeChange));
+    // this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, this._periodTypeChange);
+  }
+
+  _periodTypeChange(evt) {
+    evt.preventDefault();
+
+    console.log(evt);
+
+  }
+
   updateChart() {
     const statisticCtx = document.querySelector(`.statistic__chart`);
-    statisticCtx.innerHtml = ``;
     this._setChart(statisticCtx);
 
   }
 
   _setChart(statisticCtx) {
-    // const statisticCtx = document.querySelector(`.statistic__chart`);
     renderGenreChart(statisticCtx, this._films.getFilms());
   }
 }
