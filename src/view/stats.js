@@ -161,7 +161,7 @@ export default class Stats extends Smart {
   }
 
   setPeriodTypeChangeHandler() {
-    // console.log(this.getElement().querySelectorAll(`label`));
+    console.log(this.getElement().querySelectorAll(`.statistic__filters-label`));
     // console.log(this._periodTypeChange);
     this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((periodItem) => periodItem.addEventListener(`click`, this._periodTypeChange));
     // this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, this._periodTypeChange);
@@ -170,7 +170,7 @@ export default class Stats extends Smart {
   _periodTypeChange(evt) {
     evt.preventDefault();
     // вот тут вывод в консоль не выводится при нажатии на периоды
-    // console.log(evt);
+    console.log(evt);
 
   }
 

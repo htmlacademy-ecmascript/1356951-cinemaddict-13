@@ -29,7 +29,7 @@ render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 // filmsPresenter.init();
 // console.log(filmsModel.getFilms().slice());
 const statComponent = new Stats(filmsModel);
-statComponent.setPeriodTypeChangeHandler();
+
 statComponent.hide();
 
 
@@ -80,6 +80,7 @@ const handleSiteMenuClick = (menuItem) => {
       // Скрыть доску
       filmsPresenter.hide();
       statComponent.updateElement();
+      statComponent.setPeriodTypeChangeHandler();
       statComponent.show();
       filmsPresenter.updateFooter();
       // Показать статистику
