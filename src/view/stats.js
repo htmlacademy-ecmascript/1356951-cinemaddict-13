@@ -2,7 +2,7 @@ import Smart from "../view/smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
-import {countWatchedFilmInDateRange, countTotalDurationWatchedFilm} from "../utils/stats.js";
+import {countWatchedFilmInDateRange, countTotalDurationWatchedFilm, getMostWatchedGenreFilm} from "../utils/stats.js";
 
 const MINUTS_OF_HOUR = 60;
 
@@ -80,7 +80,8 @@ const createStatsTemplate = (data) => {
   const totalDurationWatchedFilm = films.length !== 0 ?
     countTotalDurationWatchedFilm(films, dateFrom, dateTo) :
     `0`;
-
+  const genresCountArray = getMostWatchedGenreFilm(films, dateFrom, dateTo);
+  console.log(genresCountArray);
   const hoursDurationWatchedFilm = Math.trunc(+totalDurationWatchedFilm / MINUTS_OF_HOUR);
   const minutesDurationWatchedFilm = +totalDurationWatchedFilm % MINUTS_OF_HOUR;
   return (
@@ -121,7 +122,7 @@ const createStatsTemplate = (data) => {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">Sci-Fi</p>
+          <p class="statistic__item-text">${genresCountArray[0][0]}</p>
         </li>
       </ul>
 
@@ -161,7 +162,7 @@ export default class Stats extends Smart {
   }
 
   setPeriodTypeChangeHandler() {
-    console.log(this.getElement().querySelectorAll(`.statistic__filters-label`));
+    //  console.log(this.getElement().querySelectorAll(`.statistic__filters-label`));
     // console.log(this._periodTypeChange);
     this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((periodItem) => periodItem.addEventListener(`click`, this._periodTypeChange));
     // this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, this._periodTypeChange);
@@ -170,7 +171,7 @@ export default class Stats extends Smart {
   _periodTypeChange(evt) {
     evt.preventDefault();
     // вот тут вывод в консоль не выводится при нажатии на периоды
-    console.log(evt);
+    // console.log(evt);
 
   }
 
