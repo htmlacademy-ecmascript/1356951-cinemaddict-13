@@ -2,24 +2,30 @@ import Smart from "../view/smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
-import {countWatchedFilmInDateRange, countTotalDurationWatchedFilm, getMostWatchedGenreFilm} from "../utils/stats.js";
+import {getWatchedFilmInRangeDate, /* countWatchedFilmInDateRange, */countTotalDurationWatchedFilm, getMostWatchedGenreFilm} from "../utils/stats.js";
 
 const MINUTS_OF_HOUR = 60;
 
-const renderGenreChart = (statisticCtx/* , films*/) => {
+const renderGenreChart = (statisticCtx, genresCountArray) => {
+  const genres = genresCountArray.map((genre) => {
+    return genre[0];
+  });
+  const watchingCount = genresCountArray.map((genre) => {
+    return genre[1];
+  });
   // график по датам
   const BAR_HEIGHT = 50;
   // const statisticCtx = document.querySelector(`.statistic__chart`);
   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-  statisticCtx.height = BAR_HEIGHT * 5;
+  statisticCtx.height = BAR_HEIGHT * 8;
   // const myChart =
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+      labels: genres, // [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
       datasets: [{
-        data: [11, 8, 7, 4, 3],
+        data: watchingCount, // [11, 8, 7, 4, 3],
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -71,17 +77,22 @@ const renderGenreChart = (statisticCtx/* , films*/) => {
   });
 };
 
-const createStatsTemplate = (data) => {
-  const {films, dateFrom, dateTo} = data;
+const createStatsTemplate = (films, genresCountArray) => {
+  // const {films, dateFrom, dateTo} = data;
   // console.log(films, dateFrom, dateTo);
-  const watchedFilmsCount = films.length !== 0 ?
-    countWatchedFilmInDateRange(films, dateFrom, dateTo) :
+  const watchedFilmsCount = films !== `0` ?
+    films.length :// countWatchedFilmInDateRange(films, dateFrom, dateTo) :
     `0`;
-  const totalDurationWatchedFilm = films.length !== 0 ?
-    countTotalDurationWatchedFilm(films, dateFrom, dateTo) :
+  // console.log(watchedFilmsCount);
+  const totalDurationWatchedFilm = films !== `0` ?
+    countTotalDurationWatchedFilm(films) :
     `0`;
-  const genresCountArray = getMostWatchedGenreFilm(films, dateFrom, dateTo);
-  console.log(genresCountArray);
+  // console.log(totalDurationWatchedFilm);
+  // console.log(typeof genresCountArray);
+  const topGenre = typeof genresCountArray === `object` ?
+    genresCountArray[0][0] :
+    genresCountArray;
+  // console.log(genresCountArray);
   const hoursDurationWatchedFilm = Math.trunc(+totalDurationWatchedFilm / MINUTS_OF_HOUR);
   const minutesDurationWatchedFilm = +totalDurationWatchedFilm % MINUTS_OF_HOUR;
   return (
@@ -122,7 +133,7 @@ const createStatsTemplate = (data) => {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">${genresCountArray[0][0]}</p>
+          <p class="statistic__item-text">${topGenre}</p>
         </li>
       </ul>
 
@@ -141,7 +152,11 @@ export default class Stats extends Smart {
     this._films = films;
     this._dateFrom = dayjs().subtract(45, `year`).toDate();
     this._dateTo = dayjs().toDate();
-    // console.log(this._films);
+    this._data = {
+      films: this._films,
+      dateFrom: this._dateFrom,
+      dateTo: this._dateTo
+    };
     this._genreChart = null;
     // this._setChart();
     //  this._period =
@@ -149,12 +164,13 @@ export default class Stats extends Smart {
   }
 
   getTemplate() {
-    this._data = {
-      films: this._films.getFilms().slice(),
-      dateFrom: this._dateFrom,
-      dateTo: this._dateTo
-    };
-    return createStatsTemplate(this._data);
+    this._watchedFilmInRangeDate = this._data.films.getFilms().slice().length !== 0 ?
+      getWatchedFilmInRangeDate(this._data) :
+      `0`;
+    this._genresCountArray = getMostWatchedGenreFilm(this._watchedFilmInRangeDate);
+    // console.log(this._data.films.getFilms().slice());
+    // console.log(this._genresCountArray);
+    return createStatsTemplate(this._watchedFilmInRangeDate, this._genresCountArray);
   }
 
   restoreHandlers() {
@@ -182,7 +198,7 @@ export default class Stats extends Smart {
   }
 
   _setChart(statisticCtx) {
-    renderGenreChart(statisticCtx, this._films.getFilms());
+    renderGenreChart(statisticCtx, this._genresCountArray);
   }
 }
 

@@ -11,6 +11,7 @@ export default class Movies extends Observer {
   }
 
   getFilms() {
+    // console.log(this._films);
     return this._films;
   }
 
