@@ -3,6 +3,7 @@ import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
 import {getWatchedFilmInRangeDate, /* countWatchedFilmInDateRange, */countTotalDurationWatchedFilm, getMostWatchedGenreFilm} from "../utils/stats.js";
+import {startFromDate, period} from "../const.js";
 
 const MINUTS_OF_HOUR = 60;
 
@@ -77,26 +78,26 @@ const renderGenreChart = (statisticCtx, genresCountArray) => {
   });
 };
 
-const createStatsTemplate = (films, genresCountArray) => {
+const createStatsTemplate = (films, genresCountArray, currentPeriod) => {
   // const {films, dateFrom, dateTo} = data;
   // console.log(films, dateFrom, dateTo);
   const watchedFilmsCount = films !== `0` ?
     films.length :// countWatchedFilmInDateRange(films, dateFrom, dateTo) :
-    `0`;
+    films;
   // console.log(watchedFilmsCount);
   const totalDurationWatchedFilm = films !== `0` ?
     countTotalDurationWatchedFilm(films) :
-    `0`;
-  // console.log(totalDurationWatchedFilm);
-  // console.log(typeof genresCountArray);
-  const topGenre = typeof genresCountArray === `object` ?
+    films;
+  console.log(genresCountArray);
+  console.log(typeof genresCountArray);
+  const topGenre = typeof genresCountArray === `object` && genresCountArray.length !== 0 ?
     genresCountArray[0][0] :
-    genresCountArray;
+    `None`;
   // console.log(genresCountArray);
   const hoursDurationWatchedFilm = Math.trunc(+totalDurationWatchedFilm / MINUTS_OF_HOUR);
   const minutesDurationWatchedFilm = +totalDurationWatchedFilm % MINUTS_OF_HOUR;
   return (
-    `<section class="statistic visually-hidden">
+    `<section class="statistic">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -106,19 +107,34 @@ const createStatsTemplate = (films, genresCountArray) => {
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
         <p class="statistic__filters-description">Show stats:</p>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time"
+        ${currentPeriod === period.ALL_TIME ?
+      `checked` :
+      ``}>
         <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today"
+        ${currentPeriod === period.TODAY ?
+      `checked` :
+      ``}>
         <label for="statistic-today" class="statistic__filters-label">Today</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week"
+        ${currentPeriod === period.WEEK ?
+      `checked` :
+      ``}>
         <label for="statistic-week" class="statistic__filters-label">Week</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month"
+        ${currentPeriod === period.MONTH ?
+      `checked` :
+      ``}>
         <label for="statistic-month" class="statistic__filters-label">Month</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year"
+        ${currentPeriod === period.YEAR ?
+      `checked` :
+      ``}>
         <label for="statistic-year" class="statistic__filters-label">Year</label>
       </form>
 
@@ -150,13 +166,14 @@ export default class Stats extends Smart {
   constructor(films) {
     super();
     this._films = films;
-    this._dateFrom = dayjs().subtract(45, `year`).toDate();
-    this._dateTo = dayjs().toDate();
+    // this._dateFrom = dayjs().subtract(45, `year`).toDate();
+    // this._dateTo = dayjs().toDate();
     this._data = {
       films: this._films,
-      dateFrom: this._dateFrom,
-      dateTo: this._dateTo
+      dateFrom: dayjs().subtract(45, `year`).toDate(),
+      dateTo: dayjs().toDate()
     };
+    this._currentPeriod = period.ALL_TIME;
     this._genreChart = null;
     // this._setChart();
     //  this._period =
@@ -164,17 +181,19 @@ export default class Stats extends Smart {
   }
 
   getTemplate() {
+    console.log(this._data.dateFrom);
     this._watchedFilmInRangeDate = this._data.films.getFilms().slice().length !== 0 ?
       getWatchedFilmInRangeDate(this._data) :
       `0`;
     this._genresCountArray = getMostWatchedGenreFilm(this._watchedFilmInRangeDate);
     // console.log(this._data.films.getFilms().slice());
     // console.log(this._genresCountArray);
-    return createStatsTemplate(this._watchedFilmInRangeDate, this._genresCountArray);
+    return createStatsTemplate(this._watchedFilmInRangeDate, this._genresCountArray, this._currentPeriod);
   }
 
   restoreHandlers() {
     this.updateChart();
+    this.setPeriodTypeChangeHandler();
   }
 
   setPeriodTypeChangeHandler() {
@@ -187,7 +206,21 @@ export default class Stats extends Smart {
   _periodTypeChange(evt) {
     evt.preventDefault();
     // вот тут вывод в консоль не выводится при нажатии на периоды
-    // console.log(evt);
+    // evt.checked(true);
+    this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((periodItem) => periodItem.removeEventListener(`click`, this._periodTypeChange));
+    this._currentPeriod = evt.target.htmlFor;
+    console.log(this._currentPeriod);
+    // this.getElement().querySelector(`input[id=${evt.target.htmlFor}]`).setAttribute(`checked`, `checked`);
+    console.log(this._data.dateFrom);
+    // this._dateFrom = startFromDate.get(evt.target.htmlFor);
+
+    this.updateData({
+      dateFrom: startFromDate.get(evt.target.htmlFor)
+    });
+    console.log(this._data.dateFrom);
+    // this._dateTo = dayjs().toDate();
+    // this.updateElement();
+    // console.log(evt.target.htmlFor);
 
   }
 

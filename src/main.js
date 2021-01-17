@@ -30,7 +30,7 @@ render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 // console.log(filmsModel.getFilms().slice());
 const statComponent = new Stats(filmsModel);
 
-statComponent.hide();
+// statComponent.hide();
 
 
 api.getFilms()
@@ -40,6 +40,7 @@ api.getFilms()
     filmsModel.setFilms(UpdateType.INIT, films);
     // filmsPresenter.renderStat();
     render(mainElement, statComponent, RenderPosition.BEFOREEND);
+    statComponent.hide();
     // statComponent.setPeriodTypeChangeHandler();
 
   })
@@ -49,6 +50,7 @@ api.getFilms()
     filmsModel.setFilms(UpdateType.INIT, []);
     // filmsPresenter.renderStat();
     render(mainElement, statComponent, RenderPosition.BEFOREEND);
+    statComponent.hide();
   });
 
 const handleSiteMenuClick = (menuItem) => {

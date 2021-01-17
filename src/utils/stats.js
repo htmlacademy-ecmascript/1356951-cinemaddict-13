@@ -47,11 +47,14 @@ export const getWatchedFilmInRangeDate = (data) => {
         dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
         dayjs(film.watchingDate).isSame(dateTo)
       ) {
+        // console.log(dayjs(film.watchingDate));
+        // console.log(dateFrom);
         return true;
       }
     }
     return false;
   });
+  // console.log(watchedFilms);
   return watchedFilms;
 };
 

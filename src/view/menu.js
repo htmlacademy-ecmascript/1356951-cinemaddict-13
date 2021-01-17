@@ -73,6 +73,7 @@ export default class Menu extends Smart {
 
   _menuTypeChangeHandler(evt) {
     evt.preventDefault();
+    // this.getElement().querySelector(`.main-navigation__additional`).removeEventListener(`click`, this._menuTypeChangeHandler);
     this._callback.menuClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 }
