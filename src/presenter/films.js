@@ -82,7 +82,7 @@ export default class Films {
           this._filmsModel.updateFilm(updateType, response);
         });
         break;
-      case UserAction.ADD_FILM_COMMENT:
+      case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);
         break;
     }

@@ -20,8 +20,8 @@ export const FilterType = {
 
 export const UserAction = {
   UPDATE_FILM: `UPDATE_FILM`,
-  ADD_MESSAGE: `ADD_MESSAGE`,
-  DELETE_MESSAGE: `DELETE_MESSAGE`
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
 };
 
 export const UpdateType = {

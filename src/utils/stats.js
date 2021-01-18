@@ -23,9 +23,9 @@ export const getWatchedFilmInRangeDate = (data) => {
       return false;
     } else {
       if (
-        dayjs(film.watchingDate).isSame(dateFrom) ||
+        dayjs(film.watchingDate).isSame(dateFrom, `day`) ||
         dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
-        dayjs(film.watchingDate).isSame(dateTo)
+        dayjs(film.watchingDate).isSame(dateTo, `day`)
       ) {
         return true;
       }
