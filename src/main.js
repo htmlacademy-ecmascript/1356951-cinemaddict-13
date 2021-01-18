@@ -27,28 +27,20 @@ render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 
 // сл строку надо убрать(она не нужна), но тогда линтер будет ругать, оставлю это на попозже
 // filmsPresenter.init();
-// console.log(filmsModel.getFilms().slice());
 const statComponent = new Stats(filmsModel);
-
-// statComponent.hide();
-
 
 api.getFilms()
   .then((films) => {
     filterPresenter.init();
     filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, films);
-    // filmsPresenter.renderStat();
     render(mainElement, statComponent, RenderPosition.BEFOREEND);
     statComponent.hide();
-    // statComponent.setPeriodTypeChangeHandler();
-
   })
   .catch(() => {
     filterPresenter.init();
     filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, []);
-    // filmsPresenter.renderStat();
     render(mainElement, statComponent, RenderPosition.BEFOREEND);
     statComponent.hide();
   });
@@ -56,43 +48,16 @@ api.getFilms()
 const handleSiteMenuClick = (menuItem) => {
 
   switch (menuItem) {
-    /* case MenuItem.ALL:
-      console.log(`all`);
-      // Скрыть статистику
-      // Показать доску
-      // boardPresenter.createTask(handleTaskNewFormClose);
-      // statComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = true;
-      break;
-    case MenuItem.WATCHLIST:
-      console.log(`WATCHLIST`);
-      // Показать доску
-      // Скрыть статистику
-      break;
-    case MenuItem.HISTORY:
-      console.log(`HISTORY`);
-      // Показать доску
-      // Скрыть статистику
-      break;
-    case MenuItem.FAVORITES:
-      console.log(`FAVORITES`);
-      // Показать доску
-      // Скрыть статистику
-      break;*/
     case `stat`:
       // Скрыть доску
       filmsPresenter.hide();
       statComponent.updateElement();
       statComponent.setPeriodTypeChangeHandler();
-      statComponent.show();
       filmsPresenter.updateFooter();
       // Показать статистику
       break;
     default:
-      // filmsPresenter.init();
       filmsPresenter.show();
       statComponent.hide();
   }
 };
-
-// setMenuClickHandler;
-// filterPresenter.setMenuClickHandler(handleSiteMenuClick);

@@ -3,26 +3,6 @@ import isBetween from "dayjs/plugin/isBetween";
 
 dayjs.extend(isBetween);
 
-export const countWatchedFilmInDateRange = (films, dateFrom, dateTo) => {
-  return films.reduce((counter, film) => {
-    if (film.watchingDate === null) {
-      return counter;
-    }
-
-    // С помощью day.js проверям, сколько задач с дедлайном
-    // попадают в диапазон дат
-    if (
-      dayjs(film.watchingDate).isSame(dateFrom) ||
-      dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
-      dayjs(film.watchingDate).isSame(dateTo)
-    ) {
-      return counter + 1;
-    }
-
-    return counter;
-  }, 0);
-};
-
 export const countTotalDurationWatchedFilm = (films) => {
   let counter = 0;
   for (let i = 0; i < films.length; i++) {
@@ -47,14 +27,11 @@ export const getWatchedFilmInRangeDate = (data) => {
         dayjs(film.watchingDate).isBetween(dateFrom, dateTo) ||
         dayjs(film.watchingDate).isSame(dateTo)
       ) {
-        // console.log(dayjs(film.watchingDate));
-        // console.log(dateFrom);
         return true;
       }
     }
     return false;
   });
-  // console.log(watchedFilms);
   return watchedFilms;
 };
 
@@ -75,7 +52,6 @@ export const getMostWatchedGenreFilm = (watchedFilms) => {
       let count = 0;
       genresCountArray.push([]);
       genresCountArray[i].push(genres[i]);
-      // genresCountArray[i].push(0);
       watchedFilms.forEach((film) => {
         film.genre.forEach((genre) => {
           if (genre.includes(genres[i])) {

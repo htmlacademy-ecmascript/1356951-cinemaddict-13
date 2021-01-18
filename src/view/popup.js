@@ -40,10 +40,6 @@ const createFilmDetails = (name, data) => {
 };
 
 const createComment = ({text, emoji, date, author, idMessage}) => {
-  // const today = dayjs();
-  // const dayAgo = today.diff(date, `day`) === 0 ? `` : today.diff(date, `day`);
-  // const textX = dayAgo === 0 ? `today` : ` ago`;
-  // console.log(dayjs(date).toNow(true));
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
     `<span class="film-details__comment-emoji">

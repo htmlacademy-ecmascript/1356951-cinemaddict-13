@@ -2,7 +2,7 @@ import Smart from "../view/smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
-import {getWatchedFilmInRangeDate, /* countWatchedFilmInDateRange, */countTotalDurationWatchedFilm, getMostWatchedGenreFilm} from "../utils/stats.js";
+import {getWatchedFilmInRangeDate, countTotalDurationWatchedFilm, getMostWatchedGenreFilm} from "../utils/stats.js";
 import {startFromDate, period} from "../const.js";
 
 const MINUTS_OF_HOUR = 60;
@@ -16,17 +16,15 @@ const renderGenreChart = (statisticCtx, genresCountArray) => {
   });
   // график по датам
   const BAR_HEIGHT = 50;
-  // const statisticCtx = document.querySelector(`.statistic__chart`);
   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
   statisticCtx.height = BAR_HEIGHT * 8;
-  // const myChart =
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: genres, // [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+      labels: genres,
       datasets: [{
-        data: watchingCount, // [11, 8, 7, 4, 3],
+        data: watchingCount,
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -79,21 +77,15 @@ const renderGenreChart = (statisticCtx, genresCountArray) => {
 };
 
 const createStatsTemplate = (films, genresCountArray, currentPeriod) => {
-  // const {films, dateFrom, dateTo} = data;
-  // console.log(films, dateFrom, dateTo);
   const watchedFilmsCount = films !== `0` ?
-    films.length :// countWatchedFilmInDateRange(films, dateFrom, dateTo) :
+    films.length :
     films;
-  // console.log(watchedFilmsCount);
   const totalDurationWatchedFilm = films !== `0` ?
     countTotalDurationWatchedFilm(films) :
     films;
-  console.log(genresCountArray);
-  console.log(typeof genresCountArray);
   const topGenre = typeof genresCountArray === `object` && genresCountArray.length !== 0 ?
     genresCountArray[0][0] :
     `None`;
-  // console.log(genresCountArray);
   const hoursDurationWatchedFilm = Math.trunc(+totalDurationWatchedFilm / MINUTS_OF_HOUR);
   const minutesDurationWatchedFilm = +totalDurationWatchedFilm % MINUTS_OF_HOUR;
   return (
@@ -166,8 +158,6 @@ export default class Stats extends Smart {
   constructor(films) {
     super();
     this._films = films;
-    // this._dateFrom = dayjs().subtract(45, `year`).toDate();
-    // this._dateTo = dayjs().toDate();
     this._data = {
       films: this._films,
       dateFrom: dayjs().subtract(45, `year`).toDate(),
@@ -175,19 +165,14 @@ export default class Stats extends Smart {
     };
     this._currentPeriod = period.ALL_TIME;
     this._genreChart = null;
-    // this._setChart();
-    //  this._period =
     this._periodTypeChange = this._periodTypeChange.bind(this);
   }
 
   getTemplate() {
-    console.log(this._data.dateFrom);
     this._watchedFilmInRangeDate = this._data.films.getFilms().slice().length !== 0 ?
       getWatchedFilmInRangeDate(this._data) :
       `0`;
     this._genresCountArray = getMostWatchedGenreFilm(this._watchedFilmInRangeDate);
-    // console.log(this._data.films.getFilms().slice());
-    // console.log(this._genresCountArray);
     return createStatsTemplate(this._watchedFilmInRangeDate, this._genresCountArray, this._currentPeriod);
   }
 
@@ -197,31 +182,16 @@ export default class Stats extends Smart {
   }
 
   setPeriodTypeChangeHandler() {
-    //  console.log(this.getElement().querySelectorAll(`.statistic__filters-label`));
-    // console.log(this._periodTypeChange);
     this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((periodItem) => periodItem.addEventListener(`click`, this._periodTypeChange));
-    // this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, this._periodTypeChange);
   }
 
   _periodTypeChange(evt) {
     evt.preventDefault();
-    // вот тут вывод в консоль не выводится при нажатии на периоды
-    // evt.checked(true);
     this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((periodItem) => periodItem.removeEventListener(`click`, this._periodTypeChange));
     this._currentPeriod = evt.target.htmlFor;
-    console.log(this._currentPeriod);
-    // this.getElement().querySelector(`input[id=${evt.target.htmlFor}]`).setAttribute(`checked`, `checked`);
-    console.log(this._data.dateFrom);
-    // this._dateFrom = startFromDate.get(evt.target.htmlFor);
-
     this.updateData({
       dateFrom: startFromDate.get(evt.target.htmlFor)
     });
-    console.log(this._data.dateFrom);
-    // this._dateTo = dayjs().toDate();
-    // this.updateElement();
-    // console.log(evt.target.htmlFor);
-
   }
 
   updateChart() {

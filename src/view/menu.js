@@ -10,7 +10,6 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
 };
 const createMenuTemplate = (filters, currentFilterType) => {
-  // console.log(filters, currentFilterType);
   const filterItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join(``);
   return (
     `<nav class="main-navigation">
@@ -45,7 +44,6 @@ export default class Menu extends Smart {
 
   setFilterTypeChangeHandler(callback) {
     this._callback.sortClick = callback;
-    // console.log(this._filterTypeChangeHandler);
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.addEventListener(`click`, this._filterTypeChangeHandler));
     this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._filterTypeChangeHandler);
   }
@@ -57,23 +55,19 @@ export default class Menu extends Smart {
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
-    // console.log(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
-    /* if (evt.target.firstChild.textContent.toLowerCase().slice(0, -1) === `stat`) {
-      this.getElement().querySelector(`main-navigation__item--active`).classList.remove(`.main-navigation__item--active`);
-      this.getElement().querySelector(`main-navigation__additional`).classList.add(`.main-navigation__additional--active`);
-    } else {
-      this.getElement().querySelector(`main-navigation__additional`).classList.remove(`.main-navigation__additional--active`);
-    }*/
+    this._currentFilter = evt.target.firstChild.textContent.toLowerCase().slice(0, -1);
     if (evt.target.firstChild.textContent.toLowerCase().slice(0, -1) === `stat`) {
-      this._currentFilter = `stat`;
-      this.updateElement();
+      this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.removeEventListener(`click`, this._filterTypeChangeHandler));
+      this.getElement().querySelector(`.main-navigation__additional`).removeEventListener(`click`, this._filterTypeChangeHandler);
+      this.getElement().querySelector(`.main-navigation__additional`).removeEventListener(`click`, this._menuTypeChangeHandler);
+
     }
+    this.updateElement();
     this._callback.sortClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 
   _menuTypeChangeHandler(evt) {
     evt.preventDefault();
-    // this.getElement().querySelector(`.main-navigation__additional`).removeEventListener(`click`, this._menuTypeChangeHandler);
     this._callback.menuClick(evt.target.firstChild.textContent.toLowerCase().slice(0, -1));
   }
 }
