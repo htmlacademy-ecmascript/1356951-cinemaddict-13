@@ -3,7 +3,6 @@ import Button from "../view/button.js";
 import FilmPresenter from "../presenter/film.js";
 import dayjs from "dayjs";
 import Sort from "../view/sort.js";
-import Stats from "../view/stats.js";
 import FilmContainer from "../view/film-container.js";
 import FilmList from "../view/film-list.js";
 import FilmListTop from "../view/film-list-top.js";
@@ -24,7 +23,7 @@ export default class Films {
     this._filmsModel = filmsModel;
     this._api = api;
     this._renderedFilmsCount = 0;
-    this._sortComponent = null;// new Sort();
+    this._sortComponent = null;
     this._filmContainer = new FilmContainer();
     this._filmList = new FilmList();
     this._filmListTop = new FilmListTop();
@@ -50,18 +49,13 @@ export default class Films {
   }
 
   init() {
-    /* if (this._filmsModel.getFilms().slice().length === 0) {
-      this._renderEmptyFilmsList();
-    } else {*/
     this._renderBoard();
-    // }
   }
 
   _getFilms() {
     // фильтрация
     const filterType = this._filterModel.getFilter();
     const films = this._filmsModel.getFilms().slice();
-    // console.log(films);
     const filtredFilms = filter[filterType](films);
     // сортировка
     switch (this._currentSortType) {
@@ -88,12 +82,9 @@ export default class Films {
           this._filmsModel.updateFilm(updateType, response);
         });
         break;
-      case UserAction.ADD_FILM_COMMENT:
+      case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);
         break;
-      /* ase UserAction.DELETE_TASK:
-        this._filmsModel.deleteTask(updateType, update);
-        break;*/
     }
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
@@ -125,11 +116,6 @@ export default class Films {
         remove(this._loadingComponent);
         this._renderBoard();
         break;
-        /* if (data) {
-          this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
-        }
-        this._renderBoard();
-        break;*/
     }
     // В зависимости от типа изменений решаем, что делать:
     // - обновить часть списка (например, когда поменялось описание)
@@ -198,11 +184,19 @@ export default class Films {
     this._renderFooter();
   }
 
-  _renderFooter() {
+  updateFooter() {
+    this._renderFooter(this._filmsModel.getFilms().slice().length);
+  }
+
+  _renderFooter(number) {
     const footer = document.querySelector(`footer`);
     const footerStat = footer.querySelector(`.footer__statistics`);
-    // console.log(${this._getFilms().length});
-    render(footerStat, `${this._getFilms().length}`, RenderPosition.BEFOREEND);
+    footerStat.innerHTML = ``;
+    if (number) {
+      render(footerStat, `${number}`, RenderPosition.BEFOREEND);
+    } else {
+      render(footerStat, `${this._getFilms().length}`, RenderPosition.BEFOREEND);
+    }
   }
 
   _hadleFilmChange(updateFilm) {
@@ -218,11 +212,20 @@ export default class Films {
     }
   }
 
+  hide() {
+    this._filmContainer.hide();
+    this._sortComponent.hide();
+  }
+
+  show() {
+    this._filmContainer.show();
+    this._sortComponent.show();
+    this._handleSortTypeChange(`default`);
+  }
+
   _renderButton() {
     // отрисовка кнопки
     const filmCount = this._getFilms().length;
-    // const filmsToRender = this._getFilms().slice(this._renderedFilmsCount, Math.min(this._renderedFilmsCount + FILM_COUNT_PER_STEP, filmCount));
-    // console.log(this._getFilms());
     if (filmCount > this._renderedFilmsCount && filmCount > FILM_COUNT_PER_STEP) {
       // Добавляем кнопку
       render(this._filmList, this._button, RenderPosition.BEFOREEND);
@@ -230,8 +233,6 @@ export default class Films {
         const filmsToRender = this._getFilms().slice(this._renderedFilmsCount, Math.min(this._renderedFilmsCount + FILM_COUNT_PER_STEP, filmCount));
         filmsToRender.forEach((film) => this._renderFilm(this._filmListContainer.getElement(), film));
         this._renderedFilmsCount += FILM_COUNT_PER_STEP;
-        // this._button.getElement().remove();
-        // this._button.removeElement();
         if (filmCount <= this._renderedFilmsCount) {
           this._button.getElement().remove();
           this._button.removeElement();
@@ -252,8 +253,8 @@ export default class Films {
     // отрисовка топ фильмов
     render(this._filmContainer, this._filmListTop, RenderPosition.BEFOREEND);
     render(this._filmListTop, this._filmListContainerTop, RenderPosition.BEFOREEND);
-    let topCardQuantity = /* this._getFilms().slice().length*/this._filmsModel.getFilms().length > 1 ? TOP_CARD_FILM_QUANTITY : this._getFilms().slice().length;
-    this._topFilms = /* this._getFilms()*/this._filmsModel.getFilms().slice().sort(function (a, b) {
+    let topCardQuantity = this._filmsModel.getFilms().length > 1 ? TOP_CARD_FILM_QUANTITY : this._getFilms().slice().length;
+    this._topFilms = this._filmsModel.getFilms().slice().sort(function (a, b) {
       return b.rating - a.rating;
     }).slice(0, topCardQuantity);
     this._topFilms.forEach((film) => this._renderTopFilm(this._filmListContainerTop.getElement(), film));
@@ -263,8 +264,8 @@ export default class Films {
   // отрисовка комментируемых фильмов
     render(this._filmContainer, this._filmListCommented, RenderPosition.BEFOREEND);
     render(this._filmListCommented, this._filmListContainerCommented, RenderPosition.BEFOREEND);
-    let commentedCardQuantity = /* this._getFilms().length*/this._filmsModel.getFilms().length > 1 ? COMMENTED_CARD_FILM_QUANTITY : 1;
-    const commentedFilms = /* this._getFilms()*/this._filmsModel.getFilms().slice().sort(function (a, b) {
+    let commentedCardQuantity = this._filmsModel.getFilms().length > 1 ? COMMENTED_CARD_FILM_QUANTITY : 1;
+    const commentedFilms = this._filmsModel.getFilms().slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     }).slice(0, commentedCardQuantity);
     commentedFilms.forEach((film) => this._renderCommentedFilm(this._filmListContainerCommented.getElement(), film));
@@ -340,10 +341,5 @@ export default class Films {
 
     render(mainElement, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-  }
-
-  _renderStat() {
-    // статистика
-    render(mainElement, new Stats(), RenderPosition.BEFOREEND);
   }
 }

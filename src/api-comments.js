@@ -2,7 +2,9 @@ import Comments from "./model/comments.js";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 const SuccessHTTPStatusRange = {
   MIN: 200,
@@ -18,21 +20,14 @@ export default class ApiComments {
   getComments(film) {
     return this._load({url: `/comments/${film.id}`})
       .then(ApiComments.toJSON)
-      // .then((comments) => comments.reduce(Comments.adaptToClient));
       .then((comments) => comments.map(Comments.adaptToClient))
       .then((commentsArr) => {
-        // console.log(commentsArr);
         let object = {};
         for (let i = 0; i < commentsArr.length; i++) {
           object[commentsArr[i].idMessage] = commentsArr[i];
         }
-        // console.log(object);
         return object;
       });
-    /* .then((comments) => comments.reduce(function (obj, item) {
-        obj[item.key] = item.value;
-        return obj;
-      }, {}));*/
   }
 
   updateComments(film) {
@@ -45,6 +40,26 @@ export default class ApiComments {
       .then(ApiComments.toJSON)
       .then(Comments.adaptToClient);
   }
+
+  //
+  addComment(comment) {
+    return this._load({
+      url: `comments`,
+      method: Method.POST,
+      body: JSON.stringify(Comments.adaptToServer(comment)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(ApiComments.toJSON)
+      .then(Comments.adaptToClient);
+  }
+
+  deleteTask(comment) {
+    return this._load({
+      url: `comments/${comment.id}`,
+      method: Method.DELETE
+    });
+  }
+  //
 
   _load({
     url,

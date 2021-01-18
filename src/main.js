@@ -8,6 +8,7 @@ import FilterPresenter from "./presenter/filter.js";
 import Api from "./api.js";
 // import ApiComments from "./api-comments.js";
 import {UpdateType, AUTHORIZATOIN, END_POINT} from "./const.js";
+import Stats from "./view/stats.js";
 
 
 const api = new Api(END_POINT, AUTHORIZATOIN);
@@ -23,16 +24,40 @@ const filterPresenter = new FilterPresenter(mainElement, filterModel, filmsModel
 
 render(headerElement, new User().getElement(), RenderPosition.BEFOREEND);
 
-// сл строку надо убрать(она не нужна), но тогда линтер будет ругать, оставлю это на попозже
-filmsPresenter.init();
 
+// сл строку надо убрать(она не нужна), но тогда линтер будет ругать, оставлю это на попозже
+// filmsPresenter.init();
+const statComponent = new Stats(filmsModel);
 
 api.getFilms()
   .then((films) => {
     filterPresenter.init();
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, films);
+    render(mainElement, statComponent, RenderPosition.BEFOREEND);
+    statComponent.hide();
   })
   .catch(() => {
     filterPresenter.init();
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, []);
+    render(mainElement, statComponent, RenderPosition.BEFOREEND);
+    statComponent.hide();
   });
+
+const handleSiteMenuClick = (menuItem) => {
+
+  switch (menuItem) {
+    case `stat`:
+      // Скрыть доску
+      filmsPresenter.hide();
+      statComponent.updateElement();
+      statComponent.setPeriodTypeChangeHandler();
+      filmsPresenter.updateFooter();
+      // Показать статистику
+      break;
+    default:
+      filmsPresenter.show();
+      statComponent.hide();
+  }
+};

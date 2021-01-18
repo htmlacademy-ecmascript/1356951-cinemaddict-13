@@ -5,6 +5,7 @@ import {render, RenderPosition, remove, replace} from "../utils.js";
 // import {commentsCollection} from "../mock/film.js";
 // import Comments from "../model/comments.js";
 import {UserAction, UpdateType} from "../const.js";
+import dayjs from "dayjs";
 
 
 const bodyElement = document.querySelector(`body`);
@@ -111,16 +112,32 @@ export default class FilmPresenter {
   }
 
   _handlerWatchedlistClick() {
-    this._changeData(
-        UserAction.UPDATE_FILM,
-        UpdateType.PATCH,
-        Object.assign(
-            {},
-            this._film,
-            {
-              isInHistory: !this._film.isInHistory
-            }
-        )
-    );
+    if (this._film.watchingDate !== null) {
+      this._changeData(
+          UserAction.UPDATE_FILM,
+          UpdateType.PATCH,
+          Object.assign(
+              {},
+              this._film,
+              {
+                isInHistory: !this._film.isInHistory,
+                watchingDate: null
+              }
+          )
+      );
+    } else {
+      this._changeData(
+          UserAction.UPDATE_FILM,
+          UpdateType.PATCH,
+          Object.assign(
+              {},
+              this._film,
+              {
+                isInHistory: !this._film.isInHistory,
+                watchingDate: dayjs().toDate()
+              }
+          )
+      );
+    }
   }
 }

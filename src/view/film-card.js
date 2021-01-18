@@ -26,12 +26,6 @@ const createFilmCardTemplate = (film) => {
     return onlyYear;
   };
 
-  /* const getTimeFromMins = (mins) => {
-    let hours = Math.trunc(mins / 60);
-    let minutes = (mins % 60) < 10 ? `0` + `${(mins % 60)}` : mins % 60;
-    return hours + `h. ` + minutes + `m.`;
-  };*/
-
   const getDescription = () => {
     const totalDescription = description.length > 140 ?
       description.slice(0, 139) + `...` :
@@ -62,7 +56,7 @@ const createFilmCardTemplate = (film) => {
 export default class FilmCard extends Abstract {
   constructor(film) {
     super();
-    this._film = film;
+    this._data = FilmCard.parseFilmToData(film);
     this._onFilmCardClick = this._onFilmCardClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
@@ -70,7 +64,7 @@ export default class FilmCard extends Abstract {
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._film);
+    return createFilmCardTemplate(this._data);
   }
 
   setFilmCardClickListeners(callback) {
@@ -118,7 +112,16 @@ export default class FilmCard extends Abstract {
 
   _onWatchedlistClick(evt) {
     evt.preventDefault();
-    this._callback.watchedlistClick();
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onWatchedlistClick);
+    this._callback.watchedlistClick();
+  }
+
+  static parseFilmToData(film) {
+    return Object.assign(
+        {},
+        film,
+        {
+        }
+    );
   }
 }
