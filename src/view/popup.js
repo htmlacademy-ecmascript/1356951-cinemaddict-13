@@ -3,11 +3,14 @@ import he from "he";
 import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
+import FilmsModel from "../model/movies.js";
 import {commentsCollection} from "../mock/film.js";
 import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
 import ApiComments from "../api-comments.js";
 import {getTimeFromMins} from "../utils.js";
 import relativeTime from "dayjs/plugin/relativeTime";
+// import {diff} from "../utils/popup.js";
+
 
 dayjs.extend(relativeTime);
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
@@ -100,6 +103,7 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
   };
+  console.log(Object.keys(commentsAll).length);
   const commentsToRender = Object.keys(commentsAll).length > 0 ?
     comments.map((item) => createComment(commentsAll[item])).join(` `) :
     `Loading ...`;
@@ -207,6 +211,7 @@ export default class Popup extends SmartView {
   constructor(film = {}, films) {
     super();
     this._filmsModel = films;
+    // console.log(film);
     this._data = Popup.parseFilmToData(film);
     this._commentsModel = new Comments();// commentsModel;
     this._getComments();
@@ -232,7 +237,48 @@ export default class Popup extends SmartView {
   _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
       case UserActionMessage.ADD_MESSAGE:
-        this._commentsModel.addComment(updateType, update);
+        console.log(this._data);
+        console.log(this._commentsModel.getComments());
+
+        apiComments.addComment(update, this._data).then((response) => {
+          console.log(response[1]);
+          // this._commentsModel.setComments(response[1]);
+          // const {response.movie} = response;
+          console.log(this._data.comments);
+          console.log(response[0].comments);
+          /* this.updateData({
+            comments: [...this._data.comments, response[0].comments]
+          });*/
+
+          this._handleViewActionFilm(
+              UserAction.ADD_COMMENT,
+              UpdateType.MINOR,
+              response[0]
+          );
+          console.log(this._commentsModel.getComments());
+          this._commentsModel.setComments(response[1]);
+          console.log(this._commentsModel.getComments());
+          this.updateData({
+            comments: response[0].comments
+          });
+          console.log(response);
+          console.log(this._data);
+          console.log(this._commentsModel.getComments());
+          // console.log(response.movie);
+          // .then(apiComments.toJSON)
+          // .then((response) => {return response.movie})
+          // .then()
+          // const prevComments = this._commentsModel.getComments().slice();
+          // const newComments = response;
+          /* const diff = function (prev, newElement) {
+            return prev.filter(function (i) {
+              return newElement.indexOf(i) < 0;
+            });
+        };*/
+          // const newComment = diff(prevComments, newComments);
+          // console.log(diff(prevComments, newComments));
+          // this._commentsModel.addComment(updateType, newComment);
+        });
         break;
       case UserActionMessage.DELETE_MESSAGE:
         this._commentsModel.deleteComment(updateType, update);
@@ -246,16 +292,17 @@ export default class Popup extends SmartView {
       case UserAction.UPDATE_FILM:
         this._filmsModel.updateFilm(updateType, update);
         break;
-      case UserAction.ADD_MESSAGE:
+      case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);
         break;
-      case UserAction.DELETE_MESSAGE:
+      case UserAction.DELETE_COMMENT:
         this._filmsModel.deleteComment(updateType, update);
         break;
     }
   }
 
   getTemplate() {
+    // console.log(this._commentsModel.getComments());
     return createPopupTemplate(this._data, this._commentsModel.getComments());
   }
 
@@ -309,7 +356,7 @@ export default class Popup extends SmartView {
       delete this._data.text;
       delete this._data.emoji;
 
-      this.updateData({
+      /*  this.updateData({
         comments: [...this._data.comments, newComment.idMessage]
       });
 
@@ -317,7 +364,7 @@ export default class Popup extends SmartView {
           UserAction.ADD_MESSAGE,
           UpdateType.MINOR,
           this._data
-      );
+      );*/
     }
   }
 
