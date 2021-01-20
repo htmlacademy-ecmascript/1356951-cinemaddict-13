@@ -135,6 +135,21 @@ export default class Movies extends Observer {
     );
 
     // Ненужные ключи мы удаляем
+    /* isDisabled: false,
+        isSaving: false,
+        isDeleting: false*/
+    if (adaptedFilm.isDisabled) {
+      delete adaptedFilm.isDisabled;
+    }
+    if (adaptedFilm.isSaving) {
+      delete adaptedFilm.isSaving;
+    }
+    if (adaptedFilm.isDeleting) {
+      delete adaptedFilm.isDeleting;
+    }
+    if (adaptedFilm.deletingComment) {
+      delete adaptedFilm.deletingComment;
+    }
     delete adaptedFilm.actors;
     delete adaptedFilm.country;
     delete adaptedFilm.description;
@@ -154,6 +169,7 @@ export default class Movies extends Observer {
     delete adaptedFilm.writers;
     delete adaptedFilm.year;
     delete adaptedFilm.ageRating;
+    console.log(adaptedFilm);
     return adaptedFilm;
   }
 }

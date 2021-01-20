@@ -4,3 +4,10 @@ export const diff = function (prev, newElement) {
   });
 };
 
+export const State = {
+  SENDING: `SENDING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
+
+

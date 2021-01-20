@@ -11,7 +11,7 @@ import {UpdateType, AUTHORIZATOIN, END_POINT} from "./const.js";
 import Stats from "./view/stats.js";
 
 
-const api = new Api(END_POINT, AUTHORIZATOIN);
+export const api = new Api(END_POINT, AUTHORIZATOIN);
 const filmsModel = new Movies();
 
 const filterModel = new FilterModel();

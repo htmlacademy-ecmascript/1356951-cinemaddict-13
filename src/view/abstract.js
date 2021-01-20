@@ -1,5 +1,7 @@
 import {createElement} from "../utils.js";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export default class Abstract {
   constructor() {
     if (new.target === Abstract) {
@@ -35,4 +37,18 @@ export default class Abstract {
   removeElement() {
     this._element = null;
   }
+
+  shake() {
+    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+  /* shake(callback) {
+    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = ``;
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }*/
 }
