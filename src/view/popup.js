@@ -338,6 +338,21 @@ export default class Popup extends SmartView {
       if (text === null && emoji === null) {
         return;
       }
+      /* const formEmogi = this.getElement().querySelector(`.film-details__add-emoji-label`);
+      const formText = this.getElement().querySelector(`.film-details__comment-input`);
+
+      // film-details__add-emoji-label
+      // const formElement = this.getElement().querySelector(`.film-details__new-comment`);
+      if (emoji === null) {
+        formEmogi.setCustomValidity(`Минамальное количество символов 30. Дополните заголовок.`);
+      } else if (text === null) {
+        formText.setCustomValidity(`Максимальное количество символов 100. Сократите заголовок.`);
+      } else {
+        formEmogi.setCustomValidity(``);
+        formText.setCustomValidity(``);
+      }*/
+
+      document.removeEventListener(`keydown`, this._messageToggleHandler);
       const newComment = {
         idMessage: nanoid(),
         text,
@@ -355,6 +370,7 @@ export default class Popup extends SmartView {
 
       delete this._data.text;
       delete this._data.emoji;
+
 
       /*  this.updateData({
         comments: [...this._data.comments, newComment.idMessage]
