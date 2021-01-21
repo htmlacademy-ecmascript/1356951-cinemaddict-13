@@ -10,7 +10,7 @@ import ApiComments from "../api-comments.js";
 import {getTimeFromMins} from "../utils.js";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {State} from "../utils/popup.js";
-import api from "../main.js";
+import {api} from "../main.js";
 
 
 dayjs.extend(relativeTime);
@@ -48,9 +48,9 @@ const createComment = ({text, emoji, date, author, idMessage}, deletingComment, 
   // console.log(isDeleting);
   let tyt;
   let ter;
-  if (deletingComment && isDeleting) {
+  if (deletingComment && deletingComment !== null && isDeleting) {
     tyt = isDeleting ? `Deleting` : `Delete`;
-    ter = idMessage !== deletingComment.id ?
+    ter = idMessage !== deletingComment.idMessage ?
       `Delete` :
       tyt;
   } else {
@@ -121,8 +121,9 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
     return activeClass;
   };
   console.log(Object.keys(commentsAll).length);
+  console.log(comments.length);
   const commentsToRender = Object.keys(commentsAll).length > 0 ?
-    comments.map((item) => createComment(commentsAll[item]), deletingComment, isDeleting).join(` `) :
+    comments.map((item) => createComment(commentsAll[item], deletingComment, isDeleting)).join(` `) :
     `Loading ...`;
 
   return (
@@ -269,7 +270,33 @@ export default class Popup extends SmartView {
         });
         break;
       case UserActionMessage.DELETE_MESSAGE:
-        this._commentsModel.deleteComment(updateType, update);
+        console.log(this._commentsModel.getComments());
+        this.setViewState(State.DELETING);
+        console.log(update);
+        this.updateData({
+          deletingComment: update
+        });
+        apiComments.deleteComment(update).then((response) => {
+          console.log(this._commentsModel.getComments());
+          console.log(response);
+
+          this._commentsModel.deleteComment(updateType, update);
+
+          const index = this._data.comments.findIndex((comment) => comment === update.idMessage);
+          const updateComments = [
+            ...this._data.comments.slice(0, index),
+            ...this._data.comments.slice(index + 1)
+          ];
+          this.updateData({
+            comments: updateComments,
+            deletingComment: null
+          });
+          this._handleViewActionFilm(
+              UserAction.DELETE_COMMENT,
+              UpdateType.PATCH,
+              this._data
+          );
+        });
         break;
     }
     // Здесь будем вызывать обновление модели.
@@ -284,14 +311,14 @@ export default class Popup extends SmartView {
         this._filmsModel.addComment(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.setViewState(State.DELETING);
+        /*  this.setViewState(State.DELETING);
         console.log(api);
         api.updateFilms(update)
         .then((response) => {
           console.log(response);
           this._filmsModel.deleteComment(updateType, update);
         }
-        );
+        );*/
 
 
         this._filmsModel.deleteComment(updateType, update);
@@ -410,20 +437,28 @@ export default class Popup extends SmartView {
 
   _onDeleteMessageClick(evt) {
     evt.preventDefault();
-    const index = this._data.comments.findIndex((comment) => comment === evt.target.id);
-    const updateComments = [
+    const comments = this._commentsModel.getComments();
+
+    console.log(comments[evt.target.id]);
+    this._handleViewActionComments(
+        UserActionMessage.DELETE_MESSAGE,
+        UpdateType.PATCH,
+        comments[evt.target.id]
+    );
+    /* const index = this._data.comments.findIndex((comment) => comment === evt.target.id);
+     const updateComments = [
       ...this._data.comments.slice(0, index),
       ...this._data.comments.slice(index + 1)
-    ];
-    this.updateData({
+    ];*/
+    /* this.updateData({
       comments: updateComments,
       deletingComment: evt.target
-    });
-    this._handleViewActionFilm(
+    });*/
+    /* this._handleViewActionFilm(
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
         this._data
-    );
+    );*/
   }
 
   setCloseClickListener(callback) {
