@@ -10,7 +10,7 @@ import ApiComments from "../api-comments.js";
 import {getTimeFromMins} from "../utils.js";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {State} from "../utils/popup.js";
-import {api} from "../main.js";
+// import {api} from "../main.js";
 
 
 dayjs.extend(relativeTime);
@@ -120,8 +120,8 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
     const activeClass = param ? `checked` : ``;
     return activeClass;
   };
-  console.log(Object.keys(commentsAll).length);
-  console.log(comments.length);
+  // console.log(Object.keys(commentsAll).length);
+  // console.log(comments.length);
   const commentsToRender = Object.keys(commentsAll).length > 0 ?
     comments.map((item) => createComment(commentsAll[item], deletingComment, isDeleting)).join(` `) :
     `Loading ...`;
@@ -270,15 +270,15 @@ export default class Popup extends SmartView {
         });
         break;
       case UserActionMessage.DELETE_MESSAGE:
-        console.log(this._commentsModel.getComments());
-        this.setViewState(State.DELETING);
-        console.log(update);
-        this.updateData({
+        // console.log(this._commentsModel.getComments());
+        this.setViewState(State.DELETING, update);
+        // console.log(update);
+        /* this.updateData({
           deletingComment: update
-        });
-        apiComments.deleteComment(update).then((response) => {
-          console.log(this._commentsModel.getComments());
-          console.log(response);
+        });*/
+        apiComments.deleteComment(update).then(() => {
+          // console.log(this._commentsModel.getComments());
+          // console.log(response);
 
           this._commentsModel.deleteComment(updateType, update);
 
@@ -355,7 +355,7 @@ export default class Popup extends SmartView {
     }, true);
   }
 
-  setViewState(state) {
+  setViewState(state, deletingComment) {
     /* const resetFormState = () => {
       this.updateData({
         isDisabled: false,
@@ -374,18 +374,19 @@ export default class Popup extends SmartView {
       case State.DELETING:
         this.updateData({
           isDisabled: true,
-          isDeleting: true
+          isDeleting: true,
+          deletingComment
         });
         break;
       case State.ABORTING:
-        console.log(this._data);
+        // console.log(this._data);
         this.shake();
         this.updateData({
           isDisabled: false,
           // isSending: false,
           isDeleting: false
         });
-        console.log(this._data);
+        // console.log(this._data);
         // this._taskEditComponent.shake(resetFormState);
         break;
     }
@@ -439,7 +440,7 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     const comments = this._commentsModel.getComments();
 
-    console.log(comments[evt.target.id]);
+    // console.log(comments[evt.target.id]);
     this._handleViewActionComments(
         UserActionMessage.DELETE_MESSAGE,
         UpdateType.PATCH,
