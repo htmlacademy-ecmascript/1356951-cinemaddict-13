@@ -41,7 +41,6 @@ export default class ApiComments {
       .then(Comments.adaptToClient);
   }
 
-  //
   addComment(comment, film) {
     return this._load({
       url: `comments/${film.id}`,
@@ -51,21 +50,16 @@ export default class ApiComments {
     })
       .then(ApiComments.toJSON)
       .then(Comments.adaptNewCommentToClient);
-    // .then((response) => response.comments(Comments.adaptToClient));
   }
 
   deleteComment(comment) {
-    // console.log(comment.idMessage);
     return this._load({
       url: `comments/${comment.idMessage}`,
       method: Method.DELETE,
       body: JSON.stringify(Comments.adaptToServerNewComment(comment)),
       headers: new Headers({"Content-Type": `application/json`})
     });
-    // .then(ApiComments.toJSON)
-    // .then(Comments.adaptNewCommentToClient);
   }
-  //
 
   _load({
     url,

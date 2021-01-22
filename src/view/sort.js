@@ -26,20 +26,11 @@ export default class Sort extends Abstract {
     this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 
-  /*  _clearActiveClass() {
-    const buttons = this.getElement().querySelectorAll(`.sort__button`);
-    buttons.forEach((button) => {
-      button.classList.remove(`sort__button--active`);
-    });
-  }*/
-
   _sortTypeChangeHandler(evt) {
     if (evt.target.tagName !== `A`) {
       return;
     }
     evt.preventDefault();
-    // this._clearActiveClass();
-    // evt.target.classList.add(`sort__button--active`);
     this._callback.sortTypeChangeHandler(evt.target.dataset.sortType);
   }
 

@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-// import {months} from "dayjs/locale/*";
 export const MAX_SENTENCE_OF_DESCRIPTION = 5;
 export const MIN_SENTENCE_OF_DESCRIPTION = 1;
 export const MAX_COMMENTS = 5;
@@ -15,7 +14,6 @@ export const FilterType = {
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
   FAVORITES: `favorites`
-  //  STAT: `stat`
 };
 
 export const UserAction = {
@@ -32,7 +30,6 @@ export const UpdateType = {
 };
 
 export const UserActionMessage = {
-  // UPDATE_FILM: `UPDATE_FILM`,
   ADD_MESSAGE: `ADD_MESSAGE`,
   DELETE_MESSAGE: `DELETE_MESSAGE`
 };
