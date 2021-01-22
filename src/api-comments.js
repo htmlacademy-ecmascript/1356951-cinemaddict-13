@@ -42,22 +42,28 @@ export default class ApiComments {
   }
 
   //
-  addComment(comment) {
+  addComment(comment, film) {
     return this._load({
-      url: `comments`,
+      url: `comments/${film.id}`,
       method: Method.POST,
-      body: JSON.stringify(Comments.adaptToServer(comment)),
+      body: JSON.stringify(Comments.adaptToServerNewComment(comment)),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(ApiComments.toJSON)
-      .then(Comments.adaptToClient);
+      .then(Comments.adaptNewCommentToClient);
+    // .then((response) => response.comments(Comments.adaptToClient));
   }
 
-  deleteTask(comment) {
+  deleteComment(comment) {
+    // console.log(comment.idMessage);
     return this._load({
-      url: `comments/${comment.id}`,
-      method: Method.DELETE
+      url: `comments/${comment.idMessage}`,
+      method: Method.DELETE,
+      body: JSON.stringify(Comments.adaptToServerNewComment(comment)),
+      headers: new Headers({"Content-Type": `application/json`})
     });
+    // .then(ApiComments.toJSON)
+    // .then(Comments.adaptNewCommentToClient);
   }
   //
 
