@@ -150,6 +150,9 @@ export default class Movies extends Observer {
     if (adaptedFilm.deletingComment) {
       delete adaptedFilm.deletingComment;
     }
+    if (adaptedFilm.fromServer) {
+      delete adaptedFilm.fromServer;
+    }
     delete adaptedFilm.actors;
     delete adaptedFilm.country;
     delete adaptedFilm.description;
@@ -169,7 +172,6 @@ export default class Movies extends Observer {
     delete adaptedFilm.writers;
     delete adaptedFilm.year;
     delete adaptedFilm.ageRating;
-    console.log(adaptedFilm);
     return adaptedFilm;
   }
 }

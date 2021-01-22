@@ -7,7 +7,8 @@ export const diff = function (prev, newElement) {
 export const State = {
   SENDING: `SENDING`,
   DELETING: `DELETING`,
-  ABORTING: `ABORTING`
+  ABORTING: `ABORTING`,
+  UNBLOCK_FORM: `UNBLOCK_FORM`
 };
 
 

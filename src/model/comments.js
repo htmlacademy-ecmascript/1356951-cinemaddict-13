@@ -70,7 +70,6 @@ export default class Comments extends Observer {
   static adaptNewCommentToClient(response) {
     const {movie, comments} = response;
     // console.log(movie);
-    console.log(comments);
     const adaptedResponse = [];
     const adaptedFilm = MoviesModel.adaptToClient(movie);
     /* const adaptedComment = comments.map((comment) => {
@@ -91,7 +90,6 @@ export default class Comments extends Observer {
       return object;
     };
     const adaptedComment = makeObjFromArray(comments.map(Comments.adaptToClient));
-    console.log(adaptedComment);
     adaptedResponse.push(adaptedFilm);
     // adaptedComment =
     /* for (let i = 0; i < amount; i++) {
@@ -99,7 +97,6 @@ export default class Comments extends Observer {
       comments[comment.idMessage] = comment;
     }*/
     adaptedResponse.push(adaptedComment);
-    console.log(adaptedResponse);
     return adaptedResponse;
   }
 
@@ -120,6 +117,7 @@ export default class Comments extends Observer {
       delete adaptedComments.text;
       delete adaptedComments.emoji;
       delete adaptedComments.daysAgo;
+      // delete adaptedComments.fromServer;
 
       return adaptedComments;
     } else {

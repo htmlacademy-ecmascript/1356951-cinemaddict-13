@@ -46,15 +46,15 @@ const createFilmDetails = (name, data) => {
 const createComment = ({text, emoji, date, author, idMessage}, deletingComment, isDeleting) => {
   // console.log(deletingComment);
   // console.log(isDeleting);
-  let tyt;
-  let ter;
+  let isPushedDeleteButton;
+  let nameOfDeleteButton;
   if (deletingComment && deletingComment !== null && isDeleting) {
-    tyt = isDeleting ? `Deleting` : `Delete`;
-    ter = idMessage !== deletingComment.idMessage ?
+    isPushedDeleteButton = isDeleting ? `Deleting` : `Delete`;
+    nameOfDeleteButton = idMessage !== deletingComment.idMessage ?
       `Delete` :
-      tyt;
+      isPushedDeleteButton;
   } else {
-    ter = `Delete`;
+    nameOfDeleteButton = `Delete`;
   }
   const textMessage = text ? text : ``;
   const chosenEmoji = emoji ?
@@ -72,7 +72,7 @@ const createComment = ({text, emoji, date, author, idMessage}, deletingComment, 
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${dayjs(date).toNow(true)} ago</span>
         <button id="${idMessage}" class="film-details__comment-delete">
-        ${ter}</button>
+        ${nameOfDeleteButton}</button>
       </p>
     </div>
   </li>`;
@@ -101,8 +101,10 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
     ageRating,
     isDisabled,
     isDeleting,
-    deletingComment
+    deletingComment,
+    fromServer
   } = data;
+  // console.log(data);
   const renderPlaceholder = (textMessage) => {
     const placeholder = textMessage ? `${data.text}` : ``;
     return placeholder;
@@ -122,9 +124,16 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
   };
   // console.log(Object.keys(commentsAll).length);
   // console.log(comments.length);
-  const commentsToRender = Object.keys(commentsAll).length > 0 ?
+  let commentsToRender;
+  if (Object.keys(commentsAll).length > 0) {
+    commentsToRender = comments.map((item) => createComment(commentsAll[item], deletingComment, isDeleting)).join(` `);
+  } else {
+    commentsToRender = fromServer ? `` : `Loading ...`;
+    // setTimeout(deleteLoading, 2000);
+  }
+  /* let commentsToRender = Object.keys(commentsAll).length > 0 ?
     comments.map((item) => createComment(commentsAll[item], deletingComment, isDeleting)).join(` `) :
-    `Loading ...`;
+    `Loading ...`, setTimeout(deleteLoading(), 3000);*/
 
   return (
     `<section class="film-details">
@@ -186,7 +195,6 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-
             ${commentsToRender}
             </ul>
 
@@ -250,7 +258,10 @@ export default class Popup extends SmartView {
     apiComments.getComments(this._data)
       .then((comments) => {
         this._commentsModel.setComments(comments);
-        this.updateElement();
+        this.updateData({
+          fromServer: true
+        });
+        // this.updateElement();
       });
   }
 
@@ -264,9 +275,15 @@ export default class Popup extends SmartView {
               response[0]
           );
           this._commentsModel.setComments(response[1]);
+          delete this._data.text;
+          delete this._data.emoji;
           this.updateData({
             comments: response[0].comments
           });
+        })
+        .catch(() => {
+          this.setViewState(State.ABORTING);
+          // this.setViewState(State.UN_BLOCK_FORM);
         });
         break;
       case UserActionMessage.DELETE_MESSAGE:
@@ -289,13 +306,18 @@ export default class Popup extends SmartView {
           ];
           this.updateData({
             comments: updateComments,
-            deletingComment: null
+            deletingComment: null,
+            isDisabled: false,
+            isDeleting: false,
           });
           this._handleViewActionFilm(
               UserAction.DELETE_COMMENT,
               UpdateType.PATCH,
               this._data
           );
+        })
+        .catch(() => {
+          this.setViewState(State.ABORTING);
         });
         break;
     }
@@ -381,14 +403,22 @@ export default class Popup extends SmartView {
       case State.ABORTING:
         // console.log(this._data);
         this.shake();
-        this.updateData({
-          isDisabled: false,
-          // isSending: false,
-          isDeleting: false
-        });
+        setTimeout(() => {
+          this.updateData({
+            isDisabled: false,
+            // isSending: false,
+            isDeleting: false
+          });
+        }, 1000);
         // console.log(this._data);
         // this._taskEditComponent.shake(resetFormState);
         break;
+      /* case State.UNBLOCK_FORM:
+        this.updateData({
+          isDisabled: false,
+          isDeleting: false
+        });
+        break;*/
     }
   }
 
@@ -418,8 +448,8 @@ export default class Popup extends SmartView {
             newComment
         );
 
-        delete this._data.text;
-        delete this._data.emoji;
+        // delete this._data.text;
+        // delete this._data.emoji;
       }
     }
   }
