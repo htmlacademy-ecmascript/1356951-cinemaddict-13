@@ -4,14 +4,14 @@ import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
 import {commentsCollection} from "../mock/film.js";
-import {UserActionMessage, UpdateType, UserAction, AUTHORIZATOIN, END_POINT} from "../const.js";
-import ApiComments from "../api-comments.js";
+import {UserActionMessage, UpdateType, UserAction/* , AUTHORIZATOIN, END_POINT*/} from "../const.js";
+// import ApiComments from "../api-comments.js";
 import {getTimeFromMins} from "../utils.js";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {State} from "../utils/popup.js";
 
 dayjs.extend(relativeTime);
-const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
+// const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
 const commentsModel = new Comments();
 commentsModel.setComments(commentsCollection);
@@ -229,7 +229,9 @@ export default class Popup extends SmartView {
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
     this._commentsModel = new Comments();// commentsModel;
-    this._getComments();
+    // console.log(this._commentsModel.getComments());
+    // this._getComments();
+    // console.log(this._commentsModel.getComments());
     this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -239,9 +241,10 @@ export default class Popup extends SmartView {
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
+    this.updateData = this.updateData.bind(this);
     this._setInnerHandlers();
   }
-  _getComments() {
+  /* _getComments() {
     apiComments.getComments(this._data)
       .then((comments) => {
         this._commentsModel.setComments(comments);
@@ -249,9 +252,27 @@ export default class Popup extends SmartView {
           fromServer: true
         });
       });
+  }*/
+
+  /* _getComments() {
+    this._handlerActionComments(this._data, this._commentsModel, this._getCommentsCallback);
   }
 
-  _handleViewActionComments(actionType, updateType, update) {
+  _getCommentsCallback() {
+    // this._commentsModel.setComments(comments);
+    this.updateData({
+      fromServer: true
+    });
+  }*/
+
+
+  setComments(comments) {
+    this._commentsModel.setComments(comments);
+    this.updateData({
+      fromServer: true
+    });
+  }
+  /*  _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
       case UserActionMessage.ADD_MESSAGE:
         apiComments.addComment(update, this._data).then((response) => {
@@ -297,7 +318,7 @@ export default class Popup extends SmartView {
         });
         break;
     }
-  }
+  }*/
 
   _handleViewActionFilm(actionType, updateType, update) {
     switch (actionType) {

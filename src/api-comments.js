@@ -17,11 +17,20 @@ export default class ApiComments {
     this._authorization = authorization;
   }
 
+  /* _getCommentsObj(commentsArr) {
+    let object = {};
+    for (let i = 0; i < commentsArr.length; i++) {
+      object[commentsArr[i].idMessage] = commentsArr[i];
+    }
+    return object;
+  }*/
+
   getComments(film) {
     return this._load({url: `/comments/${film.id}`})
       .then(ApiComments.toJSON)
       .then((comments) => comments.map(Comments.adaptToClient))
       .then((commentsArr) => {
+        // this._getCommentsObj(commentsArr);
         let object = {};
         for (let i = 0; i < commentsArr.length; i++) {
           object[commentsArr[i].idMessage] = commentsArr[i];

@@ -6,7 +6,6 @@ import Movies from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
 import Api from "./api.js";
-// import ApiComments from "./api-comments.js";
 import {UpdateType, AUTHORIZATOIN, END_POINT} from "./const.js";
 import Stats from "./view/stats.js";
 

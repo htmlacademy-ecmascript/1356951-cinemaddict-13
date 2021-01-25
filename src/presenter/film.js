@@ -6,6 +6,9 @@ import {render, RenderPosition, remove, replace} from "../utils.js";
 // import Comments from "../model/comments.js";
 import {UserAction, UpdateType} from "../const.js";
 import dayjs from "dayjs";
+import ApiComments from "../api-comments.js";
+import {AUTHORIZATOIN, END_POINT} from "../const.js";
+const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
 
 const bodyElement = document.querySelector(`body`);
@@ -48,7 +51,11 @@ export default class FilmPresenter {
   _onOpenPopup() {
     this._viewChange();
     this._popup = new Popup(this._film, this._filmsModel);
-
+    apiComments.getComments(this._film)
+    .then((comments) => {
+      this._popup.setComments(comments);
+      // commentsModel.setComments(comments);
+    });
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
     this._popup.setWatchedlistClickHandler(this._handlerWatchedlistClick);
@@ -139,5 +146,13 @@ export default class FilmPresenter {
           )
       );
     }
+  }
+
+  _actionWithComments(film, commentsModel, callback) {
+    apiComments.getComments(film)
+    .then((comments) => {
+      commentsModel.setComments(comments);
+      callback();
+    });
   }
 }
