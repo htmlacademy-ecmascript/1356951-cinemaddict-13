@@ -242,6 +242,7 @@ export default class Popup extends SmartView {
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this.updateData = this.updateData.bind(this);
+    // this._filmsModel.addObserver(this._handleViewUpdate);
     this._setInnerHandlers();
   }
   /* _getComments() {
@@ -272,7 +273,7 @@ export default class Popup extends SmartView {
       fromServer: true
     });
   }
-  /*  _handleViewActionComments(actionType, updateType, update) {
+  /* _handleViewActionComments(actionType, updateType, update) {
     switch (actionType) {
       case UserActionMessage.ADD_MESSAGE:
         apiComments.addComment(update, this._data).then((response) => {
@@ -319,6 +320,14 @@ export default class Popup extends SmartView {
         break;
     }
   }*/
+  _handleViewUpdate(actionType, update) {
+    switch (actionType) {
+      case UpdateType.PATCH:
+        this._data = update;
+        this.updateElement();
+        break;
+    }
+  }
 
   _handleViewActionFilm(actionType, updateType, update) {
     switch (actionType) {
@@ -428,16 +437,40 @@ export default class Popup extends SmartView {
     }
     );
   }
-
+  deleteCommentInModel(updateType, deletingComment, updateComments) {
+    this._commentsModel.deleteComment(updateType, deletingComment);
+    this.updateData({
+      isDisabled: false,
+      isDeleting: false,
+      comments: updateComments
+    });
+  }
   _onDeleteMessageClick(evt) {
     evt.preventDefault();
     const comments = this._commentsModel.getComments();
-
-    this._handleViewActionComments(
+    this.setViewState(State.DELETING, comments[evt.target.id]);
+    const index = this._data.comments.findIndex((comment) => comment === comments[evt.target.id].idMessage);
+    const updateComments = [
+      ...this._data.comments.slice(0, index),
+      ...this._data.comments.slice(index + 1)
+    ];
+    console.log(this._data.comments);
+    console.log(comments[evt.target.id].idMessage);
+    console.log(updateComments);
+    this._callback.deleteCommentclick(UpdateType.PATCH, comments[evt.target.id], updateComments);
+    /* this._handleViewActionComments(
         UserActionMessage.DELETE_MESSAGE,
         UpdateType.PATCH,
         comments[evt.target.id]
-    );
+    );*/
+    // this.updateElement();
+
+  }
+
+  setDeleteCommentListener(callback) {
+    this._callback.deleteCommentclick = callback;
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+    .forEach((deleteButton) => deleteButton.addEventListener(`click`, this._onDeleteMessageClick));
   }
 
   setCloseClickListener(callback) {

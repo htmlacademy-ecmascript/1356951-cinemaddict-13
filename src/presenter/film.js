@@ -8,9 +8,9 @@ import {UserAction, UpdateType} from "../const.js";
 import dayjs from "dayjs";
 import ApiComments from "../api-comments.js";
 import {AUTHORIZATOIN, END_POINT} from "../const.js";
+import {State} from "../utils/popup.js";
+
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
-
-
 const bodyElement = document.querySelector(`body`);
 
 export default class FilmPresenter {
@@ -26,6 +26,7 @@ export default class FilmPresenter {
     this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
     this._handlerWatchlistClick = this._handlerWatchlistClick.bind(this);
     this._handlerWatchedlistClick = this._handlerWatchedlistClick.bind(this);
+    this._onDeleteCommentPopup = this._onDeleteCommentPopup.bind(this);
   }
 
   filmInit(film) {
@@ -62,6 +63,7 @@ export default class FilmPresenter {
     this._popup.setWatchlistClickHandler(this._handlerWatchlistClick);
     this._popup.setFavoriteClickHandler(this._handlerFavoriteClick);
     this._popup.setCloseClickListener(this._onClosePopup);
+    this._popup.setDeleteCommentListener(this._onDeleteCommentPopup);
     document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
@@ -88,6 +90,57 @@ export default class FilmPresenter {
       this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
       this._popup = null;
     }
+  }
+
+  _onDeleteCommentPopup(updateType, deletingComment, updateComments) {
+    // this.setViewState(State.DELETING, update);
+    apiComments.deleteComment(deletingComment).then(() => {
+      this._popup.deleteCommentInModel(updateType, deletingComment, updateComments);
+      // this._commentsModel.deleteComment(updateType, deletingComment);
+      /* const index = this._data.comments.findIndex((comment) => comment === update.idMessage);
+      const updateComments = [
+        ...this._data.comments.slice(0, index),
+        ...this._data.comments.slice(index + 1)
+      ];*/
+      /* this.updateData({
+        comments: updateComments,
+        deletingComment: null,
+        isDisabled: false,
+        isDeleting: false,
+      });*/
+      /* this._changeData(
+          UserAction.UPDATE_FILM,
+          UpdateType.PATCH,
+          Object.assign(
+              {},
+              this._film,
+              {
+                isInFavorites: !this._film.isInFavorites
+              }
+          )
+      );*/
+      // this._handleViewActionFilm(
+      this._changeData(
+          UserAction.UPDATE_FILM, // DELETE_COMMENT,
+          UpdateType.PATCH,
+          // this._data
+          Object.assign(
+              {},
+              this._film,
+              {
+                comments: updateComments,
+                deletingComment: null,
+                isDisabled: false,
+                isDeleting: false
+              }
+          )
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+      this._popup.setViewState(State.ABORTING);
+      // this.setViewState(State.ABORTING);
+    });
   }
 
   _handlerFavoriteClick() {
