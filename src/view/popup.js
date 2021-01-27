@@ -4,14 +4,12 @@ import SmartView from "../view/smart.js";
 import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
 import {commentsCollection} from "../mock/film.js";
-import {UserActionMessage, UpdateType, UserAction/* , AUTHORIZATOIN, END_POINT*/} from "../const.js";
-// import ApiComments from "../api-comments.js";
+import {UpdateType, UserAction} from "../const.js";
 import {getTimeFromMins} from "../utils.js";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {State} from "../utils/popup.js";
 
 dayjs.extend(relativeTime);
-// const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 
 const commentsModel = new Comments();
 commentsModel.setComments(commentsCollection);
@@ -228,10 +226,7 @@ export default class Popup extends SmartView {
     super();
     this._filmsModel = films;
     this._data = Popup.parseFilmToData(film);
-    this._commentsModel = new Comments();// commentsModel;
-    // console.log(this._commentsModel.getComments());
-    // this._getComments();
-    // console.log(this._commentsModel.getComments());
+    this._commentsModel = new Comments();
     this.updateElement = this.updateElement.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -242,30 +237,8 @@ export default class Popup extends SmartView {
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
     this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this.updateData = this.updateData.bind(this);
-    // this._filmsModel.addObserver(this._handleViewUpdate);
     this._setInnerHandlers();
   }
-  /* _getComments() {
-    apiComments.getComments(this._data)
-      .then((comments) => {
-        this._commentsModel.setComments(comments);
-        this.updateData({
-          fromServer: true
-        });
-      });
-  }*/
-
-  /* _getComments() {
-    this._handlerActionComments(this._data, this._commentsModel, this._getCommentsCallback);
-  }
-
-  _getCommentsCallback() {
-    // this._commentsModel.setComments(comments);
-    this.updateData({
-      fromServer: true
-    });
-  }*/
-
 
   setComments(comments) {
     this._commentsModel.setComments(comments);
@@ -273,53 +246,16 @@ export default class Popup extends SmartView {
       fromServer: true
     });
   }
-  /* _handleViewActionComments(actionType, updateType, update) {
-    switch (actionType) {
-      case UserActionMessage.ADD_MESSAGE:
-        apiComments.addComment(update, this._data).then((response) => {
-          this._handleViewActionFilm(
-              UserAction.ADD_COMMENT,
-              UpdateType.MINOR,
-              response[0]
-          );
-          this._commentsModel.setComments(response[1]);
-          delete this._data.text;
-          delete this._data.emoji;
-          this.updateData({
-            comments: response[0].comments
-          });
-        })
-        .catch(() => {
-          this.setViewState(State.ABORTING);
-        });
-        break;
-      case UserActionMessage.DELETE_MESSAGE:
-        this.setViewState(State.DELETING, update);
-        apiComments.deleteComment(update).then(() => {
-          this._commentsModel.deleteComment(updateType, update);
-          const index = this._data.comments.findIndex((comment) => comment === update.idMessage);
-          const updateComments = [
-            ...this._data.comments.slice(0, index),
-            ...this._data.comments.slice(index + 1)
-          ];
-          this.updateData({
-            comments: updateComments,
-            deletingComment: null,
-            isDisabled: false,
-            isDeleting: false,
-          });
-          this._handleViewActionFilm(
-              UserAction.DELETE_COMMENT,
-              UpdateType.PATCH,
-              this._data
-          );
-        })
-        .catch(() => {
-          this.setViewState(State.ABORTING);
-        });
-        break;
-    }
-  }*/
+
+  addComment(response) {
+    this._commentsModel.setComments(response[1]);
+    delete this._data.text;
+    delete this._data.emoji;
+    this.updateData({
+      comments: response[0].comments
+    });
+  }
+
   _handleViewUpdate(actionType, update) {
     switch (actionType) {
       case UpdateType.PATCH:
@@ -416,12 +352,7 @@ export default class Popup extends SmartView {
           author: `anon`
         };
 
-        this._handleViewActionComments(
-            UserActionMessage.ADD_MESSAGE,
-            UpdateType.PATCH,
-            newComment
-        );
-
+        this._callback.addCommentClick(newComment, this._data);
       }
     }
   }
@@ -430,13 +361,13 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     this.updateData({
       emoji: {
-        // если есть вариант проще и красивее, то не держи в себе
         src: evt.target.getAttribute(`src`).slice(0, -4).replace(`./images/emoji/`, ``),
         id: evt.target.parentNode.getAttribute(`for`)
       }
     }
     );
   }
+
   deleteCommentInModel(updateType, deletingComment, updateComments) {
     this._commentsModel.deleteComment(updateType, deletingComment);
     this.updateData({
@@ -445,6 +376,7 @@ export default class Popup extends SmartView {
       comments: updateComments
     });
   }
+
   _onDeleteMessageClick(evt) {
     evt.preventDefault();
     const comments = this._commentsModel.getComments();
@@ -454,17 +386,12 @@ export default class Popup extends SmartView {
       ...this._data.comments.slice(0, index),
       ...this._data.comments.slice(index + 1)
     ];
-    console.log(this._data.comments);
-    console.log(comments[evt.target.id].idMessage);
-    console.log(updateComments);
     this._callback.deleteCommentclick(UpdateType.PATCH, comments[evt.target.id], updateComments);
-    /* this._handleViewActionComments(
-        UserActionMessage.DELETE_MESSAGE,
-        UpdateType.PATCH,
-        comments[evt.target.id]
-    );*/
-    // this.updateElement();
+  }
 
+  setAddCommentListener(callback) {
+    this._callback.addCommentClick = callback;
+    document.addEventListener(`keydown`, this._messageToggleHandler);
   }
 
   setDeleteCommentListener(callback) {

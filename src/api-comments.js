@@ -51,6 +51,7 @@ export default class ApiComments {
   }
 
   addComment(comment, film) {
+    console.log(film);
     return this._load({
       url: `comments/${film.id}`,
       method: Method.POST,
