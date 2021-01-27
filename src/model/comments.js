@@ -31,24 +31,11 @@ export default class Comments extends Observer {
   }
 
   addComment(updateType, update) {
-    /* if (!this._comments[update.idMessage]) {
-      this._comments = Object.assign(
-          {},
-          this._comments,
-          {
-            [update.idMessage]: update
-          }
-      );
-
-    } else {
-      throw new Error(`Can't add already existing comment`);
-    }*/
     this._comments = update;
     this._notify(updateType, update);
   }
 
   static adaptToClient(comments) {
-    // console.log(comments);
     const adaptedComments = Object.assign(
         {},
         comments,
@@ -69,19 +56,8 @@ export default class Comments extends Observer {
 
   static adaptNewCommentToClient(response) {
     const {movie, comments} = response;
-    // console.log(movie);
     const adaptedResponse = [];
     const adaptedFilm = MoviesModel.adaptToClient(movie);
-    /* const adaptedComment = comments.map((comment) => {
-      comment.id = Comments.adaptToClient(comment);
-    });*/
-    /* comments.map(Comments.adaptToClient))
-    .then((commentsArr) => {
-      let object = {};
-      for (let i = 0; i < commentsArr.length; i++) {
-        object[commentsArr[i].idMessage] = commentsArr[i];
-      }
-      return object;*/
     const makeObjFromArray = function (commentsArr) {
       let object = {};
       for (let i = 0; i < commentsArr.length; i++) {
@@ -91,11 +67,6 @@ export default class Comments extends Observer {
     };
     const adaptedComment = makeObjFromArray(comments.map(Comments.adaptToClient));
     adaptedResponse.push(adaptedFilm);
-    // adaptedComment =
-    /* for (let i = 0; i < amount; i++) {
-      let comment = generateComment();
-      comments[comment.idMessage] = comment;
-    }*/
     adaptedResponse.push(adaptedComment);
     return adaptedResponse;
   }
@@ -117,7 +88,6 @@ export default class Comments extends Observer {
       delete adaptedComments.text;
       delete adaptedComments.emoji;
       delete adaptedComments.daysAgo;
-      // delete adaptedComments.fromServer;
 
       return adaptedComments;
     } else {
@@ -130,7 +100,6 @@ export default class Comments extends Observer {
             date: comments.date
           });
 
-      // delete adaptedComments.idMessage;
       delete adaptedComments.text;
       delete adaptedComments.emoji;
       delete adaptedComments.daysAgo;
@@ -149,13 +118,11 @@ export default class Comments extends Observer {
           date: comments.date
         });
 
-    // delete adaptedComments.idMessage;
     delete adaptedComments.text;
     delete adaptedComments.emoji;
     delete adaptedComments.author;
     delete adaptedComments.idMessage;
     delete adaptedComments.daysAgo;
-    // console.log(adaptedComments);
     return adaptedComments;
   }
 

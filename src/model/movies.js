@@ -36,11 +36,6 @@ export default class Movies extends Observer {
       throw new Error(`Can't add comment to unexisting film`);
     }
     this._films[index].comments = update.comments;
-    /* this._films = [
-      ...this._films.slice(0, index),
-      update,
-      ...this._films.slice(index + 1)
-    ];*/
     this._notify(updateType, update);
   }
 
@@ -134,10 +129,6 @@ export default class Movies extends Observer {
         }
     );
 
-    // Ненужные ключи мы удаляем
-    /* isDisabled: false,
-        isSaving: false,
-        isDeleting: false*/
     if (adaptedFilm.isDisabled) {
       delete adaptedFilm.isDisabled;
     }

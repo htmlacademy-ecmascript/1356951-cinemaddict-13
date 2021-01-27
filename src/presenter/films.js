@@ -69,8 +69,6 @@ export default class Films {
           return b.rating - a.rating;
         }).slice();
         break;
-        // 3. А когда пользователь захочет "вернуть всё, как было",
-        // мы просто запишем в _sourseFilms исходный массив
     }
     return filtredFilms;
   }
@@ -86,10 +84,6 @@ export default class Films {
         this._filmsModel.addComment(updateType, update);
         break;
     }
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
   }
 
   _handleModelEvent(updateType, data) {
@@ -117,10 +111,6 @@ export default class Films {
         this._renderBoard();
         break;
     }
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
   }
 
   _handleSortTypeChange(sortType) {

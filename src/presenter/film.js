@@ -1,13 +1,13 @@
 import FilmCard from "../view/film-card.js";
 import Popup from "../view/popup.js";
-// import Films from "../presenter/films.js";
 import {render, RenderPosition, remove, replace} from "../utils.js";
-// import {commentsCollection} from "../mock/film.js";
-// import Comments from "../model/comments.js";
 import {UserAction, UpdateType} from "../const.js";
 import dayjs from "dayjs";
+import ApiComments from "../api-comments.js";
+import {AUTHORIZATOIN, END_POINT} from "../const.js";
+import {State} from "../utils/popup.js";
 
-
+const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 const bodyElement = document.querySelector(`body`);
 
 export default class FilmPresenter {
@@ -23,6 +23,8 @@ export default class FilmPresenter {
     this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
     this._handlerWatchlistClick = this._handlerWatchlistClick.bind(this);
     this._handlerWatchedlistClick = this._handlerWatchedlistClick.bind(this);
+    this._onDeleteCommentPopup = this._onDeleteCommentPopup.bind(this);
+    this._onAddCommentPopup = this._onAddCommentPopup.bind(this);
   }
 
   filmInit(film) {
@@ -48,13 +50,18 @@ export default class FilmPresenter {
   _onOpenPopup() {
     this._viewChange();
     this._popup = new Popup(this._film, this._filmsModel);
-
+    apiComments.getComments(this._film)
+    .then((comments) => {
+      this._popup.setComments(comments);
+    });
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
     this._popup.setWatchedlistClickHandler(this._handlerWatchedlistClick);
     this._popup.setWatchlistClickHandler(this._handlerWatchlistClick);
     this._popup.setFavoriteClickHandler(this._handlerFavoriteClick);
     this._popup.setCloseClickListener(this._onClosePopup);
+    this._popup.setDeleteCommentListener(this._onDeleteCommentPopup);
+    this._popup.setAddCommentListener(this._onAddCommentPopup);
     document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
@@ -81,6 +88,40 @@ export default class FilmPresenter {
       this._filmComponent.setFilmCardClickListeners(this._onOpenPopup);
       this._popup = null;
     }
+  }
+
+  _onAddCommentPopup(newComment, film) {
+    apiComments.addComment(newComment, film).then((response) => {
+      this._changeData(
+          UserAction.ADD_COMMENT,
+          UpdateType.MINOR,
+          response[0]
+      );
+      this._popup.addComment(response);
+    });
+  }
+
+  _onDeleteCommentPopup(updateType, deletingComment, updateComments) {
+    apiComments.deleteComment(deletingComment).then(() => {
+      this._popup.deleteCommentInModel(updateType, deletingComment, updateComments);
+      this._changeData(
+          UserAction.UPDATE_FILM,
+          UpdateType.PATCH,
+          Object.assign(
+              {},
+              this._film,
+              {
+                comments: updateComments,
+                deletingComment: null,
+                isDisabled: false,
+                isDeleting: false
+              }
+          )
+      );
+    })
+    .catch(() => {
+      this._popup.setViewState(State.ABORTING);
+    });
   }
 
   _handlerFavoriteClick() {
@@ -139,5 +180,13 @@ export default class FilmPresenter {
           )
       );
     }
+  }
+
+  _actionWithComments(film, commentsModel, callback) {
+    apiComments.getComments(film)
+    .then((comments) => {
+      commentsModel.setComments(comments);
+      callback();
+    });
   }
 }
