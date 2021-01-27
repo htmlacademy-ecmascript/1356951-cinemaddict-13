@@ -1,4 +1,3 @@
-// import FilterView from "../view/sort.js";
 import FilterView from "../view/menu.js";
 import {render, RenderPosition, replace, remove} from "../utils.js";
 import {filter} from "../utils/filter.js";

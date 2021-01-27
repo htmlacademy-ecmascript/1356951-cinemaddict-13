@@ -109,7 +109,6 @@ export default class Comments extends Observer {
   }
 
   static adaptToServerNewComment(comments) {
-    console.log(comments);
     const adaptedComments = Object.assign(
         {},
         comments,
@@ -124,7 +123,6 @@ export default class Comments extends Observer {
     delete adaptedComments.author;
     delete adaptedComments.idMessage;
     delete adaptedComments.daysAgo;
-    console.log(adaptedComments);
     return adaptedComments;
   }
 

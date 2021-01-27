@@ -14,9 +14,7 @@ const renderGenreChart = (statisticCtx, genresCountArray) => {
   const watchingCount = genresCountArray.map((genre) => {
     return genre[1];
   });
-  // график по датам
   const BAR_HEIGHT = 50;
-  // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
   statisticCtx.height = BAR_HEIGHT * 8;
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],

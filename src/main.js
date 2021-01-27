@@ -1,5 +1,4 @@
 import {render, RenderPosition} from "./utils.js";
-// import {createfilm} from "./mock/film.js";
 import User from "./view/user.js";
 import Films from "./presenter/films.js";
 import Movies from "./model/movies.js";

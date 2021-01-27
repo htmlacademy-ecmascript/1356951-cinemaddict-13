@@ -22,10 +22,6 @@ export const UserAction = {
   DELETE_COMMENT: `DELETE_COMMENT`
 };
 
-/* export commentAction = {
-
-};*/
-
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
