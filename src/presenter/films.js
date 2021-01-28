@@ -73,11 +73,13 @@ export default class Films {
     return filtredFilms;
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, buttonType) {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
+        const newUpdateType = this._filterModel.getFilter() === buttonType ?
+          UpdateType.MINOR : updateType;
         this._api.updateFilms(update).then((response) => {
-          this._filmsModel.updateFilm(updateType, response);
+          this._filmsModel.updateFilm(newUpdateType, response);
         });
         break;
       case UserAction.ADD_COMMENT:
@@ -131,8 +133,9 @@ export default class Films {
   _renderFilmsList() {
     // отрисовка фильмов
     const filmCount = this._getFilms().length;
-    const filmsToRender = this._getFilms().slice(0, Math.min(filmCount, FILM_COUNT_PER_STEP));
+    const filmsToRender = this._getFilms().slice(0, Math.min(filmCount, this._renderedFilmsCount !== 0 ? this._renderedFilmsCount : FILM_COUNT_PER_STEP));
     this._renderFilms(filmsToRender);
+
     if (this._filmContainer.getElement().querySelector(`.films-list__show-more`) === null) {
       this._renderButton();
     }
@@ -243,7 +246,7 @@ export default class Films {
     // отрисовка топ фильмов
     render(this._filmContainer, this._filmListTop, RenderPosition.BEFOREEND);
     render(this._filmListTop, this._filmListContainerTop, RenderPosition.BEFOREEND);
-    let topCardQuantity = this._filmsModel.getFilms().length > 1 ? TOP_CARD_FILM_QUANTITY : this._getFilms().slice().length;
+    let topCardQuantity = this._filmsModel.getFilms().length < TOP_CARD_FILM_QUANTITY ? this._getFilms().slice().length : TOP_CARD_FILM_QUANTITY;
     this._topFilms = this._filmsModel.getFilms().slice().sort(function (a, b) {
       return b.rating - a.rating;
     }).slice(0, topCardQuantity);
@@ -254,7 +257,7 @@ export default class Films {
   // отрисовка комментируемых фильмов
     render(this._filmContainer, this._filmListCommented, RenderPosition.BEFOREEND);
     render(this._filmListCommented, this._filmListContainerCommented, RenderPosition.BEFOREEND);
-    let commentedCardQuantity = this._filmsModel.getFilms().length > 1 ? COMMENTED_CARD_FILM_QUANTITY : 1;
+    let commentedCardQuantity = this._filmsModel.getFilms().length < COMMENTED_CARD_FILM_QUANTITY ? this._filmsModel.getFilms().length : COMMENTED_CARD_FILM_QUANTITY;
     const commentedFilms = this._filmsModel.getFilms().slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     }).slice(0, commentedCardQuantity);

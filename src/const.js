@@ -3,6 +3,11 @@ export const MAX_SENTENCE_OF_DESCRIPTION = 5;
 export const MIN_SENTENCE_OF_DESCRIPTION = 1;
 export const MAX_COMMENTS = 5;
 export const MIN_COMMENTS = 0;
+const DAYS_IN_WEEK = 7;
+const MONTH_COUNT = 1;
+const YEAR_COUNT = 1;
+export const YEAR_COUNT_TOTAL = 45;
+
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
@@ -35,11 +40,11 @@ export const UserActionMessage = {
 };
 
 export const startFromDate = new Map();
-startFromDate.set(`statistic-all-time`, dayjs().subtract(45, `year`).toDate());
+startFromDate.set(`statistic-all-time`, dayjs().subtract(YEAR_COUNT_TOTAL, `year`).toDate());
 startFromDate.set(`statistic-today`, dayjs().toDate());
-startFromDate.set(`statistic-week`, dayjs().subtract(7, `day`).toDate());
-startFromDate.set(`statistic-month`, dayjs().subtract(1, `month`).toDate());
-startFromDate.set(`statistic-year`, dayjs().subtract(1, `year`).toDate());
+startFromDate.set(`statistic-week`, dayjs().subtract(DAYS_IN_WEEK, `day`).toDate());
+startFromDate.set(`statistic-month`, dayjs().subtract(MONTH_COUNT, `month`).toDate());
+startFromDate.set(`statistic-year`, dayjs().subtract(YEAR_COUNT, `year`).toDate());
 
 export const period = {
   ALL_TIME: `statistic-all-time`,

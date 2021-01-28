@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import ApiComments from "../api-comments.js";
 import {AUTHORIZATOIN, END_POINT} from "../const.js";
 import {State} from "../utils/popup.js";
+import {FilterType} from "../const.js";
 
 const apiComments = new ApiComments(END_POINT, AUTHORIZATOIN);
 const bodyElement = document.querySelector(`body`);
@@ -134,7 +135,8 @@ export default class FilmPresenter {
             {
               isInFavorites: !this._film.isInFavorites
             }
-        )
+        ),
+        FilterType.FAVORITES
     );
   }
 
@@ -148,7 +150,8 @@ export default class FilmPresenter {
             {
               isInWatchlist: !this._film.isInWatchlist
             }
-        )
+        ),
+        FilterType.WATCHLIST
     );
   }
 
@@ -164,7 +167,8 @@ export default class FilmPresenter {
                 isInHistory: !this._film.isInHistory,
                 watchingDate: null
               }
-          )
+          ),
+          FilterType.HISTORY
       );
     } else {
       this._changeData(

@@ -52,8 +52,8 @@ export default class Filter {
     }
   }
 
-  setMenuTypeChangeHandler(par) {
-    this._menuTypeChangeHandler = par;
+  setMenuTypeChangeHandler(callback) {
+    this._menuTypeChangeHandler = callback;
     this._filterComponent.setMenuClickHandler(this._menuTypeChangeHandler);
   }
 

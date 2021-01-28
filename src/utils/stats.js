@@ -46,12 +46,12 @@ export const getMostWatchedGenreFilm = (watchedFilms) => {
       });
     });
 
-    let genresCountArray = [];
+    let genresCount = [];
 
     for (let i = 0; i < genres.length; i++) {
       let count = 0;
-      genresCountArray.push([]);
-      genresCountArray[i].push(genres[i]);
+      genresCount.push([]);
+      genresCount[i].push(genres[i]);
       watchedFilms.forEach((film) => {
         film.genre.forEach((genre) => {
           if (genre.includes(genres[i])) {
@@ -59,12 +59,12 @@ export const getMostWatchedGenreFilm = (watchedFilms) => {
           }
         });
       });
-      genresCountArray[i].push(count);
+      genresCount[i].push(count);
     }
-    genresCountArray.sort(function (a, b) {
+    genresCount.sort(function (a, b) {
       return b[1] - a[1];
     });
-    return genresCountArray;
+    return genresCount;
   }
   return `None`;
 };

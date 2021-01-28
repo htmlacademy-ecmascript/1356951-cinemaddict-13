@@ -1,5 +1,6 @@
 import Abstract from "../view/abstract.js";
 import {getTimeFromMins} from "../utils.js";
+const MAX_LENGTH_OF_DESCRIPTION = 140;
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -16,8 +17,8 @@ const createFilmCardTemplate = (film) => {
     isInWatchlist
   } = film;
 
-  const getActiveClass = (param) => {
-    const activeClass = param ? ` film-card__controls-item--active` : ``;
+  const getActiveClass = (button) => {
+    const activeClass = button ? ` film-card__controls-item--active` : ``;
     return activeClass;
   };
 
@@ -27,7 +28,7 @@ const createFilmCardTemplate = (film) => {
   };
 
   const getDescription = () => {
-    const totalDescription = description.length > 140 ?
+    const totalDescription = description.length > MAX_LENGTH_OF_DESCRIPTION ?
       description.slice(0, 139) + `...` :
       description;
     return totalDescription;
