@@ -1,18 +1,13 @@
 import dayjs from "dayjs";
 import he from "he";
 import SmartView from "../view/smart.js";
-import {nanoid} from "../mock/film.js";
 import Comments from "../model/comments.js";
-import {commentsCollection} from "../mock/film.js";
 import {UpdateType, UserAction} from "../const.js";
 import {getTimeFromMins} from "../utils.js";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {State} from "../utils/popup.js";
 
 dayjs.extend(relativeTime);
-
-const commentsModel = new Comments();
-commentsModel.setComments(commentsCollection);
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
@@ -110,8 +105,8 @@ const createPopupTemplate = (data = {}, commentsAll = []) => {
     return ``;
   };
 
-  const getActiveClass = (param) => {
-    const activeClass = param ? `checked` : ``;
+  const getActiveClass = (input) => {
+    const activeClass = input ? `checked` : ``;
     return activeClass;
   };
   let commentsToRender;
@@ -344,12 +339,10 @@ export default class Popup extends SmartView {
       } else if (text !== null || emoji !== null) {
         document.removeEventListener(`keydown`, this._messageToggleHandler);
         const newComment = {
-          idMessage: nanoid(),
+          // idMessage: nanoid(),
           text,
           emoji,
-          date: dayjs(),
-          daysAgo: 7,
-          author: `anon`
+          date: dayjs()
         };
 
         this._callback.addCommentClick(newComment, this._data);

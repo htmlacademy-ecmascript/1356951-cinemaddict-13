@@ -1,5 +1,7 @@
 import Abstract from "./view/abstract.js";
 import dayjs from "dayjs";
+const MIN_IN_HOUR = 60;
+const MIN_DOUBLE_NUMBER = 10;
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -114,7 +116,7 @@ export const sortRating = (filmA, filmB) => {
 };
 
 export const getTimeFromMins = (mins) => {
-  let hours = Math.trunc(mins / 60);
-  let minutes = (mins % 60) < 10 ? `0` + `${(mins % 60)}` : mins % 60;
+  let hours = Math.trunc(mins / MIN_IN_HOUR);
+  let minutes = (mins % MIN_IN_HOUR) < MIN_DOUBLE_NUMBER ? `0` + `${(mins % MIN_IN_HOUR)}` : mins % MIN_IN_HOUR;
   return hours + `h ` + minutes + `m`;
 };

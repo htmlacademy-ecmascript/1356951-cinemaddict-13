@@ -2,12 +2,18 @@ import Smart from "../view/smart.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
-  return (
-    `<a href="#${name.toLowerCase()}" class="main-navigation__item ${type === currentFilterType ?
+  if (name !== `All movies`) {
+    return (
+      `<a href="#${name.toLowerCase()}" class="main-navigation__item ${type === currentFilterType ?
+        `main-navigation__item--active` :
+        ``}">${name} <span class="main-navigation__item-count">${count}</span></a>`
+    );
+  } else {
+    return (`<a href="#${name.toLowerCase()}" class="main-navigation__item ${type === currentFilterType ?
       `main-navigation__item--active` :
-      ``}">${name} <span class="main-navigation__item-count">${count}</span></a>`
-  );
-
+      ``}">${name} </a>`
+    );
+  }
 };
 const createMenuTemplate = (filters, currentFilterType) => {
   const filterItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join(``);
