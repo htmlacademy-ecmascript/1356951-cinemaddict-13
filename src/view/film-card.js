@@ -1,6 +1,7 @@
 import Abstract from "../view/abstract.js";
 import {getTimeFromMins} from "../utils.js";
 const MAX_LENGTH_OF_DESCRIPTION = 140;
+const DESCRIPTION_LENGTH_IF_MORE_THEN_MAX = 139;
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -29,7 +30,7 @@ const createFilmCardTemplate = (film) => {
 
   const getDescription = () => {
     const totalDescription = description.length > MAX_LENGTH_OF_DESCRIPTION ?
-      description.slice(0, 139) + `...` :
+      description.slice(0, DESCRIPTION_LENGTH_IF_MORE_THEN_MAX) + `...` :
       description;
     return totalDescription;
   };

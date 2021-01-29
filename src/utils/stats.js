@@ -12,7 +12,7 @@ export const countTotalDurationWatchedFilm = (films) => {
 };
 export const getWatchedFilmInRangeDate = (data) => {
   const {films, dateFrom, dateTo} = data;
-  let watchedFilms = films.getFilms().slice().filter((film) => {
+  const watchedFilms = films.getFilms().slice().filter((film) => {
     if (film.isInHistory === false) {
       return false;
     }
@@ -36,7 +36,7 @@ export const getWatchedFilmInRangeDate = (data) => {
 };
 
 export const getMostWatchedGenreFilm = (watchedFilms) => {
-  let genres = [];
+  const genres = [];
   if (watchedFilms !== `0`) {
     watchedFilms.forEach((film) => {
       film.genre.forEach((genre) => {
@@ -46,7 +46,7 @@ export const getMostWatchedGenreFilm = (watchedFilms) => {
       });
     });
 
-    let genresCount = [];
+    const genresCount = [];
 
     for (let i = 0; i < genres.length; i++) {
       let count = 0;

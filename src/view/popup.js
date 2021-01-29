@@ -339,7 +339,6 @@ export default class Popup extends SmartView {
       } else if (text !== null || emoji !== null) {
         document.removeEventListener(`keydown`, this._messageToggleHandler);
         const newComment = {
-          // idMessage: nanoid(),
           text,
           emoji,
           date: dayjs()

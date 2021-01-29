@@ -246,7 +246,7 @@ export default class Films {
     // отрисовка топ фильмов
     render(this._filmContainer, this._filmListTop, RenderPosition.BEFOREEND);
     render(this._filmListTop, this._filmListContainerTop, RenderPosition.BEFOREEND);
-    let topCardQuantity = this._filmsModel.getFilms().length < TOP_CARD_FILM_QUANTITY ? this._getFilms().slice().length : TOP_CARD_FILM_QUANTITY;
+    const topCardQuantity = this._filmsModel.getFilms().length < TOP_CARD_FILM_QUANTITY ? this._getFilms().slice().length : TOP_CARD_FILM_QUANTITY;
     this._topFilms = this._filmsModel.getFilms().slice().sort(function (a, b) {
       return b.rating - a.rating;
     }).slice(0, topCardQuantity);
@@ -257,7 +257,7 @@ export default class Films {
   // отрисовка комментируемых фильмов
     render(this._filmContainer, this._filmListCommented, RenderPosition.BEFOREEND);
     render(this._filmListCommented, this._filmListContainerCommented, RenderPosition.BEFOREEND);
-    let commentedCardQuantity = this._filmsModel.getFilms().length < COMMENTED_CARD_FILM_QUANTITY ? this._filmsModel.getFilms().length : COMMENTED_CARD_FILM_QUANTITY;
+    const commentedCardQuantity = this._filmsModel.getFilms().length < COMMENTED_CARD_FILM_QUANTITY ? this._filmsModel.getFilms().length : COMMENTED_CARD_FILM_QUANTITY;
     const commentedFilms = this._filmsModel.getFilms().slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     }).slice(0, commentedCardQuantity);
