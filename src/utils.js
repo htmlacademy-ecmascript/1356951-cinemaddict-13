@@ -116,7 +116,7 @@ export const sortRating = (filmA, filmB) => {
 };
 
 export const getTimeFromMins = (mins) => {
-  let hours = Math.trunc(mins / MIN_IN_HOUR);
-  let minutes = (mins % MIN_IN_HOUR) < MIN_DOUBLE_NUMBER ? `0` + `${(mins % MIN_IN_HOUR)}` : mins % MIN_IN_HOUR;
+  const hours = Math.trunc(mins / MIN_IN_HOUR);
+  const minutes = (mins % MIN_IN_HOUR) < MIN_DOUBLE_NUMBER ? `0` + `${(mins % MIN_IN_HOUR)}` : mins % MIN_IN_HOUR;
   return hours + `h ` + minutes + `m`;
 };

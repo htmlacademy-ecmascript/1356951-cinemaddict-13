@@ -21,12 +21,12 @@ export default class ApiComments {
     return this._load({url: `/comments/${film.id}`})
       .then(ApiComments.toJSON)
       .then((comments) => comments.map(Comments.adaptToClient))
-      .then((commentsArr) => {
-        let object = {};
-        for (let i = 0; i < commentsArr.length; i++) {
-          object[commentsArr[i].idMessage] = commentsArr[i];
+      .then((responseComments) => {
+        const commentsList = {};
+        for (let i = 0; i < responseComments.length; i++) {
+          commentsList[responseComments[i].idMessage] = responseComments[i];
         }
-        return object;
+        return commentsList;
       });
   }
 

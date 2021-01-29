@@ -61,6 +61,9 @@ export default class Menu extends Smart {
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
+    if (evt.target.localName === `span`) {
+      return;
+    }
     this._currentFilter = evt.target.firstChild.textContent.toLowerCase().slice(0, -1);
     if (evt.target.firstChild.textContent.toLowerCase().slice(0, -1) === `stat`) {
       this.getElement().querySelectorAll(`.main-navigation__item`).forEach((navigationItem) => navigationItem.removeEventListener(`click`, this._filterTypeChangeHandler));

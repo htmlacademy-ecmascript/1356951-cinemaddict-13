@@ -59,11 +59,11 @@ export default class Comments extends Observer {
     const adaptedResponse = [];
     const adaptedFilm = MoviesModel.adaptToClient(movie);
     const makeObjectFromArray = function (commentsOfFilm) {
-      let object = {};
+      const commentsList = {};
       for (let i = 0; i < commentsOfFilm.length; i++) {
-        object[commentsOfFilm[i].idMessage] = commentsOfFilm[i];
+        commentsList[commentsOfFilm[i].idMessage] = commentsOfFilm[i];
       }
-      return object;
+      return commentsList;
     };
     const adaptedComment = makeObjectFromArray(comments.map(Comments.adaptToClient));
     adaptedResponse.push(adaptedFilm);
