@@ -11,25 +11,36 @@ dayjs.extend(relativeTime);
 
 const createFilmDetails = (name, data) => {
   let filmDetails = ``;
-  if (!data.isArray && typeof data !== `object`) {
-    filmDetails = (
-      `<tr class="film-details__row">
-        <td class="film-details__term">${name}</td>
-        <td class="film-details__cell">${data}</td>
-      </tr>`);
-  }
-  if (typeof data === `object`) {
-    let genresHtml = ``;
-    for (let i = 0; i < data.length; i++) {
-      genresHtml += `<span class="film-details__genre">${data[i]}</span>`;
-    }
-    filmDetails = (
+  const firstOptionFilmDetails = (
+    `<tr class="film-details__row">
+      <td class="film-details__term">${name}</td>
+      <td class="film-details__cell">${data}</td>
+    </tr>`);
+
+  const getSecondOptionFilmDetails = () => {
+    const getGenresHtml = function (detailsData) {
+      let genresHtml = ``;
+      if (typeof detailsData === `object`) {
+        for (let i = 0; i < detailsData.length; i++) {
+          genresHtml += `<span class="film-details__genre">${detailsData[i]}</span>`;
+        }
+      }
+      return genresHtml;
+    };
+    return (
       `<tr class="film-details__row">
       <td class="film-details__term">${name}</td>
-      <td class="film-details__cell">${genresHtml}</td>
-    </tr>`
+      <td class="film-details__cell">${getGenresHtml(data)}</td>
+      </tr>`
     );
-  }
+  };
+
+  filmDetails = !data.isArray && typeof data !== `object` ?
+    firstOptionFilmDetails :
+    filmDetails;
+  filmDetails = typeof data === `object` ?
+    getSecondOptionFilmDetails() :
+    filmDetails;
   return filmDetails;
 };
 

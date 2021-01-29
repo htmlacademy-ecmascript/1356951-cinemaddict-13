@@ -230,7 +230,6 @@ export default class Films {
           this._button.getElement().remove();
           this._button.removeElement();
         }
-
       });
     }
 
@@ -275,10 +274,10 @@ export default class Films {
     render(this._filmContainer, this._filmList, RenderPosition.BEFOREEND);
     if (this._getFilms().slice().length === 0) {
       this._renderEmptyFilmsList();
-    } else {
-      render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
-      this._renderFilmsList();
+      return;
     }
+    render(this._filmList, this._filmListContainer, RenderPosition.BEFOREEND);
+    this._renderFilmsList();
   }
 
   _clearBoard({resetRenderedTaskCount = false, resetSortType = false} = {}) {
